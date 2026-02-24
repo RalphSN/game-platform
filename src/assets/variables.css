@@ -1,0 +1,36 @@
+/* src/assets/variables.css */
+
+:root {
+  /* ===== 品牌主色 (Brand & Primary) ===== */
+  --color-primary: #5e60ce; /* 品牌藍紫 (LOGO、主要按鈕、標題滑過、標籤背景) */
+  --color-primary-hover: #4f52c9; /* 深藍紫 (主要按鈕滑過變色) */
+  --color-primary-active: #4548b8; /* 深藍紫 (主要按鈕所在頁) */
+  --color-primary-light: #eef0ff; /* 淡紫 (分類文字/標籤、當前頁面底色) */
+
+  /* ===== 文字顏色 (Text) ===== */
+  --color-text-main: #1f2937; /* 深灰 (Header/Body標題、卡片標題) */
+  --color-text-sub: #6b7280; /* 灰色 (卡片副文字、未選中 icon) */
+  --color-text-muted: #9ca3af; /* 次灰 (未選中文字) */
+  --color-text-white: #ffffff; /* 白色 (按鈕文字、底色白字、Footer標題) */
+
+  /* ===== 背景色 (Background) ===== */
+  --color-bg-page: #f7f9fc; /* 灰藍 (Body 頁面底色) */
+  --color-bg-content: #ffffff; /* 白色 (Header底色、主內容背景、卡片底色、選單背景) */
+  --color-bg-footer: #1e2235; /* 深灰藍 (Footer 背景) */
+
+  /* ===== Footer 專用文字顏色 ===== */
+  --color-footer-text: #c7c9d9; /* 淡灰 (Footer 文字) */
+  --color-footer-text-hover: #4cc9f0; /* 淺藍 (Footer 文字滑過) */
+
+  /* ===== 輔助色 (Border & Shadow) ===== */
+  --color-border-light: #e6eaf2; /* 淡灰 (Header 底框線、分隔線) */
+  --color-border-dark: #2c314a; /* 深灰 (Footer 分隔線) */
+  --color-shadow-main: rgba(0, 0, 0, 0.08); /* 陰影 (例如: 0 -4px 12px) */
+}
+
+/* 全域基礎樣式重置 (確保整個網站套用新的底色與文字顏色) */
+body {
+  background-color: var(--color-bg-page);
+  color: var(--color-text-main);
+  font-family: 'Helvetica Neue', Arial, sans-serif;
+}
