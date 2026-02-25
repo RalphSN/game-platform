@@ -1,10 +1,12 @@
 <template>
   <div class="home-view">
-
     <section class="hero-banner" @mouseenter="pauseAutoPlay" @mouseleave="startAutoPlay">
       <transition-group name="fade" tag="div" class="carousel-inner">
-        <img v-for="(banner, index) in banners" :key="banner.id" v-show="currentIndex === index" :src="banner.src"
-          :alt="banner.alt" class="hero-img" />
+        <picture v-for="(banner, index) in banners" :key="banner.id" v-show="currentIndex === index"
+          class="hero-img-container">
+          <source media="(max-width: 768px)" :srcset="banner.srcMobile" />
+          <img :src="banner.src" :alt="banner.alt" class="hero-img" />
+        </picture>
       </transition-group>
 
       <div class="carousel-indicators">
@@ -38,70 +40,76 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import GameSection from '@/components/GameSection.vue'
 import AdBanner from '@/components/AdBanner.vue'
 
-// ==========================================
-// 1. Banner 輪播邏輯
-// ==========================================
-// 在 Vite 中，src/assets 下的圖片必須用 import 引入
-import banner1 from '@/assets/images/banner1.png'
-import banner2 from '@/assets/images/banner2.png'
-import banner3 from '@/assets/images/banner3.png'
+import banner1 from '@/assets/images/banner1.jpg'
+import banner2 from '@/assets/images/banner2.jpg'
+import banner3 from '@/assets/images/banner3.jpg'
+import banner1m from '@/assets/images/banner1-m.jpg'
+import banner2m from '@/assets/images/banner2-m.jpg'
+import banner3m from '@/assets/images/banner3-m.jpg'
+
+import ad1 from '@/assets/images/ad1.jpg'
+import ad1m from '@/assets/images/ad1-m.jpg'
+import ad2 from '@/assets/images/ad2.jpg'
+import ad2m from '@/assets/images/ad2-m.jpg'
+
+import game1 from '@/assets/images/game1.jpg'
+import game2 from '@/assets/images/game2.jpg'
 
 const banners = ref([
-  { id: 1, src: banner1, alt: '活動 Banner 1' },
-  { id: 2, src: banner2, alt: '活動 Banner 2' },
-  { id: 3, src: banner3, alt: '活動 Banner 3' }
+  { id: 1, src: banner1, srcMobile: banner1m, alt: '活動 Banner 1' },
+  { id: 2, src: banner2, srcMobile: banner2m, alt: '活動 Banner 2' },
+  { id: 3, src: banner3, srcMobile: banner3m, alt: '活動 Banner 3' }
 ])
 
 const currentIndex = ref(0)
 let timer = null
 
-// 切換到下一張
 const nextSlide = () => {
   currentIndex.value = (currentIndex.value + 1) % banners.value.length
 }
 
-// 點擊底部指示點切換
 const goToSlide = (index) => {
   currentIndex.value = index
 }
 
-// 開始自動播放 (每 3.5 秒切換一次)
 const startAutoPlay = () => {
   timer = setInterval(() => {
     nextSlide()
   }, 3500)
 }
 
-// 暫停自動播放 (滑鼠移入時)
 const pauseAutoPlay = () => {
   if (timer) clearInterval(timer)
 }
 
-// 元件掛載時啟動計時器，卸載時清除避免記憶體流失
 onMounted(() => {
   startAutoPlay()
 })
+
 onUnmounted(() => {
   pauseAutoPlay()
 })
 
-// ==========================================
-// 2. Mock API 資料 (不變)
-// ==========================================
-const mockGames = Array.from({ length: 30 }, (_, i) => ({
-  id: i + 1,
-  title: `網頁遊戲 ${i + 1}`,
-  thumb: `https://picsum.photos/seed/${i + 1}/300/300`,
-  category: i % 3 === 0 ? '角色扮演' : i % 2 === 0 ? '休閒益智' : '動作冒險',
+const customGames = [
+  { id: 1, title: '鍛劍開天', thumb: game1, category: '角色扮演', players: 8400 },
+  { id: 2, title: '夢幻廚房', thumb: game2, category: '休閒益智', players: 12500 }
+]
+
+const randomGames = Array.from({ length: 28 }, (_, i) => ({
+  id: i + 3,
+  title: `網頁遊戲 ${i + 3}`,
+  thumb: `https://picsum.photos/seed/${i + 3}/300/300`,
+  category: (i + 2) % 3 === 0 ? '角色扮演' : (i + 2) % 2 === 0 ? '休閒益智' : '動作冒險',
   players: Math.floor(Math.random() * 50000) + 1000
 }))
 
-const mockAds = Array.from({ length: 10 }, (_, i) => ({
-  id: 100 + i,
-  title: `推薦廣告 ${i + 1}`,
-  imageUrl: `https://via.placeholder.com/1200x200/5E60CE/FFFFFF?text=AD+${i + 1}`,
-  link: '#'
-}))
+const mockGames = [...customGames, ...randomGames]
+
+const mockAds = [
+  { id: 101, title: '廣告 1', imageUrl: ad1, imageUrlMobile: ad1m, link: '#' },
+  { id: 102, title: '廣告 2', imageUrl: ad2, imageUrlMobile: ad2m, link: '#' },
+  { id: 103, title: '廣告 3', imageUrl: ad1, imageUrlMobile: ad1m, link: '#' },
+]
 
 const games = ref(mockGames)
 const ads = ref(mockAds)
@@ -112,19 +120,16 @@ const ads = ref(mockAds)
   width: 100%;
 }
 
-/* --- Banner 輪播區塊樣式 --- */
 .hero-banner {
   position: relative;
   width: 100%;
-  /* 使用 aspect-ratio 讓高度根據寬度自適應縮放，維持大約 1440:400 的比例 */
-  aspect-ratio: 1440 / 400;
-  max-height: 400px;
+  aspect-ratio: 1440 / 580;
+  max-height: 580px;
   border-radius: 16px;
   overflow: hidden;
   margin-bottom: 40px;
   box-shadow: 0 4px 16px var(--color-shadow-main);
   background-color: var(--color-border-light);
-  /* 圖片載入前的底色 */
 }
 
 .carousel-inner {
@@ -133,16 +138,20 @@ const ads = ref(mockAds)
   height: 100%;
 }
 
-.hero-img {
+.hero-img-container {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.hero-img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 }
 
-/* 漸隱漸顯 (Fade) 動畫 */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.8s ease;
@@ -153,7 +162,6 @@ const ads = ref(mockAds)
   opacity: 0;
 }
 
-/* 底部指示點樣式 */
 .carousel-indicators {
   position: absolute;
   bottom: 16px;
@@ -173,14 +181,12 @@ const ads = ref(mockAds)
   transition: all 0.3s ease;
 }
 
-/* 當前啟用的指示點會變長、變亮 */
 .carousel-indicators span.active {
   width: 24px;
   border-radius: 5px;
   background-color: #ffffff;
 }
 
-/* --- 原有排版樣式 --- */
 .feed-container {
   display: flex;
   flex-direction: column;
@@ -201,8 +207,7 @@ const ads = ref(mockAds)
 @media (max-width: 768px) {
   .hero-banner {
     margin-bottom: 24px;
-    /* 手機版可能稍微調高比例避免圖片太扁 */
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1080 / 650;
   }
 
   .feed-container {

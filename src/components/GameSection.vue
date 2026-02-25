@@ -119,7 +119,7 @@ const goToCategory = () => {
 .section-content {
   width: 100%;
   /* 確保只有一排顯示，超出的部分直接隱藏 */
-  overflow: hidden;
+  /* overflow: hidden; */
 }
 
 .game-grid {

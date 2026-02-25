@@ -1,9 +1,11 @@
 <template>
   <a :href="ad.link" target="_blank" class="ad-banner" @click="trackAdClick">
-    <img :src="ad.imageUrl" :alt="ad.title" class="ad-img" loading="lazy" />
+    <picture>
+      <source v-if="ad.imageUrlMobile" media="(max-width: 768px)" :srcset="ad.imageUrlMobile" />
+      <img :src="ad.imageUrl" :alt="ad.title" class="ad-img" loading="lazy" />
+    </picture>
 
     <div class="ad-badge">AD</div>
-
     <div class="shine-effect"></div>
   </a>
 </template>
@@ -16,13 +18,13 @@ const props = defineProps({
     default: () => ({
       id: 0,
       title: '預設廣告',
-      imageUrl: 'https://via.placeholder.com/1200x200?text=Advertisement',
+      imageUrl: 'https://via.placeholder.com/1200x200?text=AD',
+      imageUrlMobile: null,
       link: '#'
     })
   }
 })
 
-// 模擬廣告點擊追蹤 API
 const trackAdClick = () => {
   console.log(`[Mock API] 記錄廣告點擊: ID ${props.ad.id}`)
 }
@@ -37,8 +39,7 @@ const trackAdClick = () => {
   overflow: hidden;
   box-shadow: 0 4px 12px var(--color-shadow-main);
   transition: transform 0.2s ease;
-  /* 設定一個基本的長寬比，避免圖片載入前畫面跳動 */
-  aspect-ratio: 21 / 9;
+  aspect-ratio: 1440 / 300;
   background-color: var(--color-border-light);
 }
 
@@ -50,10 +51,8 @@ const trackAdClick = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* 確保圖片不變形填滿容器 */
 }
 
-/* 廣告右上角標示 */
 .ad-badge {
   position: absolute;
   top: 8px;
@@ -66,7 +65,6 @@ const trackAdClick = () => {
   letter-spacing: 1px;
 }
 
-/* --- UIUX：Hover 時的光澤掃過特效 --- */
 .shine-effect {
   position: absolute;
   top: 0;
@@ -95,10 +93,9 @@ const trackAdClick = () => {
   }
 }
 
-/* 手機版時稍微調整廣告的長寬比，避免太扁 */
 @media (max-width: 768px) {
   .ad-banner {
-    aspect-ratio: 16 / 9;
+    aspect-ratio: 1080 / 280;
   }
 }
 </style>

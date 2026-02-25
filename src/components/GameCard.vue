@@ -12,7 +12,7 @@
       <h4 class="game-title">{{ game.title }}</h4>
       <div class="game-meta">
         <span class="game-tag">{{ game.category }}</span>
-        <span class="game-players">🔥 {{ formatPlayers(game.players) }}</span>
+        <span class="game-players">🔥 {{ game.players }}</span>
       </div>
     </div>
 
@@ -48,11 +48,11 @@ const goToGame = () => {
 }
 
 // 格式化遊玩人數 (例如: 12000 -> 1.2w)
-const formatPlayers = (num) => {
-  if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
-  return num
-}
+// const formatPlayers = (num) => {
+//   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
+//   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+//   return num
+// }
 </script>
 
 <style scoped>
