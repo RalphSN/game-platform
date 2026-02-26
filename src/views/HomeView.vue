@@ -1,6 +1,7 @@
 <template>
   <div class="home-view">
-    <section class="hero-banner" @mouseenter="pauseAutoPlay" @mouseleave="startAutoPlay">
+    <section class="hero-banner fade-in-up" style="animation-delay: 0s;" @mouseenter="pauseAutoPlay"
+      @mouseleave="startAutoPlay">
       <transition-group name="fade" tag="div" class="carousel-inner">
         <picture v-for="(banner, index) in banners" :key="banner.id" v-show="currentIndex === index"
           class="hero-img-container">
@@ -16,21 +17,26 @@
     </section>
 
     <div class="feed-container">
-      <GameSection title="熱門推薦" icon="🔥" categoryId="hot" :games="games.slice(0, 6)" />
+      <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" icon="🔥" categoryId="hot"
+        :games="games.slice(0, 6)" />
 
-      <div class="ad-wrapper">
+      <div class="ad-wrapper fade-in-up" style="animation-delay: 0.2s;">
         <AdBanner :ad="ads[0]" />
       </div>
 
-      <GameSection title="動作冒險" icon="⚔️" categoryId="action" :games="games.slice(6, 12)" />
-      <GameSection title="休閒益智" icon="🧩" categoryId="puzzle" :games="games.slice(12, 18)" />
+      <GameSection class="fade-in-up" style="animation-delay: 0.3s;" title="動作冒險" icon="⚔️" categoryId="action"
+        :games="games.slice(6, 12)" />
 
-      <div class="ad-wrapper half-ad">
+      <GameSection class="fade-in-up" style="animation-delay: 0.4s;" title="休閒益智" icon="🧩" categoryId="puzzle"
+        :games="games.slice(12, 18)" />
+
+      <div class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
         <AdBanner :ad="ads[1]" />
         <AdBanner :ad="ads[2]" />
       </div>
 
-      <GameSection title="角色扮演" icon="🛡️" categoryId="rpg" :games="games.slice(18, 24)" />
+      <GameSection class="fade-in-up" style="animation-delay: 0.6s;" title="角色扮演" icon="🛡️" categoryId="rpg"
+        :games="games.slice(18, 24)" />
     </div>
   </div>
 </template>
@@ -116,6 +122,23 @@ const ads = ref(mockAds)
 </script>
 
 <style scoped>
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in-up {
+  opacity: 0;
+  animation: fadeInUp 0.5s ease-out forwards;
+}
+
 .home-view {
   width: 100%;
 }

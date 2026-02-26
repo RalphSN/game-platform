@@ -56,7 +56,6 @@ const goToGame = () => {
 </script>
 
 <style scoped>
-/* 卡片外觀：白色底、圓角、預設陰影 */
 .game-card {
   background-color: var(--color-bg-content);
   border-radius: 12px;
@@ -65,21 +64,17 @@ const goToGame = () => {
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
-  /* 寬度由外層 Grid 決定 */
 }
 
-/* Hover 互動效果：整張卡片上浮並加深陰影 */
 .game-card:hover {
   transform: translateY(-6px);
   box-shadow: 0 12px 24px var(--color-shadow-main);
 }
 
-/* --- 圖片與遮罩區 --- */
 .thumb-wrapper {
   position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  /* 強制正方形比例，讓瀑布流整齊 */
   overflow: hidden;
 }
 
@@ -90,12 +85,10 @@ const goToGame = () => {
   transition: transform 0.5s ease;
 }
 
-/* 滑鼠移入時，圖片微微放大 */
 .game-card:hover .game-thumb {
   transform: scale(1.08);
 }
 
-/* 黑色半透明遮罩 (預設隱藏) */
 .hover-overlay {
   position: absolute;
   top: 0;
@@ -103,7 +96,6 @@ const goToGame = () => {
   width: 100%;
   height: 100%;
   background-color: rgba(31, 41, 55, 0.6);
-  /* 深灰半透明 */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -115,7 +107,6 @@ const goToGame = () => {
   opacity: 1;
 }
 
-/* 播放按鈕 */
 .play-btn {
   background-color: var(--color-primary);
   color: var(--color-text-white);
@@ -141,7 +132,6 @@ const goToGame = () => {
   font-size: 1rem;
   font-weight: 600;
   margin-bottom: 8px;
-  /* 文字過長省略號 */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

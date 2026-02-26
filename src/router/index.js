@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory } from 'vue-router'
-// 引入我們剛剛寫好的首頁
 import HomeView from '../views/HomeView.vue'
 
 const router = createRouter({
@@ -10,14 +9,19 @@ const router = createRouter({
       name: 'home',
       component: HomeView,
     },
+    {
+      path: '/games',
+      name: 'games',
+      component: () => import('../views/GamesView.vue'),
+    },
     // ==========================================
-    // 以下為未來擴充預留的路由，目前先註解起來
+    // 預留路由，目前註解
     // ==========================================
 
     // {
     //   path: '/games',
     //   name: 'games',
-    //   // 延遲載入 (Lazy load)：只有當使用者點擊進來時才載入該頁面的程式碼，優化首頁速度
+    //   // 延遲載入 (Lazy load) 使用者點擊進來時才載入該頁面的程式碼
     //   component: () => import('../views/GamesView.vue')
     // },
     // {
@@ -36,7 +40,7 @@ const router = createRouter({
     //   component: () => import('../views/LeaderboardView.vue')
     // }
   ],
-  // 加上這段，可以確保每次切換頁面時，畫面都會自動回到最頂端
+  // 切換頁面時畫面自動回到頂端
   scrollBehavior(to, from, savedPosition) {
     if (savedPosition) {
       return savedPosition

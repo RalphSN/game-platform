@@ -44,7 +44,7 @@ const props = defineProps({
   },
   showMore: {
     type: Boolean,
-    default: true // 是否顯示「查看更多」按鈕
+    default: true // 是否顯示「查看更多」
   }
 })
 
@@ -60,19 +60,15 @@ const goToCategory = () => {
 .game-section {
   width: 100%;
   margin-bottom: 32px;
-  /* 區塊與區塊之間的間距 */
 }
 
-/* --- 頭部樣式 --- */
 .section-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  /* 讓標題與按鈕底部對齊 */
   margin-bottom: 16px;
   padding-bottom: 8px;
   border-bottom: 2px solid var(--color-border-light);
-  /* 淡灰底線 */
 }
 
 .section-title {
@@ -89,7 +85,7 @@ const goToCategory = () => {
   font-size: 1.4rem;
 }
 
-/* 「查看更多」按鈕 */
+/* 「查看更多」 */
 .more-btn {
   background: none;
   border: none;
@@ -115,11 +111,9 @@ const goToCategory = () => {
   line-height: 1;
 }
 
-/* --- 內容區域 (與 HomeView 瀑布流共用類似的 RWD 設定) --- */
+/* --- 內容區域 --- */
 .section-content {
   width: 100%;
-  /* 確保只有一排顯示，超出的部分直接隱藏 */
-  /* overflow: hidden; */
 }
 
 .game-grid {

@@ -29,9 +29,7 @@ const currentYear = computed(() => new Date().getFullYear())
 <style scoped>
 .app-footer {
   background-color: var(--color-bg-footer);
-  /* 背景：深灰藍 */
   color: var(--color-footer-text);
-  /* 文字：淡灰 */
   padding: 40px 24px 24px;
   margin-top: auto;
 }
@@ -47,7 +45,6 @@ const currentYear = computed(() => new Date().getFullYear())
 
 .footer-title {
   color: var(--color-text-white);
-  /* 標題：白色 */
   font-size: 1.25rem;
   margin-bottom: 8px;
 }
@@ -61,7 +58,6 @@ const currentYear = computed(() => new Date().getFullYear())
 
 .footer-links a {
   color: var(--color-footer-text);
-  /* 文字：淡灰 */
   text-decoration: none;
   font-size: 0.95rem;
   transition: color 0.2s;
@@ -69,10 +65,8 @@ const currentYear = computed(() => new Date().getFullYear())
 
 .footer-links a:hover {
   color: var(--color-footer-text-hover);
-  /* 文字滑過：淺藍 */
 }
 
-/* 分隔線：深灰 */
 .footer-divider {
   width: 100%;
   max-width: 800px;

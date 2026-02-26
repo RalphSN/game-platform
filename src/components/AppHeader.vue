@@ -43,15 +43,12 @@ const toggleMenu = () => {
 </script>
 
 <style scoped>
-/* --- 基礎佈局 --- */
 .app-header {
   position: sticky;
   top: 0;
   z-index: 100;
   background-color: var(--color-bg-content);
-  /* 白色底色 */
   border-bottom: 1px solid var(--color-border-light);
-  /* 淡灰底框線 */
   box-shadow: 0 2px 8px var(--color-shadow-main);
 }
 
@@ -65,7 +62,7 @@ const toggleMenu = () => {
   align-items: center;
 }
 
-/* --- 左側：Logo --- */
+/* --- 左側Logo --- */
 .header-left {
   display: flex;
   align-items: center;
@@ -88,7 +85,6 @@ const toggleMenu = () => {
   font-size: 1.25rem;
   font-weight: 600;
   color: var(--color-primary);
-  /* LOGO 藍紫 */
 }
 
 /* --- PC 選單 --- */
@@ -103,7 +99,6 @@ const toggleMenu = () => {
   display: inline-flex;
   align-items: center;
   color: var(--color-text-muted);
-  /* 未選中文字：次灰 */
   text-decoration: none;
   font-weight: 500;
   font-size: 0.95rem;
@@ -114,15 +109,12 @@ const toggleMenu = () => {
 
 .pc-nav a:hover {
   color: var(--color-primary);
-  /* 滑過變色：藍紫 */
   background-color: var(--color-primary-light);
-  /* 滑過加上一點淡紫底色增加回饋感 */
 }
 
 .pc-nav a.active {
   color: var(--color-primary);
   background-color: var(--color-primary-light);
-  /* 當前頁面底色：淡紫 */
   font-weight: 600;
 }
 
@@ -141,7 +133,6 @@ const toggleMenu = () => {
   border-radius: 50%;
   transition: 0.35s;
   color: var(--color-text-sub);
-  /* 未選中 icon：灰色 */
 }
 
 .icon-btn:hover {
@@ -154,7 +145,6 @@ const toggleMenu = () => {
   background: none;
   border: none;
   color: var(--color-text-main);
-  /* 標題文字色 */
   font-weight: 600;
   cursor: pointer;
   padding: 8px 16px;
@@ -169,9 +159,7 @@ const toggleMenu = () => {
 /* 主要按鈕 (註冊) */
 .primary-btn {
   background-color: var(--color-primary);
-  /* 主要按鈕：藍紫 */
   color: var(--color-text-white);
-  /* 文字白 */
   border: none;
   font-weight: 600;
   cursor: pointer;
@@ -182,12 +170,10 @@ const toggleMenu = () => {
 
 .primary-btn:hover {
   background-color: var(--color-primary-hover);
-  /* 滑過變色：深藍紫 */
 }
 
 .primary-btn:active {
   background-color: var(--color-primary-active);
-  /* 所在頁/點擊：更深藍紫 */
 }
 
 /* --- PC / Mobile 顯示切換 --- */
