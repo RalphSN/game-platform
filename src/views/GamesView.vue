@@ -406,6 +406,10 @@ const filteredGames = computed(() => {
     grid-template-columns: repeat(3, 1fr);
     gap: 12px;
   }
+
+  .mode-switch-container {
+    align-items: flex-start;
+  }
 }
 
 @media (max-width: 480px) {

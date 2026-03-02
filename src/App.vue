@@ -7,13 +7,18 @@
     </main>
 
     <AppFooter />
+
+    <MobileTabBar />
+
+    <GoTopButton />
   </div>
 </template>
 
 <script setup>
-
 import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
+import MobileTabBar from './components/MobileTabBar.vue'
+import GoTopButton from './components/GoTopButton.vue'
 </script>
 
 <style>
@@ -33,9 +38,13 @@ import AppFooter from './components/AppFooter.vue'
   flex: 1;
   width: 100%;
   max-width: 1400px;
-  /* 限制最大寬度 */
   margin: 0 auto;
-  /* 內容置中 */
   padding: 20px;
+}
+
+@media (max-width: 768px) {
+  .app-wrapper {
+    padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
 }
 </style>
