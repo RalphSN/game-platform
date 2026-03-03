@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 
 // 預留接收 API 資料的 Props
 const props = defineProps({
@@ -38,13 +38,13 @@ const props = defineProps({
   }
 })
 
-// const router = useRouter()
+const router = useRouter()
 
 // 點擊卡片跳轉到遊戲詳情頁 (未來可串接真實路由)
 const goToGame = () => {
   if (props.game.id === 0) return // 防止載入中被點擊
   console.log(`準備進入遊戲 ID: ${props.game.id}`)
-  // router.push(`/game/${props.game.id}`)
+  router.push(`/game/${props.game.id}`)
 }
 
 // 格式化遊玩人數 (例如: 12000 -> 1.2w)

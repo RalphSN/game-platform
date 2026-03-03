@@ -24,6 +24,11 @@ const router = createRouter({
       name: 'register',
       component: () => import('../views/RegisterView.vue'),
     },
+    {
+      path: '/game/:id',
+      name: 'game-detail',
+      component: () => import('../views/GameDetailView.vue'),
+    },
     // ==========================================
     // 預留路由，目前註解
     // ==========================================
