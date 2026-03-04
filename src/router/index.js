@@ -32,7 +32,12 @@ const router = createRouter({
     {
       path: '/support',
       name: 'support',
-      component: () => import('../views/SupportView.vue')
+      component: () => import('../views/SupportView.vue'),
+    },
+    {
+      path: '/member',
+      name: 'member',
+      component: () => import('../views/MemberView.vue'),
     },
     // ==========================================
     // 預留路由，目前註解

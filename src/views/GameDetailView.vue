@@ -1,31 +1,53 @@
 <template>
   <div class="game-detail-view">
     <section class="game-hero fade-in-up">
-      <div class="hero-bg" :style="{ backgroundImage: `url(${game.banner})` }"></div>
+      <div class="hero-bg" :class="{ 'skeleton-bg': isLoadingData }"
+        :style="isLoadingData ? {} : { backgroundImage: `url(${game.banner})` }"></div>
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
         <div class="hero-left">
-          <img :src="game.thumb" :alt="game.title" class="game-cover" />
+          <div v-if="isLoadingData" class="game-cover skeleton skeleton-thumb"></div>
+          <img v-else :src="game.thumb" :alt="game.title" class="game-cover" />
+
           <div class="game-meta">
-            <h1 class="game-title">{{ game.title }}</h1>
+            <div v-if="isLoadingData" class="skeleton skeleton-title"></div>
+            <h1 v-else class="game-title">{{ game.title }}</h1>
+
             <div class="game-tags">
-              <span class="tag category-tag">{{ game.category }}</span>
-              <span class="tag players-tag">🔥 {{ game.players }} 人在玩</span>
+              <template v-if="isLoadingData">
+                <span class="skeleton skeleton-tag"></span>
+                <span class="skeleton skeleton-tag"></span>
+              </template>
+              <template v-else>
+                <span class="tag category-tag">{{ game.category }}</span>
+                <span class="tag players-tag">🔥 {{ formatPlayers(game.players) }} 人在玩</span>
+              </template>
             </div>
           </div>
         </div>
 
         <div class="hero-right">
-          <button class="play-btn" @click="startGame" :disabled="isLoading">
-            <span v-if="isLoading" class="loader"></span>
-            <template v-else>
-              <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
-                <path d="M8 5v14l11-7z" />
+          <div class="hero-actions">
+            <button class="hero-favorite-btn" :class="{ active: isFavorite }" @click="toggleFavorite"
+              :disabled="isLoadingData" :title="isFavorite ? '取消收藏' : '加入收藏'">
+              <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                stroke-linejoin="round">
+                <path
+                  d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+                </path>
               </svg>
-              開始遊戲
-            </template>
-          </button>
+            </button>
+            <button class="play-btn" @click="startGame" :disabled="isLoading || isLoadingData">
+              <span v-if="isLoading" class="loader"></span>
+              <template v-else>
+                <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                  <path d="M8 5v14l11-7z" />
+                </svg>
+                開始遊戲
+              </template>
+            </button>
+          </div>
         </div>
       </div>
     </section>
@@ -43,7 +65,12 @@
             <h2>遊戲簡介</h2>
           </div>
           <div class="card-body">
-            <p v-if="isLoadingData" class="loading-text">資料載入中...</p>
+            <template v-if="isLoadingData">
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text"></div>
+              <div class="skeleton skeleton-text short"></div>
+            </template>
             <p v-else class="description-text">{{ game.description }}</p>
           </div>
         </div>
@@ -61,7 +88,11 @@
             <h2>操作說明</h2>
           </div>
           <div class="card-body">
-            <p v-if="isLoadingData" class="loading-text">資料載入中...</p>
+            <template v-if="isLoadingData">
+              <div class="skeleton skeleton-text w-80"></div>
+              <div class="skeleton skeleton-text w-60"></div>
+              <div class="skeleton skeleton-text w-70"></div>
+            </template>
             <ul v-else class="controls-list">
               <li v-for="(ctrl, index) in game.controls" :key="index">
                 <span class="ctrl-dot"></span>
@@ -87,25 +118,32 @@ import GameSection from '@/components/GameSection.vue'
 const route = useRoute()
 const isLoading = ref(false)
 const isLoadingData = ref(true)
+const isFavorite = ref(false)
 
-// const formatPlayers = (num) => {
-//   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
-//   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
-//   return num
-// }
+const formatPlayers = (num) => {
+  if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+  return num
+}
 
 const game = ref({
   id: 0,
-  title: '載入中...',
+  title: '',
   thumb: '',
   banner: '',
-  category: '載入中...',
+  category: '',
   players: 0,
   description: '',
   controls: []
 })
 
 const relatedGames = ref([])
+
+const toggleFavorite = () => {
+  if (isLoadingData.value) return
+  isFavorite.value = !isFavorite.value
+  console.log(`${isFavorite.value ? '加入' : '移除'}收藏: ${game.value.title} (ID: ${game.value.id})`)
+}
 
 const fetchGameData = async (gameId) => {
   isLoadingData.value = true
@@ -114,7 +152,7 @@ const fetchGameData = async (gameId) => {
     setTimeout(() => {
       game.value = {
         id: gameId,
-        title: `夢幻廚房`,
+        title: `夢幻廚房 (ID: ${gameId})`,
         thumb: `https://picsum.photos/seed/${gameId * 10}/300/300`,
         banner: `https://picsum.photos/seed/${gameId * 20}/1200/400`,
         category: '休閒益智',
@@ -127,17 +165,20 @@ const fetchGameData = async (gameId) => {
         ]
       }
 
+      isFavorite.value = Math.random() > 0.5
+
       relatedGames.value = Array.from({ length: 6 }, (_, i) => ({
         id: i + 20 + parseInt(gameId),
         title: `推薦遊戲 ${i + 1}`,
         thumb: `https://picsum.photos/seed/${i + 200 + parseInt(gameId)}/300/300`,
         category: i % 2 === 0 ? '休閒益智' : '動作闖關',
-        players: Math.floor(Math.random() * 50000) + 1000
+        players: Math.floor(Math.random() * 50000) + 1000,
+        isFavorite: Math.random() > 0.5
       }))
 
       isLoadingData.value = false
       resolve()
-    }, 800)
+    }, 1500)
   })
 }
 
@@ -198,6 +239,87 @@ watch(() => route.params.id, (newId) => {
   100% {
     transform: rotate(360deg);
   }
+}
+
+@keyframes heartPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes skeletonShimmer {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.skeleton {
+  background: linear-gradient(90deg, var(--color-bg-page) 25%, var(--color-border-light) 50%, var(--color-bg-page) 75%);
+  background-size: 400% 100%;
+  animation: skeletonShimmer 3s infinite ease-in-out;
+}
+
+.skeleton-bg {
+  background: linear-gradient(90deg, #101726 25%, #1a2333 50%, #101726 75%);
+  background-size: 400% 100%;
+  animation: skeletonShimmer 3s infinite ease-in-out;
+}
+
+.skeleton-thumb {
+  width: 160px;
+  height: 160px;
+  border-radius: 16px;
+  border: 4px solid var(--color-bg-content);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+  flex-shrink: 0;
+}
+
+.skeleton-title {
+  width: 240px;
+  height: 36px;
+  border-radius: 8px;
+  margin-bottom: 4px;
+}
+
+.skeleton-tag {
+  width: 80px;
+  height: 30px;
+  border-radius: 20px;
+}
+
+.skeleton-text {
+  width: 100%;
+  height: 20px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.skeleton-text.short {
+  width: 60%;
+}
+
+.skeleton-text.w-80 {
+  width: 80%;
+}
+
+.skeleton-text.w-70 {
+  width: 70%;
+}
+
+.skeleton-text.w-60 {
+  width: 60%;
 }
 
 .fade-in-up {
@@ -308,6 +430,50 @@ watch(() => route.params.id, (newId) => {
   background-color: rgba(255, 255, 255, 0.15);
   color: #ffffff;
   backdrop-filter: blur(4px);
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.hero-favorite-btn {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background-color: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+
+.hero-favorite-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.hero-favorite-btn svg {
+  width: 24px;
+  height: 24px;
+  fill: none;
+  stroke: #ffffff;
+  transition: all 0.3s ease;
+}
+
+.hero-favorite-btn:hover:not(:disabled) {
+  background-color: rgba(255, 255, 255, 0.25);
+  transform: translateY(-2px);
+}
+
+.hero-favorite-btn.active svg {
+  fill: #ff4757;
+  stroke: #ff4757;
+  animation: heartPulse 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .play-btn {
@@ -430,11 +596,6 @@ watch(() => route.params.id, (newId) => {
   flex-shrink: 0;
 }
 
-.loading-text {
-  color: var(--color-text-muted);
-  font-style: italic;
-}
-
 .related-section {
   margin-top: 16px;
 }
@@ -462,6 +623,7 @@ watch(() => route.params.id, (newId) => {
     gap: 16px;
   }
 
+  .skeleton-thumb,
   .game-cover {
     width: 120px;
     height: 120px;
@@ -469,6 +631,10 @@ watch(() => route.params.id, (newId) => {
 
   .game-title {
     font-size: 1.5rem;
+  }
+
+  .skeleton-title {
+    width: 200px;
   }
 
   .game-tags {
@@ -479,9 +645,13 @@ watch(() => route.params.id, (newId) => {
     width: 100%;
   }
 
-  .play-btn {
+  .hero-actions {
     width: 100%;
     justify-content: center;
+  }
+
+  .play-btn {
+    flex: 1;
   }
 
   .info-card {

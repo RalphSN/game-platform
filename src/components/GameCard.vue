@@ -1,25 +1,32 @@
 <template>
   <div class="game-card" @click="goToGame">
-
     <div class="thumb-wrapper">
       <img :src="game.thumb" :alt="game.title" class="game-thumb" loading="lazy" />
       <div class="hover-overlay">
         <div class="play-btn">▶ 立即遊玩</div>
       </div>
+      <button class="favorite-btn" :class="{ active: isFavorite }" @click.stop="toggleFavorite" title="加入/移除收藏">
+        <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+          </path>
+        </svg>
+      </button>
     </div>
 
     <div class="game-info">
       <h4 class="game-title">{{ game.title }}</h4>
       <div class="game-meta">
         <span class="game-tag">{{ game.category }}</span>
-        <span class="game-players">🔥 {{ game.players }}</span>
+        <span class="game-players">🔥 {{ formatPlayers(game.players) }}</span>
       </div>
     </div>
-
   </div>
 </template>
 
 <script setup>
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 
 // 預留接收 API 資料的 Props
@@ -27,32 +34,39 @@ const props = defineProps({
   game: {
     type: Object,
     required: true,
-    // Mock API 預期的資料結構示範
+    // Mock API 資料結構示範
     default: () => ({
       id: 0,
       title: '載入中...',
       thumb: 'https://via.placeholder.com/300x300?text=Game',
       category: '未分類',
-      players: 0
+      players: 0,
+      isFavorite: false
     })
   }
 })
 
 const router = useRouter()
+const isFavorite = ref(props.game.isFavorite || false)
 
-// 點擊卡片跳轉到遊戲詳情頁 (未來可串接真實路由)
+const toggleFavorite = () => {
+  if (props.game.id === 0) return
+  isFavorite.value = !isFavorite.value
+  console.log(`${isFavorite.value ? '加入' : '移除'}收藏: ${props.game.title} (ID: ${props.game.id})`)
+}
+
+// 點擊卡片跳轉到遊戲詳情頁
 const goToGame = () => {
-  if (props.game.id === 0) return // 防止載入中被點擊
+  if (props.game.id === 0) return
   console.log(`準備進入遊戲 ID: ${props.game.id}`)
   router.push(`/game/${props.game.id}`)
 }
 
-// 格式化遊玩人數 (例如: 12000 -> 1.2w)
-// const formatPlayers = (num) => {
-//   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
-//   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
-//   return num
-// }
+const formatPlayers = (num) => {
+  if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
+  if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+  return num
+}
 </script>
 
 <style scoped>
@@ -120,6 +134,61 @@ const goToGame = () => {
 
 .game-card:hover .play-btn {
   transform: translateY(0);
+}
+
+.favorite-btn {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 32px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.5);
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  z-index: 10;
+  backdrop-filter: blur(4px);
+}
+
+.favorite-btn svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.favorite-btn:hover {
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
+}
+
+.favorite-btn.active {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.favorite-btn.active svg {
+  fill: #ff4757;
+  stroke: #ff4757;
+  animation: heartPulse 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes heartPulse {
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.3);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 
 /* --- 資訊區 --- */
