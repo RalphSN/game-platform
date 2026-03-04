@@ -39,6 +39,16 @@ const router = createRouter({
       name: 'member',
       component: () => import('../views/MemberView.vue'),
     },
+    {
+      path: '/news',
+      name: 'news',
+      component: () => import('../views/NewsView.vue'),
+    },
+    {
+      path: '/news/:id',
+      name: 'news-detail',
+      component: () => import('../views/NewsDetailView.vue'),
+    },
     // ==========================================
     // 預留路由，目前註解
     // ==========================================

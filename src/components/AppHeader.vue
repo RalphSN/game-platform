@@ -11,7 +11,8 @@
         <nav class="pc-nav">
           <router-link to="/" exact-active-class="active">首頁</router-link>
           <router-link to="/games" active-class="active">遊戲列表</router-link>
-          <router-link to="/leaderboard" active-class="active">排行榜</router-link>
+          <router-link to="/news" active-class="active">最新消息</router-link>
+          <!-- <router-link to="/leaderboard" active-class="active">排行榜</router-link> -->
         </nav>
       </div>
 
