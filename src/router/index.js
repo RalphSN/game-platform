@@ -29,6 +29,11 @@ const router = createRouter({
       name: 'game-detail',
       component: () => import('../views/GameDetailView.vue'),
     },
+    {
+      path: '/support',
+      name: 'support',
+      component: () => import('../views/SupportView.vue')
+    },
     // ==========================================
     // 預留路由，目前註解
     // ==========================================

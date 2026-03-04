@@ -36,6 +36,7 @@
                 <div v-if="isProfileMenuOpen" class="dropdown-menu">
                   <router-link to="/member" class="dropdown-item">會員中心</router-link>
                   <router-link to="/recharge" class="dropdown-item">儲值中心</router-link>
+                  <router-link to="/support" class="dropdown-item">聯繫客服</router-link>
                   <div class="dropdown-divider"></div>
                   <button class="dropdown-item logout-text" @click="handleLogout">登出</button>
                 </div>
