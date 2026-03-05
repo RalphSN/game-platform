@@ -1,16 +1,16 @@
 <template>
   <div class="app-wrapper">
-    <AppHeader />
+    <AppHeader v-if="!$route.meta.hideLayout" />
 
-    <main class="main-content">
+    <main class="main-content" :class="{ 'full-screen-content': $route.meta.hideLayout }">
       <router-view />
     </main>
 
-    <AppFooter />
+    <AppFooter v-if="!$route.meta.hideLayout" />
 
-    <MobileTabBar />
+    <MobileTabBar v-if="!$route.meta.hideLayout" />
 
-    <GoTopButton />
+    <GoTopButton v-if="!$route.meta.hideLayout" />
   </div>
 </template>
 
@@ -42,9 +42,19 @@ import GoTopButton from './components/GoTopButton.vue'
   padding: 20px;
 }
 
+.main-content.full-screen-content {
+  max-width: 100%;
+  padding: 0;
+  margin: 0;
+}
+
 @media (max-width: 768px) {
   .app-wrapper {
     padding-bottom: calc(64px + env(safe-area-inset-bottom));
+  }
+
+  .app-wrapper:has(.full-screen-content) {
+    padding-bottom: 0;
   }
 }
 </style>

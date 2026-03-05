@@ -49,6 +49,12 @@ const router = createRouter({
       name: 'news-detail',
       component: () => import('../views/NewsDetailView.vue'),
     },
+    {
+      path: '/play/:id',
+      name: 'play',
+      component: () => import('../views/PlayView.vue'),
+      meta: { hideLayout: true }
+    },
     // ==========================================
     // 預留路由，目前註解
     // ==========================================

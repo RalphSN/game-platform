@@ -112,10 +112,11 @@
 
 <script setup>
 import { ref, onMounted, watch } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import GameSection from '@/components/GameSection.vue'
 
 const route = useRoute()
+const router = useRouter()
 const isLoading = ref(false)
 const isLoadingData = ref(true)
 const isFavorite = ref(false)
@@ -186,8 +187,12 @@ const startGame = () => {
   isLoading.value = true
   setTimeout(() => {
     isLoading.value = false
-    alert(`即將進入遊戲：${game.value.title}`)
-  }, 1000)
+    router.push({
+      name: 'play',
+      params: { id: game.value.id },
+      query: { token: localStorage.getItem('user_token') || 'guest_token' }
+    })
+  }, 500)
 }
 
 onMounted(() => {

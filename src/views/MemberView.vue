@@ -620,6 +620,11 @@ const transactions = ref([
 
   .member-content {
     padding: 24px 16px;
+    width: 100%;
+  }
+
+  .profile-form {
+    max-width: none;
   }
 
   .history-item {
