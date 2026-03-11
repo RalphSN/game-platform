@@ -43,10 +43,11 @@
   </div>
 </template>
 
+
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
+import { sendRequest } from '@/assets/utils/api'
 const router = useRouter()
 
 const form = reactive({
@@ -57,18 +58,14 @@ const form = reactive({
 const isLoading = ref(false)
 const errorMessage = ref('')
 
-// 模擬後端 API 請求
-const mockLoginAPI = async (data) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // 模擬驗證邏輯
-      if (data.account === 'abc' && data.password === '123456') {
-        resolve({ status: 200, message: '登入成功', token: 'mock-jwt-token-123' })
-      } else {
-        reject({ status: 401, message: '帳號或密碼錯誤，請重試！' })
-      }
-    }, 1500) 
-  })
+const getClientIP = async () => {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json')
+    const data = await res.json()
+    return data.ip
+  } catch (e) {
+    return '127.0.0.1'
+  }
 }
 
 const handleLogin = async () => {
@@ -76,23 +73,36 @@ const handleLogin = async () => {
   errorMessage.value = ''
 
   try {
-    const response = await mockLoginAPI({
-      account: form.account,
-      password: form.password
-    })
+    const userIP = await getClientIP()
 
-    console.log('[API 成功]', response)
+    const requestData = {
+      Account: form.account,
+      PWD: form.password,
+      LoginIP: userIP
+    }
 
-    localStorage.setItem('user_token', response.token)
+    const result = await sendRequest('/member/login', requestData)
 
-    // 通知全域狀態改變
-    window.dispatchEvent(new Event('auth-change'))
+    console.log('[API 回傳解密結果]', result)
 
-    alert('登入成功！')
-    router.push('/')
+    if (result.code === 0) {
+      localStorage.setItem('user_token', result.Info.Token)
+      localStorage.setItem('user_account', result.Info.Account)
+      window.dispatchEvent(new Event('auth-change'))
+      alert('登入成功！')
+      router.push('/')
+    } else {
+      switch (result.code) {
+        case 1: throw new Error('參數錯誤')
+        case 2: throw new Error('帳號密碼格式錯誤 (6~20碼，必須包含1英文1數字)')
+        case 3: throw new Error('玩家帳號不存在或密碼錯誤')
+        case 4: throw new Error('該帳號為凍結狀態')
+        default: throw new Error(result.msg || '登入失敗，請重試')
+      }
+    }
 
   } catch (error) {
-    console.error('[API 失敗]', error)
+    console.error('[登入失敗]', error)
     errorMessage.value = error.message
   } finally {
     isLoading.value = false

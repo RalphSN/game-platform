@@ -4,8 +4,9 @@
 
       <div class="header-left">
         <router-link to="/" class="logo">
-          <span class="logo-icon">🎮</span>
-          <span class="logo-text">點點趣星球 DDFun</span>
+          <!-- <span class="logo-icon">🎮</span>
+          <span class="logo-text">點點趣星球 DDFun</span> -->
+          <img :src="logoUrl" alt="logo">
         </router-link>
 
         <nav class="pc-nav">
@@ -18,7 +19,11 @@
 
       <div class="header-right">
         <div class="pc-actions">
-          <button class="icon-btn" title="搜尋">🔍</button>
+          <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" class="search-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg></button>
 
           <template v-if="!isLoggedIn">
             <router-link to="/login" class="text-btn">登入</router-link>
@@ -104,13 +109,17 @@
         </div>
       </nav>
     </transition>
-
+    <SearchModal v-model:isOpen="isSearchOpen" />
   </header>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+import SearchModal from './SearchModal.vue'
+import logoUrl from '@/assets/images/logo/logo-dark.svg'
+import searchIcon from '@/assets/images/icon/search.png'
+
 
 const router = useRouter()
 const isMobileMenuOpen = ref(false)
@@ -120,11 +129,15 @@ const isLoggedIn = ref(false)
 const userName = ref('')
 const userAvatar = ref('https://ui-avatars.com/api/?name=User&background=5E60CE&color=fff')
 
+const isSearchOpen = ref(false)
+
 const checkLoginStatus = () => {
   const token = localStorage.getItem('user_token')
+  const account = localStorage.getItem('user_account')
+
   if (token) {
     isLoggedIn.value = true
-    userName.value = 'abc_player'
+    userName.value = account || 'Player'
   } else {
     isLoggedIn.value = false
     userName.value = ''
@@ -193,6 +206,10 @@ onUnmounted(() => {
   height: 100%;
 }
 
+.header-left img {
+  width: 150px;
+}
+
 .logo {
   display: flex;
   align-items: center;
@@ -246,15 +263,27 @@ onUnmounted(() => {
 }
 
 .icon-btn {
+  display: flex;
   background: none;
   border: none;
   font-size: 1.2rem;
   cursor: pointer;
-  padding: 8px;
   border-radius: 50%;
   transition: 0.35s;
   color: var(--color-text-sub);
 }
+
+.icon-btn img {
+  width: 40px;
+}
+
+.search-icon {
+  width: 24px;
+  height: 24px;
+  stroke-width: 2;
+  color: var(--color-text-muted);
+}
+
 
 .icon-btn:hover {
   background-color: var(--color-bg-page);
@@ -387,6 +416,7 @@ onUnmounted(() => {
 .pc-actions {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 12px;
   height: 100%;
 }

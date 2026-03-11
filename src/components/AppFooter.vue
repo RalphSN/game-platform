@@ -2,7 +2,8 @@
   <footer class="app-footer">
     <div class="footer-container">
       <div class="footer-brand">
-        <h3 class="footer-title">點點趣星球 DDFun</h3>
+        <!-- <h3 class="footer-title">點點趣星球 DDFun</h3> -->
+        <img :src="logoUrl" alt="logo">
       </div>
 
       <div class="footer-links">
@@ -23,6 +24,7 @@
 
 <script setup>
 import { computed } from 'vue'
+import logoUrl from '@/assets/images/logo/logo-light.svg'
 const currentYear = computed(() => new Date().getFullYear())
 </script>
 
@@ -41,6 +43,15 @@ const currentYear = computed(() => new Date().getFullYear())
   flex-direction: column;
   align-items: center;
   gap: 20px;
+}
+
+.footer-brand {
+  display: flex;
+  align-items: center;
+}
+
+.footer-brand img {
+  width: 200px;
 }
 
 .footer-title {

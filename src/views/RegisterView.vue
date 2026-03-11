@@ -17,33 +17,16 @@
         <div class="form-group">
           <label for="reg-account">帳號</label>
           <div class="input-wrapper">
-            <input id="reg-account" type="text" v-model="form.account" required placeholder="請設定登入帳號"
-              :disabled="isLoading" />
+            <input id="reg-account" type="text" v-model="form.account" required placeholder="請設定登入帳號 (6~20碼)"
+              :disabled="isLoading" minlength="6" maxlength="20" />
           </div>
         </div>
 
         <div class="form-group">
           <label for="reg-password">密碼</label>
           <div class="input-wrapper">
-            <input id="reg-password" type="password" v-model="form.password" required placeholder="請設定密碼 (至少 6 碼)"
-              :disabled="isLoading" minlength="6" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="reg-nickname">暱稱</label>
-          <div class="input-wrapper">
-            <input id="reg-nickname" type="text" v-model="form.nickname" required placeholder="您的暱稱"
-              :disabled="isLoading" />
-          </div>
-        </div>
-
-        <div class="form-group">
-          <label for="reg-invite">
-            邀請碼 <span class="optional-tag">(非必填)</span>
-          </label>
-          <div class="input-wrapper">
-            <input id="reg-invite" type="text" v-model="form.inviteCode" placeholder="若有邀請碼請輸入" :disabled="isLoading" />
+            <input id="reg-password" type="password" v-model="form.password" required
+              placeholder="請設定密碼 (包含英文數字, 6~20碼)" :disabled="isLoading" minlength="6" maxlength="20" />
           </div>
         </div>
 
@@ -64,31 +47,25 @@
 <script setup>
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
-
-const router = useRouter()
+import { sendRequest } from '@/assets/utils/api'
 
 const form = reactive({
   account: '',
-  password: '',
-  nickname: '',
-  inviteCode: ''
+  password: ''
 })
 
 const isLoading = ref(false)
 const errorMessage = ref('')
 
-// 模擬後端 API 請求
-const mockRegisterAPI = async (data) => {
-  return new Promise((resolve, reject) => {
-    setTimeout(() => {
-      // 模擬驗證邏輯：帳號 abc 已經被註冊
-      if (data.account === 'abc') {
-        reject({ status: 409, message: '此帳號已被註冊，請換一個！' })
-      } else {
-        resolve({ status: 200, message: '註冊成功' })
-      }
-    }, 1500)
-  })
+const detectDevice = () => {
+  const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+  if (/android/i.test(userAgent)) {
+    return 1; // Android
+  }
+  if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+    return 2; // iOS
+  }
+  return 0; // PC
 }
 
 const handleRegister = async () => {
@@ -96,22 +73,33 @@ const handleRegister = async () => {
   errorMessage.value = ''
 
   try {
-    // 呼叫 API
-    const response = await mockRegisterAPI({
-      account: form.account,
-      password: form.password,
-      nickname: form.nickname,
-      inviteCode: form.inviteCode
-    })
+    const deviceType = detectDevice()
 
-    console.log('[API 成功]', response)
+    const requestData = {
+      Account: form.account,
+      PWD: form.password,
+      RegisterDev: deviceType
+    }
 
-    alert('註冊成功！請重新登入。')
-    // 註冊成功後，跳轉到登入頁，並帶上帳號
-    router.push({ name: 'login', query: { account: form.account } })
+    const result = await sendRequest('/member/signup', requestData)
+
+    console.log('[API 回傳解密結果]', result)
+
+    if (result.code === 0) {
+      alert('註冊成功！請使用新帳號登入。')
+      router.push({ name: 'login', query: { account: form.account } })
+    } else {
+      switch (result.code) {
+        case 1: throw new Error('參數錯誤，請檢查填寫內容')
+        case 2: throw new Error('帳號密碼格式錯誤 (6~20碼，必須包含1英文1數字)')
+        case 3: throw new Error('此玩家帳號已存在，請換一個')
+        case 4: throw new Error('包含特殊符號，請重新嘗試')
+        default: throw new Error(result.msg || '註冊失敗，請稍後再試')
+      }
+    }
 
   } catch (error) {
-    console.error('[API 失敗]', error)
+    console.error('[註冊失敗]', error)
     errorMessage.value = error.message
   } finally {
     isLoading.value = false
@@ -233,12 +221,6 @@ const handleRegister = async () => {
   color: var(--color-text-main);
 }
 
-.optional-tag {
-  font-size: 0.75rem;
-  font-weight: normal;
-  color: var(--color-text-muted);
-}
-
 .input-wrapper {
   position: relative;
 }
@@ -257,6 +239,7 @@ const handleRegister = async () => {
 
 .input-wrapper input::placeholder {
   color: var(--color-text-muted);
+  font-size: 0.9rem;
 }
 
 .input-wrapper input:disabled {

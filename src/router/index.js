@@ -55,6 +55,11 @@ const router = createRouter({
       component: () => import('../views/PlayView.vue'),
       meta: { hideLayout: true }
     },
+    {
+      path: '/search',
+      name: 'search',
+      component: () => import('../views/SearchView.vue'),
+    },
     // ==========================================
     // 預留路由，目前註解
     // ==========================================
