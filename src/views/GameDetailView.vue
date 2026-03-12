@@ -41,10 +41,11 @@
             <button class="play-btn" @click="startGame" :disabled="isLoading || isLoadingData">
               <span v-if="isLoading" class="loader"></span>
               <template v-else>
-                <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
+                <!-- <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
                   <path d="M8 5v14l11-7z" />
                 </svg>
-                開始遊戲
+                開始遊戲 -->
+                <img :src="startIcon" alt="開始遊戲">
               </template>
             </button>
           </div>
@@ -114,6 +115,7 @@
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import GameSection from '@/components/GameSection.vue'
+import startIcon from '@/assets/images/icon/start.png'
 
 const route = useRoute()
 const router = useRouter()
@@ -496,8 +498,18 @@ watch(() => route.params.id, (newId) => {
   cursor: pointer;
   transition: all 0.3s ease;
   animation: pulse 2s infinite;
-  min-width: 160px;
-  height: 56px;
+  /* min-width: 160px;
+  height: 56px; */
+
+  /* 如果內部放圖片，要讓按鈕與圖片貼合的額外設定 */
+  width: 200px;
+  height: 50px;
+  padding: 0;
+}
+
+.play-btn img {
+  width: 200px;
+  height: 50px;
 }
 
 .play-btn:hover:not(:disabled) {
@@ -656,7 +668,7 @@ watch(() => route.params.id, (newId) => {
   }
 
   .play-btn {
-    flex: 1;
+    /* flex: 1; */
   }
 
   .info-card {

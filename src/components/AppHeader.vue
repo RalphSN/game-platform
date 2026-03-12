@@ -52,6 +52,11 @@
         </div>
 
         <div class="mobile-actions">
+          <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" class="search-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg></button>
           <template v-if="!isLoggedIn">
             <router-link to="/login" class="text-btn">登入</router-link>
           </template>
@@ -101,7 +106,8 @@
 
           <template v-if="!isLoggedIn">
             <router-link to="/login" class="sidebar-btn text-btn" @click="toggleMenu">登入</router-link>
-            <router-link to="/register" class="sidebar-btn primary-btn" @click="toggleMenu">註冊</router-link>
+            <router-link to="/register" class="sidebar-btn primary-btn sidebar-register"
+              @click="toggleMenu">註冊</router-link>
           </template>
           <template v-else>
             <button class="sidebar-btn text-btn logout-text" @click="handleLogoutAndCloseMenu">登出帳號</button>
@@ -118,7 +124,7 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import SearchModal from './SearchModal.vue'
 import logoUrl from '@/assets/images/logo/logo-dark.svg'
-import searchIcon from '@/assets/images/icon/search.png'
+// import searchIcon from '@/assets/images/icon/search.png'
 
 
 const router = useRouter()
@@ -546,6 +552,10 @@ onUnmounted(() => {
   object-fit: cover;
 }
 
+.sidebar-links .sidebar-register {
+  color: var(--color-text-white);
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;
@@ -576,6 +586,8 @@ onUnmounted(() => {
   opacity: 0;
   transform: translateY(-10px);
 }
+
+
 
 @media (max-width: 768px) {
   .header-container {
