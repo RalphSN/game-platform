@@ -139,10 +139,10 @@ onMounted(() => {
   window.addEventListener('mousemove', handleMouseMove)
   window.addEventListener('touchstart', handleMouseMove)
 
-  // 1. 取得路由中的遊戲 ID
+  // 取得路由中的遊戲 ID
   const gameId = route.params.id
 
-  // 2. 從我們模擬的資料庫中取得基礎網址
+  // 從模擬的資料庫中取得基礎網址
   const baseUrl = getBaseGameUrl(gameId)
 
   // 3. 從 localStorage 或路由 query 中取得 Token (這裡從 localStorage 拿最穩)
@@ -154,8 +154,6 @@ onMounted(() => {
   gameUrl.value = `${baseUrl}${separator}token=${token}`
   // gameUrl.value = baseUrl
 
-  console.log(`正在載入遊戲 ID: ${gameId}`)
-  console.log(`實際 iframe 載入網址: ${gameUrl.value}`)
 })
 
 onUnmounted(() => {

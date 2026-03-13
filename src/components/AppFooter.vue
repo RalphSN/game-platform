@@ -7,10 +7,10 @@
       </div>
 
       <div class="footer-links">
-        <a href="#">關於我們</a>
         <a href="#">服務條款</a>
         <a href="#">隱私權政策</a>
         <a href="#">聯絡客服</a>
+        <a href="#">商務合作</a>
       </div>
 
       <div class="footer-divider"></div>

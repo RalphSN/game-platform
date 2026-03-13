@@ -36,13 +36,13 @@
               </select>
             </div>
           </div>
-          <div class="form-group half-width">
+          <!-- <div class="form-group half-width">
             <label for="email">聯絡信箱</label>
             <div class="input-wrapper">
               <input id="email" type="email" v-model="form.email" required placeholder="請輸入 Email"
                 :disabled="isLoading" />
             </div>
-          </div>
+          </div> -->
         </div>
 
         <div class="form-group">
@@ -167,8 +167,6 @@ const removeImage = (index) => {
 const mockSubmitAPI = async (formData) => {
   return new Promise((resolve) => {
     setTimeout(() => {
-      console.log('送出的表單資料:', formData)
-      console.log('送出的圖片數量:', files.value.length)
       resolve({
         status: 200,
         ticketId: 'TK' + Math.floor(Math.random() * 1000000).toString().padStart(6, '0')

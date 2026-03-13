@@ -1,7 +1,6 @@
 const BASE_URL = 'http://127.0.0.1:3001/apisrv'
 
 const encryptPayload = (data) => {
-  console.log('[準備加密的資料]', data)
   return data
 }
 
@@ -103,7 +102,7 @@ export const fetchGamesByCategory = async (categoryId) => {
         categoryId === 'hot' ? '熱門遊戲' : categoryId === 'new' ? '最新上架' : '精選遊戲'
 
       const mockResults = Array.from({ length: count }, (_, i) => ({
-        id: parseInt(`${categoryId.length}${i}`), 
+        id: parseInt(`${categoryId.length}${i}`),
         title: `${categoryName} ${i + 1}`,
         category: categoryName,
         thumb: `https://picsum.photos/seed/${categoryId}${i}/300/300`,

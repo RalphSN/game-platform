@@ -10,9 +10,23 @@
           </div>
           <h2 class="user-nickname">{{ userInfo.nickname }}</h2>
           <p class="user-id">ID: {{ userInfo.id }}</p>
-          <div class="balance-info">
-            <span class="coin-icon">🪙</span>
-            <span class="balance-amount">{{ userInfo.balance }}</span>
+
+          <div class="balance-container">
+            <div class="balance-info primary-balance">
+              <span class="coin-icon">💎</span>
+              <div class="balance-details">
+                <span class="balance-label">儲值代幣</span>
+                <span class="balance-amount">{{ userInfo.paidBalance }}</span>
+              </div>
+            </div>
+
+            <div class="balance-info secondary-balance">
+              <span class="coin-icon">🪙</span>
+              <div class="balance-details">
+                <span class="balance-label">免費代幣</span>
+                <span class="balance-amount">{{ userInfo.freeBalance }}</span>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -49,16 +63,47 @@
                 </div>
               </div>
 
-              <div class="form-group">
-                <label>聯絡信箱</label>
-                <div class="input-wrapper">
-                  <input type="email" v-model="editForm.email" required :disabled="isUpdating" />
-                </div>
-              </div>
-
               <button type="submit" class="submit-btn" :disabled="isUpdating">
                 <span v-if="isUpdating" class="loader"></span>
                 <span v-else>儲存修改</span>
+              </button>
+            </form>
+
+            <hr class="section-divider" />
+
+            <h4 class="sub-section-title">修改密碼</h4>
+            <form @submit.prevent="updatePassword" class="profile-form">
+              <div v-if="passwordMessage" class="alert-message" :class="passwordMessageType">
+                {{ passwordMessage }}
+              </div>
+
+              <div class="form-group">
+                <label>原密碼</label>
+                <div class="input-wrapper">
+                  <input type="password" v-model="passwordForm.oldPassword" required :disabled="isUpdatingPassword"
+                    placeholder="請輸入原密碼" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>新密碼</label>
+                <div class="input-wrapper">
+                  <input type="password" v-model="passwordForm.newPassword" required :disabled="isUpdatingPassword"
+                    placeholder="請輸入新密碼" />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>確認新密碼</label>
+                <div class="input-wrapper">
+                  <input type="password" v-model="passwordForm.confirmPassword" required :disabled="isUpdatingPassword"
+                    placeholder="請再次輸入新密碼" />
+                </div>
+              </div>
+
+              <button type="submit" class="submit-btn" :disabled="isUpdatingPassword">
+                <span v-if="isUpdatingPassword" class="loader"></span>
+                <span v-else>更新密碼</span>
               </button>
             </form>
           </section>
@@ -106,7 +151,7 @@
                     <td>#{{ tx.orderId }}</td>
                     <td>{{ tx.date }}</td>
                     <td class="amount">NT$ {{ tx.amount }}</td>
-                    <td class="coins">+{{ tx.coins }} 🪙</td>
+                    <td class="coins">+{{ tx.coins }} 💎</td>
                     <td>
                       <span class="status-badge" :class="tx.status.toLowerCase()">
                         {{ tx.statusText }}
@@ -142,7 +187,8 @@ const userInfo = reactive({
   account: 'abc',
   nickname: 'abc_player',
   email: 'abc@example.com',
-  balance: 1250,
+  paidBalance: 1250,
+  freeBalance: 300,
   avatar: 'https://ui-avatars.com/api/?name=User&background=5E60CE&color=fff'
 })
 
@@ -166,6 +212,39 @@ const updateProfile = async () => {
   updateMessage.value = '資料已成功更新！'
 
   setTimeout(() => { updateMessage.value = '' }, 3000)
+}
+
+const passwordForm = reactive({
+  oldPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+
+const isUpdatingPassword = ref(false)
+const passwordMessage = ref('')
+const passwordMessageType = ref('success')
+
+const updatePassword = async () => {
+  if (passwordForm.newPassword !== passwordForm.confirmPassword) {
+    passwordMessageType.value = 'error'
+    passwordMessage.value = '兩次輸入的新密碼不一致！'
+    return
+  }
+
+  isUpdatingPassword.value = true
+  passwordMessage.value = ''
+
+  await new Promise(resolve => setTimeout(resolve, 1000))
+
+  isUpdatingPassword.value = false
+  passwordMessageType.value = 'success'
+  passwordMessage.value = '密碼已成功更新！'
+
+  passwordForm.oldPassword = ''
+  passwordForm.newPassword = ''
+  passwordForm.confirmPassword = ''
+
+  setTimeout(() => { passwordMessage.value = '' }, 3000)
 }
 
 const playHistory = ref([
@@ -282,25 +361,69 @@ const transactions = ref([
 .user-id {
   font-size: 0.85rem;
   color: var(--color-text-muted);
-  margin: 0 0 16px;
+  margin: 0 0 20px;
+}
+
+.balance-container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
 }
 
 .balance-info {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   background-color: var(--color-bg-page);
-  padding: 8px 24px;
-  border-radius: 20px;
+  padding: 12px 16px;
+  border-radius: 12px;
+  width: 100%;
+  border: 1px solid transparent;
+}
+
+.primary-balance {
+  background-color: rgba(94, 96, 206, 0.05);
+  border-color: rgba(94, 96, 206, 0.2);
+}
+
+.secondary-balance {
+  background-color: rgba(245, 158, 11, 0.05);
+  border-color: rgba(245, 158, 11, 0.2);
 }
 
 .coin-icon {
-  font-size: 1.1rem;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+}
+
+.balance-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.balance-label {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 2px;
 }
 
 .balance-amount {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   font-weight: 700;
+}
+
+.primary-balance .balance-amount {
+  color: var(--color-primary);
+}
+
+.secondary-balance .balance-amount {
   color: #f59e0b;
 }
 
@@ -366,6 +489,19 @@ const transactions = ref([
   margin: 0 0 24px;
   padding-bottom: 16px;
   border-bottom: 1px solid var(--color-border-light);
+}
+
+.section-divider {
+  border: none;
+  border-top: 1px solid var(--color-border-light);
+  margin: 32px 0 24px;
+}
+
+.sub-section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--color-text-main);
+  margin: 0 0 16px;
 }
 
 .profile-form {
@@ -446,13 +582,23 @@ const transactions = ref([
   animation: spin 1s ease-in-out infinite;
 }
 
-.alert-message.success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
+.alert-message {
   padding: 12px 16px;
   border-radius: 8px;
   font-size: 0.95rem;
-  border: 1px solid #c8e6c9;
+  border: 1px solid transparent;
+}
+
+.alert-message.success {
+  background-color: #e8f5e9;
+  color: #2e7d32;
+  border-color: #c8e6c9;
+}
+
+.alert-message.error {
+  background-color: #ffebee;
+  color: #d32f2f;
+  border-color: #ffcdd2;
 }
 
 .history-list {

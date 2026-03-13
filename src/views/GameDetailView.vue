@@ -41,10 +41,6 @@
             <button class="play-btn" @click="startGame" :disabled="isLoading || isLoadingData">
               <span v-if="isLoading" class="loader"></span>
               <template v-else>
-                <!-- <svg viewBox="0 0 24 24" fill="currentColor" class="play-icon">
-                  <path d="M8 5v14l11-7z" />
-                </svg>
-                開始遊戲 -->
                 <img :src="startIcon" alt="開始遊戲">
               </template>
             </button>
@@ -72,11 +68,11 @@
               <div class="skeleton skeleton-text"></div>
               <div class="skeleton skeleton-text short"></div>
             </template>
-            <p v-else class="description-text">{{ game.description }}</p>
+            <div v-else class="description-text rich-text-content" v-html="game.description"></div>
           </div>
         </div>
 
-        <div class="info-card fade-in-up" style="animation-delay: 0.2s;">
+        <!-- <div class="info-card fade-in-up" style="animation-delay: 0.2s;">
           <div class="card-header">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
               stroke-linejoin="round" class="card-icon">
@@ -101,7 +97,7 @@
               </li>
             </ul>
           </div>
-        </div>
+        </div> -->
       </main>
     </div>
 
@@ -145,7 +141,6 @@ const relatedGames = ref([])
 const toggleFavorite = () => {
   if (isLoadingData.value) return
   isFavorite.value = !isFavorite.value
-  console.log(`${isFavorite.value ? '加入' : '移除'}收藏: ${game.value.title} (ID: ${game.value.id})`)
 }
 
 const fetchGameData = async (gameId) => {
@@ -160,7 +155,7 @@ const fetchGameData = async (gameId) => {
         banner: `https://picsum.photos/seed/${gameId * 20}/1200/400`,
         category: '休閒益智',
         players: Math.floor(Math.random() * 50000) + 1000,
-        description: '這是一款非常有趣的模擬經營遊戲。在這裡，你將經營一家屬於自己的夢幻廚房，從挑選食材、烹飪美食到服務顧客，體驗完整的餐廳經營樂趣。不斷解鎖新食譜，升級廚房設備，打造世界頂級的米其林餐廳！豐富的關卡與挑戰等你來發掘。',
+        description: '<p>這是一款非常有趣的模擬經營遊戲。</p><p>在這裡，你將經營一家屬於自己的夢幻廚房，從挑選食材、烹飪美食到服務顧客，體驗完整的餐廳經營樂趣。</p><p>不斷解鎖新食譜，升級廚房設備，打造世界頂級的米其林餐廳！豐富的關卡與挑戰等你來發掘。</p>',
         controls: [
           '滑鼠左鍵：點擊食材與廚具進行互動',
           '拖曳：移動畫面或分配食物給顧客',
@@ -498,10 +493,6 @@ watch(() => route.params.id, (newId) => {
   cursor: pointer;
   transition: all 0.3s ease;
   animation: pulse 2s infinite;
-  /* min-width: 160px;
-  height: 56px; */
-
-  /* 如果內部放圖片，要讓按鈕與圖片貼合的額外設定 */
   width: 200px;
   height: 50px;
   padding: 0;
@@ -585,7 +576,6 @@ watch(() => route.params.id, (newId) => {
   line-height: 1.8;
   color: var(--color-text-sub);
   margin: 0;
-  white-space: pre-line;
 }
 
 .controls-list {
@@ -615,6 +605,52 @@ watch(() => route.params.id, (newId) => {
 
 .related-section {
   margin-top: 16px;
+}
+
+/* --- 針對後端編輯器傳回的 HTML 內容進行樣式重置與美化 --- */
+.description-text.rich-text-content :deep(p) {
+  margin-top: 0;
+  margin-bottom: 1em;
+  line-height: 1.8;
+}
+
+.description-text.rich-text-content :deep(img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  display: block;
+  margin: 16px 0;
+}
+
+.description-text.rich-text-content :deep(ul),
+.description-text.rich-text-content :deep(ol) {
+  margin-bottom: 1em;
+  padding-left: 24px;
+}
+
+.description-text.rich-text-content :deep(li) {
+  margin-bottom: 0.5em;
+  line-height: 1.6;
+}
+
+.description-text.rich-text-content :deep(h1),
+.description-text.rich-text-content :deep(h2),
+.description-text.rich-text-content :deep(h3),
+.description-text.rich-text-content :deep(h4) {
+  color: var(--color-text-main);
+  margin-top: 1.5em;
+  margin-bottom: 0.5em;
+  font-weight: 600;
+}
+
+.description-text.rich-text-content :deep(a) {
+  color: var(--color-primary);
+  text-decoration: underline;
+}
+
+.description-text.rich-text-content :deep(strong),
+.description-text.rich-text-content :deep(b) {
+  font-weight: bold;
 }
 
 @media (max-width: 768px) {
@@ -665,10 +701,6 @@ watch(() => route.params.id, (newId) => {
   .hero-actions {
     width: 100%;
     justify-content: center;
-  }
-
-  .play-btn {
-    /* flex: 1; */
   }
 
   .info-card {

@@ -52,13 +52,11 @@ const isFavorite = ref(props.game.isFavorite || false)
 const toggleFavorite = () => {
   if (props.game.id === 0) return
   isFavorite.value = !isFavorite.value
-  console.log(`${isFavorite.value ? '加入' : '移除'}收藏: ${props.game.title} (ID: ${props.game.id})`)
 }
 
 // 點擊卡片跳轉到遊戲詳情頁
 const goToGame = () => {
   if (props.game.id === 0) return
-  console.log(`準備進入遊戲 ID: ${props.game.id}`)
   router.push(`/game/${props.game.id}`)
 }
 

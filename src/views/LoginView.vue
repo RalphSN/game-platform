@@ -83,8 +83,6 @@ const handleLogin = async () => {
 
     const result = await sendRequest('/member/login', requestData)
 
-    console.log('[API 回傳解密結果]', result)
-
     if (result.code === 0) {
       localStorage.setItem('user_token', result.Info.Token)
       localStorage.setItem('user_account', result.Info.Account)

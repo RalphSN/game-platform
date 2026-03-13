@@ -83,7 +83,6 @@ const handleRegister = async () => {
 
     const result = await sendRequest('/member/signup', requestData)
 
-    console.log('[API 回傳解密結果]', result)
 
     if (result.code === 0) {
       alert('註冊成功！請使用新帳號登入。')

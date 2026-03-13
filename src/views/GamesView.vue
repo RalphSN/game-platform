@@ -39,7 +39,7 @@
 
         <div class="options-container">
           <button v-for="(opt, oIndex) in category.list" :key="opt.id" class="option-btn"
-            :class="{ 'active': selectedIds[category.key].includes(opt.id) }"
+            :class="{ 'active': Array.isArray(selectedIds[category.key]) ? selectedIds[category.key].includes(opt.id) : selectedIds[category.key] === opt.id }"
             :style="{ animationDelay: `${(cIndex * 0.1) + (oIndex * 0.03)}s` }"
             @click="updateSelection(category.key, opt.id)">
             {{ opt.name }}
@@ -88,19 +88,19 @@ const categoryList = ref([
     ]
   },
   {
-    title: '遊玩方式',
+    title: '遊戲狀態',
     key: 'mode',
     list: [
       { id: 0, name: '全部' },
-      { id: 1, name: '單機模式' },
-      { id: 2, name: '多人遊玩' }
+      { id: 1, name: '已解鎖' },
+      { id: 2, name: '未解鎖' }
     ]
   }
 ])
 
 const selectedIds = ref({
-  genre: [0],
-  mode: [0]
+  genre: [0], // 陣列多選
+  mode: 0 // 純數字單選
 })
 
 const isFullyMatch = ref(false)
@@ -114,6 +114,11 @@ const toggleMatchMode = () => {
 }
 
 const updateSelection = (type, tagId) => {
+  if (type === 'mode') {
+    selectedIds.value[type] = tagId
+    return
+  }
+
   let ids = [...selectedIds.value[type]]
 
   if (tagId === 0) {
@@ -142,7 +147,8 @@ const mockDatabase = Array.from({ length: 40 }, (_, i) => {
   const genres = [Math.floor(Math.random() * 7) + 1]
   if (Math.random() > 0.7) genres.push(Math.floor(Math.random() * 7) + 1)
 
-  const modes = [Math.random() > 0.5 ? 1 : 2]
+  // 確保 mode 是一個單一數字 (1 或 2)
+  const modes = Math.random() > 0.5 ? 1 : 2
 
   return {
     id: i + 1,
@@ -150,6 +156,7 @@ const mockDatabase = Array.from({ length: 40 }, (_, i) => {
     thumb: `https://picsum.photos/seed/${i + 100}/300/300`,
     category: categoryList.value[0].list.find(l => l.id === genres[0]).name,
     players: Math.floor(Math.random() * 50000) + 1000,
+    // tags 裡面的 mode 現在是純數字了
     tags: { genre: genres, mode: modes }
   }
 })
@@ -158,18 +165,24 @@ const allGames = ref(mockDatabase)
 
 const filteredGames = computed(() => {
   return allGames.value.filter(game => {
+    // 1. 處理遊戲類別 (多選，使用陣列比對)
     const genreFilter = selectedIds.value.genre
     const isGenreMatch = genreFilter.includes(0) || genreFilter.some(id => game.tags.genre.includes(id))
 
+    // 2. 處理遊戲狀態 (單選，使用嚴格相等 === 比對)
     const modeFilter = selectedIds.value.mode
-    const isModeMatch = modeFilter.includes(0) || modeFilter.some(id => game.tags.mode.includes(id))
+    // 修改這裡：直接比對 game.tags.mode 是否等於篩選條件，不再使用 includes
+    const isModeMatch = modeFilter === 0 || game.tags.mode === modeFilter
 
+    // 3. 處理匹配模式
     if (!isFullyMatch.value) {
-      if (genreFilter.includes(0) && modeFilter.includes(0)) return true;
+      // 寬鬆匹配 (符合任一條件)
+      if (genreFilter.includes(0) && modeFilter === 0) return true;
       if (genreFilter.includes(0)) return isModeMatch;
-      if (modeFilter.includes(0)) return isGenreMatch;
+      if (modeFilter === 0) return isGenreMatch;
       return isGenreMatch || isModeMatch;
     } else {
+      // 精準匹配 (符合所有條件)
       return isGenreMatch && isModeMatch;
     }
   })
