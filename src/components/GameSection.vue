@@ -20,7 +20,7 @@
 </template>
 
 <script setup>
-// import { useRouter } from 'vue-router'
+import { useRouter } from 'vue-router'
 import GameCard from './GameCard.vue'
 
 const props = defineProps({
@@ -31,7 +31,7 @@ const props = defineProps({
   },
   icon: {
     type: String,
-    default: '' // 例如 '🔥', '⚔️', '🧩'
+    default: '' // 如 '🔥', '⚔️', '🧩'
   },
   categoryId: {
     type: [String, Number],
@@ -48,11 +48,10 @@ const props = defineProps({
   }
 })
 
-// const router = useRouter()
+const router = useRouter()
 
 const goToCategory = () => {
-  console.log(`準備跳轉到分類頁面: ${props.categoryId}`)
-  // router.push(`/category/${props.categoryId}`)
+  router.push(`/category/${props.categoryId}`)
 }
 </script>
 

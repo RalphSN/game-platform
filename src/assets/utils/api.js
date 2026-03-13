@@ -93,3 +93,30 @@ export const searchGames = async (keyword) => {
     }, 500)
   })
 }
+
+// 模擬依分類取得遊戲清單 API
+export const fetchGamesByCategory = async (categoryId) => {
+  return new Promise((resolve) => {
+    setTimeout(() => {
+      const count = categoryId === 'hot' ? 12 : 8
+      const categoryName =
+        categoryId === 'hot' ? '熱門遊戲' : categoryId === 'new' ? '最新上架' : '精選遊戲'
+
+      const mockResults = Array.from({ length: count }, (_, i) => ({
+        id: parseInt(`${categoryId.length}${i}`), 
+        title: `${categoryName} ${i + 1}`,
+        category: categoryName,
+        thumb: `https://picsum.photos/seed/${categoryId}${i}/300/300`,
+        players: Math.floor(Math.random() * 10000) + 100,
+      }))
+
+      resolve({
+        code: 0,
+        data: {
+          title: categoryName, // 回傳該分類的顯示名稱
+          games: mockResults,
+        },
+      })
+    }, 600)
+  })
+}

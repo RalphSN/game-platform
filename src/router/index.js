@@ -53,12 +53,17 @@ const router = createRouter({
       path: '/play/:id',
       name: 'play',
       component: () => import('../views/PlayView.vue'),
-      meta: { hideLayout: true }
+      meta: { hideLayout: true },
     },
     {
       path: '/search',
       name: 'search',
       component: () => import('../views/SearchView.vue'),
+    },
+    {
+      path: '/category/:id',
+      name: 'category',
+      component: () => import('../views/CategoryView.vue'),
     },
     // ==========================================
     // 預留路由，目前註解
