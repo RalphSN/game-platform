@@ -5,18 +5,18 @@
       <aside class="member-sidebar">
         <div class="user-profile-card">
           <div class="avatar-wrapper">
-            <img :src="userInfo.avatar" alt="Avatar" class="avatar-img" />
-            <div class="vip-badge">VIP 3</div>
+            <img :src="userAvatar" alt="Avatar" class="avatar-img" />
+            <!-- <div class="vip-badge">VIP 3</div> -->
           </div>
-          <h2 class="user-nickname">{{ userInfo.nickname }}</h2>
-          <p class="user-id">ID: {{ userInfo.id }}</p>
+          <h2 class="user-nickname">{{ userStore.nickname || userStore.account || 'Player' }}</h2>
+          <!-- <p class="user-id">ID: {{ userInfo.id }}</p> -->
 
           <div class="balance-container">
             <div class="balance-info primary-balance">
               <span class="coin-icon">💎</span>
               <div class="balance-details">
                 <span class="balance-label">儲值代幣</span>
-                <span class="balance-amount">{{ userInfo.paidBalance }}</span>
+                <span class="balance-amount">{{ userStore.points }}</span>
               </div>
             </div>
 
@@ -24,7 +24,7 @@
               <span class="coin-icon">🪙</span>
               <div class="balance-details">
                 <span class="balance-label">免費代幣</span>
-                <span class="balance-amount">{{ userInfo.freeBalance }}</span>
+                <span class="balance-amount">{{ userStore.freePoints }}</span>
               </div>
             </div>
           </div>
@@ -52,7 +52,7 @@
               <div class="form-group">
                 <label>帳號</label>
                 <div class="input-wrapper">
-                  <input type="text" :value="userInfo.account" disabled />
+                  <input type="text" :value="userStore.account" disabled />
                 </div>
               </div>
 
@@ -77,13 +77,13 @@
                 {{ passwordMessage }}
               </div>
 
-              <div class="form-group">
+              <!-- <div class="form-group">
                 <label>原密碼</label>
                 <div class="input-wrapper">
                   <input type="password" v-model="passwordForm.oldPassword" required :disabled="isUpdatingPassword"
                     placeholder="請輸入原密碼" />
                 </div>
-              </div>
+              </div> -->
 
               <div class="form-group">
                 <label>新密碼</label>
@@ -170,10 +170,24 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed, watch } from 'vue'
+import { useUserStore } from '@/stores/user'
+import { updatePasswordApi, updatePlayerInfoApi } from '@/assets/utils/api'
 import GameCard from '@/components/GameCard.vue'
 
 const activeTab = ref('profile')
+
+const userStore = useUserStore()
+
+const getClientIP = async () => {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json')
+    const data = await res.json()
+    return data.ip
+  } catch (e) {
+    return '127.0.0.1'
+  }
+}
 
 const tabs = [
   { id: 'profile', name: '個人資料', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' },
@@ -182,40 +196,70 @@ const tabs = [
   { id: 'transactions', name: '儲值紀錄', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>' }
 ]
 
-const userInfo = reactive({
-  id: '8810239',
-  account: 'abc',
-  nickname: 'abc_player',
-  email: 'abc@example.com',
-  paidBalance: 1250,
-  freeBalance: 300,
-  avatar: 'https://ui-avatars.com/api/?name=User&background=5E60CE&color=fff'
+const userAvatar = computed(() => {
+  const name = userStore.account || 'User'
+  return `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
 })
 
 const editForm = reactive({
-  nickname: userInfo.nickname,
-  email: userInfo.email
+  nickname: userStore.nickname
 })
+
+watch(
+  () => userStore.nickname,
+  (newNickname) => {
+    editForm.nickname = newNickname
+  },
+  { immediate: true }
+)
 
 const isUpdating = ref(false)
 const updateMessage = ref('')
+const updateMessageType = ref('success')
 
 const updateProfile = async () => {
   isUpdating.value = true
   updateMessage.value = ''
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  try {
+    const userIP = await getClientIP()
 
-  userInfo.nickname = editForm.nickname
-  userInfo.email = editForm.email
-  isUpdating.value = false
-  updateMessage.value = '資料已成功更新！'
+    const result = await updatePlayerInfoApi(
+      userStore.account,
+      editForm.nickname,
+      userStore.token,
+      userIP
+    )
 
-  setTimeout(() => { updateMessage.value = '' }, 3000)
+    if (result.code === 0) {
+      updateMessageType.value = 'success'
+      updateMessage.value = '暱稱已成功更新！'
+      userStore.nickname = editForm.nickname
+    } else {
+      updateMessageType.value = 'error'
+      switch (result.code) {
+        case 1: updateMessage.value = '參數錯誤'; break;
+        case 2: updateMessage.value = '玩家帳號不存在'; break;
+        case 3:
+          updateMessage.value = '登入已過期，請重新登入'
+          setTimeout(() => userStore.logout(), 2000)
+          break;
+        case 4: updateMessage.value = '該帳號為凍結狀態'; break;
+        case 999: updateMessage.value = '帳號遭封鎖(IP)'; break;
+        default: updateMessage.value = result.msg || '更新失敗，請稍後再試'
+      }
+    }
+  } catch (error) {
+    console.error('更新暱稱發生錯誤:', error)
+    updateMessageType.value = 'error'
+    updateMessage.value = '系統發生錯誤，請稍後再試'
+  } finally {
+    isUpdating.value = false
+    setTimeout(() => { updateMessage.value = '' }, 3000)
+  }
 }
-
 const passwordForm = reactive({
-  oldPassword: '',
+  // oldPassword: '',
   newPassword: '',
   confirmPassword: ''
 })
@@ -234,17 +278,45 @@ const updatePassword = async () => {
   isUpdatingPassword.value = true
   passwordMessage.value = ''
 
-  await new Promise(resolve => setTimeout(resolve, 1000))
+  try {
+    const userIP = await getClientIP()
 
-  isUpdatingPassword.value = false
-  passwordMessageType.value = 'success'
-  passwordMessage.value = '密碼已成功更新！'
+    const result = await updatePasswordApi(
+      userStore.account,
+      passwordForm.newPassword,
+      userStore.token,
+      userIP
+    )
 
-  passwordForm.oldPassword = ''
-  passwordForm.newPassword = ''
-  passwordForm.confirmPassword = ''
-
-  setTimeout(() => { passwordMessage.value = '' }, 3000)
+    if (result.code === 0) {
+      passwordMessageType.value = 'success'
+      passwordMessage.value = '密碼已成功更新！'
+      passwordForm.newPassword = ''
+      passwordForm.confirmPassword = ''
+    } else {
+      passwordMessageType.value = 'error'
+      switch (result.code) {
+        case 1: passwordMessage.value = '參數錯誤'; break;
+        case 2: passwordMessage.value = '密碼格式錯誤 (6~20碼，必須包含1英文1數字)'; break;
+        case 3: passwordMessage.value = '玩家帳號不存在'; break;
+        case 4:
+          passwordMessage.value = '登入已過期，請重新登入'
+          setTimeout(() => userStore.logout(), 2000)
+          break;
+        case 5: passwordMessage.value = '該帳號為凍結狀態'; break;
+        case 6: passwordMessage.value = '與原密碼相同，無法變更'; break;
+        case 999: passwordMessage.value = '帳號遭封鎖(IP)'; break;
+        default: passwordMessage.value = result.msg || '修改失敗，請稍後再試'
+      }
+    }
+  } catch (error) {
+    console.error('修改密碼發生錯誤:', error)
+    passwordMessageType.value = 'error'
+    passwordMessage.value = '系統發生錯誤，請稍後再試'
+  } finally {
+    isUpdatingPassword.value = false
+    setTimeout(() => { passwordMessage.value = '' }, 3000)
+  }
 }
 
 const playHistory = ref([
@@ -355,7 +427,7 @@ const transactions = ref([
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--color-text-main);
-  margin: 0 0 4px;
+  margin: 0 0 15px;
 }
 
 .user-id {

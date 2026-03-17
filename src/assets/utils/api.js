@@ -1,4 +1,4 @@
-const BASE_URL = 'http://127.0.0.1:3001/apisrv'
+const BASE_URL = 'http://190.92.230.160:8021/apisrv/'
 
 const encryptPayload = (data) => {
   return data
@@ -34,6 +34,39 @@ export const sendRequest = async (endpoint, payload) => {
     }
     throw error
   }
+}
+
+export const fetchPlayerInfo = async (account, token, ip) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    LoginIP: ip || '127.0.0.1',
+  }
+
+  return await sendRequest('/member/playerInfo', requestData)
+}
+
+// 修改密碼 API
+export const updatePasswordApi = async (account, pwdNew, token, ip) => {
+  const requestData = {
+    Account: account,
+    PWDNew: pwdNew,
+    Token: token,
+    LoginIP: ip || '127.0.0.1',
+  }
+
+  return await sendRequest('/member/updatePWD', requestData)
+}
+
+// 修改玩家資訊 API (暱稱)
+export const updatePlayerInfoApi = async (account, nickname, token, ip) => {
+  const requestData = {
+    Account: account,
+    NickName: nickname, // 注意大小寫
+    Token: token,
+    LoginIP: ip || '127.0.0.1',
+  }
+  return await sendRequest('/member/updateInfo', requestData)
 }
 
 // 模擬熱門關鍵字 API

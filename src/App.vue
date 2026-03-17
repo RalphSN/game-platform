@@ -19,6 +19,17 @@ import AppHeader from './components/AppHeader.vue'
 import AppFooter from './components/AppFooter.vue'
 import MobileTabBar from './components/MobileTabBar.vue'
 import GoTopButton from './components/GoTopButton.vue'
+
+import { onMounted } from 'vue'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+
+onMounted(async () => {
+  if (userStore.token) {
+    await userStore.getPlayerInfo()
+  }
+})
 </script>
 
 <style>

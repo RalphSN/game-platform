@@ -147,7 +147,7 @@ const mockDatabase = Array.from({ length: 40 }, (_, i) => {
   const genres = [Math.floor(Math.random() * 7) + 1]
   if (Math.random() > 0.7) genres.push(Math.floor(Math.random() * 7) + 1)
 
-  // 確保 mode 是一個單一數字 (1 或 2)
+  // 確保 mode 是一個單一數字
   const modes = Math.random() > 0.5 ? 1 : 2
 
   return {
@@ -156,7 +156,6 @@ const mockDatabase = Array.from({ length: 40 }, (_, i) => {
     thumb: `https://picsum.photos/seed/${i + 100}/300/300`,
     category: categoryList.value[0].list.find(l => l.id === genres[0]).name,
     players: Math.floor(Math.random() * 50000) + 1000,
-    // tags 裡面的 mode 現在是純數字了
     tags: { genre: genres, mode: modes }
   }
 })
@@ -165,16 +164,13 @@ const allGames = ref(mockDatabase)
 
 const filteredGames = computed(() => {
   return allGames.value.filter(game => {
-    // 1. 處理遊戲類別 (多選，使用陣列比對)
     const genreFilter = selectedIds.value.genre
     const isGenreMatch = genreFilter.includes(0) || genreFilter.some(id => game.tags.genre.includes(id))
 
-    // 2. 處理遊戲狀態 (單選，使用嚴格相等 === 比對)
     const modeFilter = selectedIds.value.mode
-    // 修改這裡：直接比對 game.tags.mode 是否等於篩選條件，不再使用 includes
     const isModeMatch = modeFilter === 0 || game.tags.mode === modeFilter
 
-    // 3. 處理匹配模式
+    // 匹配模式
     if (!isFullyMatch.value) {
       // 寬鬆匹配 (符合任一條件)
       if (genreFilter.includes(0) && modeFilter === 0) return true;

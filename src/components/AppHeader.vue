@@ -25,7 +25,7 @@
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg></button>
 
-          <template v-if="!isLoggedIn">
+          <template v-if="!userStore.token">
             <router-link to="/login" class="text-btn">登入</router-link>
             <router-link to="/register" class="primary-btn">註冊</router-link>
           </template>
@@ -35,11 +35,22 @@
               @mouseleave="isProfileMenuOpen = false">
               <button class="profile-btn">
                 <img :src="userAvatar" alt="User Avatar" class="avatar-img" />
-                <span class="username">{{ userName }}</span>
+                <span class="username">{{ userStore.account || 'Player' }}</span>
               </button>
 
               <transition name="fade-slide-down">
                 <div v-if="isProfileMenuOpen" class="dropdown-menu">
+                  <div class="dropdown-balance-section">
+                    <div class="balance-item">
+                      <span class="balance-label">儲值代幣</span>
+                      <span class="balance-value">{{ userStore.points }}</span>
+                    </div>
+                    <div class="balance-item">
+                      <span class="balance-label">免費代幣</span>
+                      <span class="balance-value free-balance">{{ userStore.freePoints }}</span>
+                    </div>
+                  </div>
+                  <div class="dropdown-divider"></div>
                   <router-link to="/member" class="dropdown-item">會員中心</router-link>
                   <router-link to="/recharge" class="dropdown-item">儲值中心</router-link>
                   <router-link to="/support" class="dropdown-item">聯繫客服</router-link>
@@ -57,7 +68,7 @@
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg></button>
-          <template v-if="!isLoggedIn">
+          <template v-if="!userStore.token">
             <router-link to="/login" class="text-btn">登入</router-link>
           </template>
           <template v-else>
@@ -82,11 +93,19 @@
           <button class="close-btn" @click="toggleMenu">✕</button>
         </div>
 
-        <div class="sidebar-user-section" v-if="isLoggedIn">
+        <div class="sidebar-user-section" v-if="userStore.token">
           <img :src="userAvatar" alt="User Avatar" class="sidebar-avatar" />
           <div class="sidebar-user-info">
-            <span class="sidebar-username">{{ userName }}</span>
-            <span class="sidebar-balance">餘額: 🪙 1,250</span>
+            <span class="sidebar-username">{{ userStore.account || 'Player' }}</span>
+
+            <div class="balance-item">
+              <span class="balance-label">儲值代幣</span>
+              <span class="balance-value">{{ userStore.points }}</span>
+            </div>
+            <div class="balance-item">
+              <span class="balance-label">免費代幣</span>
+              <span class="balance-value free-balance">{{ userStore.freePoints }}</span>
+            </div>
           </div>
         </div>
 
@@ -95,7 +114,7 @@
           <router-link to="/games" active-class="active" @click="toggleMenu">遊戲列表</router-link>
           <router-link to="/leaderboard" active-class="active" @click="toggleMenu">排行榜</router-link>
 
-          <template v-if="isLoggedIn">
+          <template v-if="userStore.token">
             <div class="sidebar-divider"></div>
             <router-link to="/member" active-class="active" @click="toggleMenu">會員中心</router-link>
             <router-link to="/recharge" active-class="active" @click="toggleMenu">儲值中心</router-link>
@@ -104,7 +123,7 @@
 
           <div class="sidebar-divider"></div>
 
-          <template v-if="!isLoggedIn">
+          <template v-if="!userStore.token">
             <router-link to="/login" class="sidebar-btn text-btn" @click="toggleMenu">登入</router-link>
             <router-link to="/register" class="sidebar-btn primary-btn sidebar-register"
               @click="toggleMenu">註冊</router-link>
@@ -120,35 +139,23 @@
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 import SearchModal from './SearchModal.vue'
 import logoUrl from '@/assets/images/logo/logo-dark.svg'
 // import searchIcon from '@/assets/images/icon/search.png'
 
-
+const userStore = useUserStore()
 const router = useRouter()
 const isMobileMenuOpen = ref(false)
 const isProfileMenuOpen = ref(false)
-
-const isLoggedIn = ref(false)
-const userName = ref('')
-const userAvatar = ref('https://ui-avatars.com/api/?name=User&background=5E60CE&color=fff')
+const userAvatar = computed(() => {
+  const name = userStore.account || 'Player'
+  return `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
+})
 
 const isSearchOpen = ref(false)
-
-const checkLoginStatus = () => {
-  const token = localStorage.getItem('user_token')
-  const account = localStorage.getItem('user_account')
-
-  if (token) {
-    isLoggedIn.value = true
-    userName.value = account || 'Player'
-  } else {
-    isLoggedIn.value = false
-    userName.value = ''
-  }
-}
 
 const toggleMenu = () => {
   isMobileMenuOpen.value = !isMobileMenuOpen.value
@@ -170,18 +177,11 @@ const handleLogoutAndCloseMenu = () => {
 }
 
 onMounted(() => {
-  checkLoginStatus()
-  // 監聽自定義的 auth-change 事件
-  window.addEventListener('auth-change', checkLoginStatus)
 
-  // 保留 storage 監聽 (為了支援多個分頁同步登出/登入)
-  window.addEventListener('storage', (e) => {
-    if (e.key === 'user_token') checkLoginStatus()
-  })
 })
 
 onUnmounted(() => {
-  window.removeEventListener('auth-change', checkLoginStatus)
+
 })
 </script>
 
@@ -364,7 +364,7 @@ onUnmounted(() => {
 }
 
 .username {
-  font-size: 0.95rem;
+  font-size: 1rem;
   font-weight: 600;
   color: var(--color-text-main);
 }
@@ -486,10 +486,11 @@ onUnmounted(() => {
   display: flex;
   flex-direction: column;
   gap: 4px;
+  flex: 1;
 }
 
 .sidebar-username {
-  font-size: 1.1rem;
+  font-size: 1.4rem;
   font-weight: 700;
   color: var(--color-text-main);
 }
@@ -554,6 +555,39 @@ onUnmounted(() => {
 
 .sidebar-links .sidebar-register {
   color: var(--color-text-white);
+}
+
+.dropdown-balance-section {
+  padding: 10px 16px;
+  background-color: var(--color-bg-page);
+  margin-bottom: 4px;
+}
+
+.balance-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  margin-bottom: 6px;
+}
+
+.balance-item:last-child {
+  margin-bottom: 0;
+}
+
+.balance-label {
+  color: var(--color-text-sub);
+}
+
+.balance-value {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #f59e0b;
+}
+
+.free-balance,
+.balance-value.free-balance {
+  color: #10b981;
 }
 
 .fade-enter-active,

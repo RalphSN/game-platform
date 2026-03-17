@@ -25,7 +25,7 @@
           <label for="password">密碼</label>
           <div class="input-wrapper">
             <input id="password" type="password" v-model="form.password" required placeholder="請輸入密碼"
-              :disabled="isLoading" />
+              :disabled="isLoading" minlength="6" maxlength="20" />
           </div>
         </div>
 
@@ -48,6 +48,10 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
+import { useUserStore } from '@/stores/user'
+
+const userStore = useUserStore()
+
 const router = useRouter()
 
 const form = reactive({
@@ -84,17 +88,17 @@ const handleLogin = async () => {
     const result = await sendRequest('/member/login', requestData)
 
     if (result.code === 0) {
-      localStorage.setItem('user_token', result.Info.Token)
-      localStorage.setItem('user_account', result.Info.Account)
-      window.dispatchEvent(new Event('auth-change'))
+      userStore.setLoginData(result.Info.Account, result.Info.Token)
+      await userStore.getPlayerInfo(userIP)
       alert('登入成功！')
       router.push('/')
     } else {
       switch (result.code) {
         case 1: throw new Error('參數錯誤')
-        case 2: throw new Error('帳號密碼格式錯誤 (6~20碼，必須包含1英文1數字)')
-        case 3: throw new Error('玩家帳號不存在或密碼錯誤')
+        case 2: throw new Error('帳密格式錯誤 (6~20碼，必須包含1英文1數字)')
+        case 3: throw new Error('登入失敗')
         case 4: throw new Error('該帳號為凍結狀態')
+        case 999: throw new Error('帳號遭封鎖(IP)')
         default: throw new Error(result.msg || '登入失敗，請重試')
       }
     }

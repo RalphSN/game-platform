@@ -68,6 +68,16 @@ const detectDevice = () => {
   return 0; // PC
 }
 
+const getClientIP = async () => {
+  try {
+    const res = await fetch('https://api.ipify.org?format=json')
+    const data = await res.json()
+    return data.ip
+  } catch (e) {
+    return '127.0.0.1'
+  }
+}
+
 const handleRegister = async () => {
   isLoading.value = true
   errorMessage.value = ''
@@ -75,10 +85,13 @@ const handleRegister = async () => {
   try {
     const deviceType = detectDevice()
 
+    const userIP = await getClientIP()
+
     const requestData = {
       Account: form.account,
       PWD: form.password,
-      RegisterDev: deviceType
+      RegisterDev: deviceType,
+      LoginIP: userIP
     }
 
     const result = await sendRequest('/member/signup', requestData)
@@ -93,6 +106,7 @@ const handleRegister = async () => {
         case 2: throw new Error('帳號密碼格式錯誤 (6~20碼，必須包含1英文1數字)')
         case 3: throw new Error('此玩家帳號已存在，請換一個')
         case 4: throw new Error('包含特殊符號，請重新嘗試')
+        case 999: throw new Error('帳號遭封鎖(IP)')
         default: throw new Error(result.msg || '註冊失敗，請稍後再試')
       }
     }
