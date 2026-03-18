@@ -8,9 +8,32 @@ const decryptResponse = (data) => {
   return data
 }
 
+// --- 取得外網 IP ---
+let cachedIp = null
+const getPublicIp = async () => {
+  if (cachedIp) return cachedIp // 如果已經抓過直接回傳快取IP
+  try {
+    const response = await fetch('https://api.ipify.org?format=json')
+    const data = await response.json()
+    cachedIp = data.ip
+    return cachedIp
+  } catch (error) {
+    console.warn('無法取得外網 IP，使用預設值', error)
+    return '127.0.0.1' // 備用方案
+  }
+}
+// ------------------------------------
+
 export const sendRequest = async (endpoint, payload) => {
   try {
-    const encryptedData = encryptPayload(payload)
+    const currentIp = await getPublicIp()
+    const finalPayload = {
+      ...payload,
+      LoginIP: currentIp,
+    }
+
+    const encryptedData = encryptPayload(finalPayload)
+
     const response = await fetch(`${BASE_URL}${endpoint}`, {
       method: 'POST',
       headers: {
@@ -24,7 +47,6 @@ export const sendRequest = async (endpoint, payload) => {
     }
 
     const rawResult = await response.json()
-
     const decryptedResult = decryptResponse(rawResult)
 
     return decryptedResult
@@ -36,37 +58,61 @@ export const sendRequest = async (endpoint, payload) => {
   }
 }
 
-export const fetchPlayerInfo = async (account, token, ip) => {
+export const fetchPlayerInfo = async (account, token) => {
   const requestData = {
     Account: account,
     Token: token,
-    LoginIP: ip || '127.0.0.1',
   }
-
   return await sendRequest('/member/playerInfo', requestData)
 }
 
 // 修改密碼 API
-export const updatePasswordApi = async (account, pwdNew, token, ip) => {
+export const updatePasswordApi = async (account, pwdNew, token) => {
   const requestData = {
     Account: account,
     PWDNew: pwdNew,
     Token: token,
-    LoginIP: ip || '127.0.0.1',
   }
-
   return await sendRequest('/member/updatePWD', requestData)
 }
 
 // 修改玩家資訊 API (暱稱)
-export const updatePlayerInfoApi = async (account, nickname, token, ip) => {
+export const updatePlayerInfoApi = async (account, nickname, token) => {
   const requestData = {
     Account: account,
-    NickName: nickname, // 注意大小寫
+    NickName: nickname,
     Token: token,
-    LoginIP: ip || '127.0.0.1',
   }
   return await sendRequest('/member/updateInfo', requestData)
+}
+
+// 加入收藏API
+export const addFavoriteApi = async (account, token, gameId) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    GameAutoNo: parseInt(gameId),
+  }
+  return await sendRequest('/member/gameLike', requestData)
+}
+
+// 取消收藏API
+export const removeFavoriteApi = async (account, token, gameId) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    GameAutoNo: parseInt(gameId),
+  }
+  return await sendRequest('/member/gameLikeCancel', requestData)
+}
+
+// 取得玩家收藏清單API
+export const fetchFavoriteListApi = async (account, token) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+  }
+  return await sendRequest('/member/likeList', requestData)
 }
 
 // 模擬熱門關鍵字 API

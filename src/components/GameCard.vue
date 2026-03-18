@@ -1,10 +1,22 @@
 <template>
-  <div class="game-card" @click="goToGame">
+  <div class="game-card" :class="{ 'is-locked': game.Lock }" @click="goToGame">
     <div class="thumb-wrapper">
-      <img :src="game.thumb" :alt="game.title" class="game-thumb" loading="lazy" />
-      <div class="hover-overlay">
-        <div class="play-btn">▶ 立即遊玩</div>
+      <img :src="game.IconURL || defaultThumb" :alt="game.GameName" class="game-thumb" loading="lazy" />
+
+      <div v-if="game.Lock" class="lock-indicator">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round" class="lock-icon">
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
       </div>
+
+      <div class="hover-overlay">
+        <div class="play-btn" :class="{ 'unlock-btn': game.Lock }">
+          {{ game.Lock ? '查看解鎖條件' : '▶ 立即遊玩' }}
+        </div>
+      </div>
+
       <button class="favorite-btn" :class="{ active: isFavorite }" @click.stop="toggleFavorite" title="加入/移除收藏">
         <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round">
@@ -16,55 +28,88 @@
     </div>
 
     <div class="game-info">
-      <h4 class="game-title">{{ game.title }}</h4>
+      <h4 class="game-title">{{ game.GameName }}</h4>
       <div class="game-meta">
-        <span class="game-tag">{{ game.category }}</span>
-        <span class="game-players">🔥 {{ formatPlayers(game.players) }}</span>
+        <span class="game-tag">{{ parsedCategory }}</span>
+        <span class="game-players">🔥 {{ formatPlayers(game.PlayerNum) }}</span>
       </div>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { useUserStore } from '@/stores/user'
 
-// 預留接收 API 資料的 Props
+const defaultThumb = 'https://via.placeholder.com/300x300?text=Game'
+
 const props = defineProps({
   game: {
     type: Object,
     required: true,
-    // Mock API 資料結構示範
     default: () => ({
-      id: 0,
-      title: '載入中...',
-      thumb: 'https://via.placeholder.com/300x300?text=Game',
-      category: '未分類',
-      players: 0,
-      isFavorite: false
+      GameAutoNo: 0,
+      IconURL: '',
+      GameName: '載入中...',
+      LabelType: '',
+      PlayerNum: 0,
+      Favorite: false,
+      Lock: false,
+      JumpUrl: ''
     })
   }
 })
 
+const userStore = useUserStore()
 const router = useRouter()
-const isFavorite = ref(props.game.isFavorite || false)
 
-const toggleFavorite = () => {
-  if (props.game.id === 0) return
-  isFavorite.value = !isFavorite.value
+const isFavorite = computed(() => {
+  if (!userStore.token) return false
+  return userStore.favoriteGames.includes(Number(props.game.GameAutoNo)) || props.game.Favorite
+})
+
+const toggleFavorite = async (event) => {
+  event.stopPropagation()
+  if (props.game.GameAutoNo === 0) return
+  await userStore.toggleFavorite(props.game.GameAutoNo)
 }
 
-// 點擊卡片跳轉到遊戲詳情頁
 const goToGame = () => {
-  if (props.game.id === 0) return
-  router.push(`/game/${props.game.id}`)
+  if (props.game.GameAutoNo === 0) return
+
+  if (props.game.JumpUrl && props.game.JumpUrl.trim() !== '') {
+    window.location.href = props.game.JumpUrl
+    return
+  }
+
+  router.push(`/game/${props.game.GameAutoNo}`)
 }
 
 const formatPlayers = (num) => {
+  if (!num) return 0
   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
   return num
 }
+
+const categoryMap = {
+  '1': '休閒益智',
+  '2': '動作闖關',
+  '3': '策略塔防',
+  '4': '模擬經營',
+  '5': '競技對戰',
+  '6': '角色冒險',
+  '7': '精選合集'
+}
+
+const parsedCategory = computed(() => {
+  const labels = props.game.LabelType
+  if (!labels) return '未分類'
+
+  const firstLabelCode = labels.split(',')[0]
+  return categoryMap[firstLabelCode] || '未分類'
+})
 </script>
 
 <style scoped>
@@ -101,6 +146,43 @@ const formatPlayers = (num) => {
   transform: scale(1.08);
 }
 
+.is-locked .game-thumb {
+  filter: grayscale(85%) brightness(60%);
+}
+
+.is-locked:hover .game-thumb {
+  filter: grayscale(85%) brightness(40%);
+}
+
+.lock-indicator {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2;
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.lock-icon {
+  width: 24px;
+  height: 24px;
+  stroke: #ffffff;
+  opacity: 0.9;
+}
+
+.is-locked:hover .lock-indicator {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
 .hover-overlay {
   position: absolute;
   top: 0;
@@ -113,6 +195,7 @@ const formatPlayers = (num) => {
   align-items: center;
   opacity: 0;
   transition: opacity 0.3s ease;
+  z-index: 3;
 }
 
 .game-card:hover .hover-overlay {
@@ -132,6 +215,14 @@ const formatPlayers = (num) => {
 
 .game-card:hover .play-btn {
   transform: translateY(0);
+}
+
+.unlock-btn {
+  background-color: #f59e0b;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .favorite-btn {
@@ -189,7 +280,6 @@ const formatPlayers = (num) => {
   }
 }
 
-/* --- 資訊區 --- */
 .game-info {
   padding: 12px;
 }

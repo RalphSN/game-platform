@@ -35,7 +35,7 @@
               @mouseleave="isProfileMenuOpen = false">
               <button class="profile-btn">
                 <img :src="userAvatar" alt="User Avatar" class="avatar-img" />
-                <span class="username">{{ userStore.account || 'Player' }}</span>
+                <span class="username">{{ userStore.nickname || userStore.account || 'Player' }}</span>
               </button>
 
               <transition name="fade-slide-down">
@@ -96,7 +96,7 @@
         <div class="sidebar-user-section" v-if="userStore.token">
           <img :src="userAvatar" alt="User Avatar" class="sidebar-avatar" />
           <div class="sidebar-user-info">
-            <span class="sidebar-username">{{ userStore.account || 'Player' }}</span>
+            <span class="sidebar-username">{{ userStore.nickname || userStore.account || 'Player' }}</span>
 
             <div class="balance-item">
               <span class="balance-label">儲值代幣</span>
@@ -151,10 +151,9 @@ const router = useRouter()
 const isMobileMenuOpen = ref(false)
 const isProfileMenuOpen = ref(false)
 const userAvatar = computed(() => {
-  const name = userStore.account || 'Player'
+  const name = userStore.nickname || userStore.account || 'Player'
   return `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
 })
-
 const isSearchOpen = ref(false)
 
 const toggleMenu = () => {
@@ -162,13 +161,10 @@ const toggleMenu = () => {
 }
 
 const handleLogout = () => {
-  localStorage.removeItem('user_token')
-
-  window.dispatchEvent(new Event('auth-change'))
-
+  userStore.logout()
   isProfileMenuOpen.value = false
   alert('已成功登出！')
-  router.push('/')
+  window.location.href = '/'
 }
 
 const handleLogoutAndCloseMenu = () => {

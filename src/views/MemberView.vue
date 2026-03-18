@@ -125,12 +125,22 @@
 
           <section v-else-if="activeTab === 'favorites'" key="favorites" class="content-section">
             <h3 class="section-title">收藏清單</h3>
-            <div class="favorites-grid">
-              <GameCard v-for="game in favoriteGames" :key="game.id" :game="game" />
+
+            <div v-if="isLoadingFavorites" class="loading-state" style="text-align: center; padding: 40px;">
+              <span class="loader"
+                style="border-color: var(--color-primary) transparent var(--color-primary) transparent;"></span>
+              <p>載入中...</p>
             </div>
-            <div v-if="favoriteGames.length === 0" class="empty-state">
-              <p>目前沒有收藏的遊戲喔！</p>
-            </div>
+
+            <template v-else>
+              <div class="favorites-grid">
+                <GameCard v-for="game in favoriteGames" :key="game.id" :game="game" />
+              </div>
+              <div v-if="favoriteGames.length === 0" class="empty-state"
+                style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                <p>目前沒有收藏的遊戲喔！</p>
+              </div>
+            </template>
           </section>
 
           <section v-else-if="activeTab === 'transactions'" key="transactions" class="content-section">
@@ -172,7 +182,7 @@
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { updatePasswordApi, updatePlayerInfoApi } from '@/assets/utils/api'
+import { updatePasswordApi, updatePlayerInfoApi, fetchFavoriteListApi } from '@/assets/utils/api'
 import GameCard from '@/components/GameCard.vue'
 
 const activeTab = ref('profile')
@@ -191,7 +201,7 @@ const getClientIP = async () => {
 
 const tabs = [
   { id: 'profile', name: '個人資料', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' },
-  { id: 'history', name: '遊戲紀錄', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' },
+  // { id: 'history', name: '遊戲紀錄', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>' },
   { id: 'favorites', name: '收藏清單', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' },
   { id: 'transactions', name: '儲值紀錄', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>' }
 ]
@@ -325,16 +335,35 @@ const playHistory = ref([
   { id: 3, title: '星際塔防', thumb: 'https://picsum.photos/seed/53/100/100', duration: '5小時 10分', lastPlayed: '2023-11-10 21:00' }
 ])
 
-const favoriteGames = ref([
-  { id: 101, title: '鍛劍開天', thumb: 'https://picsum.photos/seed/51/300/300', category: '角色扮演', players: 8400 },
-  { id: 102, title: '賽博龐克跑酷', thumb: 'https://picsum.photos/seed/54/300/300', category: '動作闖關', players: 15200 }
-])
+const favoriteGames = ref([])
+const isLoadingFavorites = ref(false)
 
 const transactions = ref([
   { id: 1, orderId: 'TX99201', date: '2023-11-15', amount: 500, coins: 550, status: 'success', statusText: '成功' },
   { id: 2, orderId: 'TX99158', date: '2023-11-01', amount: 1000, coins: 1200, status: 'success', statusText: '成功' },
   { id: 3, orderId: 'TX98902', date: '2023-10-15', amount: 300, coins: 300, status: 'failed', statusText: '失敗' }
 ])
+
+watch(activeTab, async (newTab) => {
+  if (newTab === 'favorites') {
+    isLoadingFavorites.value = true
+    try {
+      const result = await fetchFavoriteListApi(userStore.account, userStore.token)
+      if (result.code === 0) {
+        favoriteGames.value = result.da || []
+      } else {
+        console.error('獲取收藏清單失敗:', result.msg)
+        if (result.code === 3) {
+          setTimeout(() => userStore.logout(), 2000)
+        }
+      }
+    } catch (error) {
+      console.error('API 錯誤:', error)
+    } finally {
+      isLoadingFavorites.value = false
+    }
+  }
+})
 </script>
 
 <style scoped>

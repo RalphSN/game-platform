@@ -45,12 +45,12 @@
           </div> -->
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
           <label for="title">主旨</label>
           <div class="input-wrapper">
             <input id="title" type="text" v-model="form.title" required placeholder="請簡述您的問題" :disabled="isLoading" />
           </div>
-        </div>
+        </div> -->
 
         <div class="form-group">
           <label for="description">詳細說明</label>

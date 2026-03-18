@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia'
-import { fetchPlayerInfo } from '@/assets/utils/api' 
+import { fetchPlayerInfo, addFavoriteApi, removeFavoriteApi } from '@/assets/utils/api'
 export const useUserStore = defineStore('user', {
   state: () => ({
     account: localStorage.getItem('user_account') || '',
@@ -34,6 +34,42 @@ export const useUserStore = defineStore('user', {
         }
       } catch (error) {
         console.error('獲取玩家資訊失敗:', error)
+        return false
+      }
+    },
+    // 切換收藏狀態 (加入或取消)
+    async toggleFavorite(gameId, ip = '127.0.0.1') {
+      // 確認登入
+      if (!this.account || !this.token) {
+        alert('請先登入才能收藏遊戲')
+        return false
+      }
+
+      try {
+        // 判斷收藏清單裡有無此遊戲 ID
+        const isFavorite = this.favoriteGames.includes(gameId)
+        let result = null
+
+        // 根據判斷結果決定打API
+        if (isFavorite) {
+          // 已經收藏 -> 取消 API
+          result = await removeFavoriteApi(this.account, this.token, gameId, ip)
+        } else {
+          // 還沒收藏 -> 加入 API
+          result = await addFavoriteApi(this.account, this.token, gameId, ip)
+        }
+
+        // API回傳成功在背景「重取玩家資訊」更新愛心狀態
+        if (result.code === 0) {
+          await this.getPlayerInfo(ip)
+          return true
+        } else {
+          console.error('收藏動作失敗:', result.msg)
+          alert(result.msg || '操作失敗，請稍後再試')
+          return false
+        }
+      } catch (error) {
+        console.error('切換收藏發生錯誤:', error)
         return false
       }
     },
