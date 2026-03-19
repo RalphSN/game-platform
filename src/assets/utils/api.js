@@ -117,12 +117,34 @@ export const fetchFavoriteListApi = async (account, token) => {
 
 // 取得首頁遊戲清單API
 export const fetchGameListAllApi = async (account = '', token = '') => {
-  // 即使未登入 (訪客模式)，也可以傳空字串過去
+  // 即使未登入 (訪客模式)，也可以傳空字串
   const requestData = {
     Account: account,
     Token: token,
   }
   return await sendRequest('game/gameListAll', requestData)
+}
+
+// 取得篩選遊戲清單
+export const fetchFilteredGamesApi = async (account, token, labelType, conformAny, gameStatus) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    LabelType: labelType, //  "1,2" 或者 "0"
+    ConformAny: conformAny, // "Y" (任一) 或 "N" (全部)
+    GameStatus: gameStatus, // 0 (全部), 1 (已解鎖), 2 (未解鎖)
+  }
+  return await sendRequest('game/gameList', requestData)
+}
+
+// 取得單一遊戲詳細資訊 
+export const fetchGameInfoApi = async (account, token, gameId) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    GameAutoNo: parseInt(gameId, 10)
+  }
+  return await sendRequest('game/gameInfo', requestData)
 }
 
 // 模擬熱門關鍵字 API

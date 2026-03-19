@@ -21,7 +21,8 @@
     </div>
 
     <div v-else class="games-grid fade-in-up" style="animation-delay: 0.1s;">
-      <GameCard v-for="game in games" :key="game.id" :game="game" />
+      <GameCard v-for="(game, index) in games" :key="game.GameAutoNo || index" :game="game"
+        :hideFavorite="route.params.id === 'banana'" />
     </div>
   </div>
 </template>
@@ -29,26 +30,51 @@
 <script setup>
 import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchGamesByCategory } from '@/assets/utils/api'
+import { fetchGameListAllApi } from '@/assets/utils/api'
+import { useUserStore } from '@/stores/user'
 import GameCard from '@/components/GameCard.vue'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const isLoading = ref(true)
 const categoryTitle = ref('')
 const games = ref([])
 
+const categoryMapping = {
+  'hot': { id: '7', title: '熱門推薦' },
+  'banana': { id: '0', title: '香蕉遊戲' },
+  'action': { id: '2', title: '動作冒險' },
+  'puzzle': { id: '1', title: '休閒益智' },
+  'rpg': { id: '6', title: '角色扮演' }
+}
+
 const loadCategoryData = async (categoryId) => {
   isLoading.value = true
+  games.value = []
+
   try {
-    const res = await fetchGamesByCategory(categoryId)
-    if (res.code === 0) {
-      categoryTitle.value = res.data.title
-      games.value = res.data.games
+    const config = categoryMapping[categoryId]
+    if (!config) {
+      categoryTitle.value = '全部遊戲'
+    } else {
+      categoryTitle.value = config.title
+    }
+
+    const result = await fetchGameListAllApi(userStore.account, userStore.token)
+
+    if (result.code === 0) {
+      if (config && result[config.id]) {
+        games.value = result[config.id]
+      } else {
+        games.value = []
+      }
+    } else {
+      console.error('取得分類資料失敗:', result.msg)
     }
   } catch (error) {
-    console.error('取得分類資料失敗', error)
+    console.error('API 錯誤:', error)
   } finally {
     isLoading.value = false
   }

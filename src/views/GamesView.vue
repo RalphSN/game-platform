@@ -54,9 +54,14 @@
       </div>
 
       <div class="game-grid" :key="refreshKey">
-        <div v-for="(game, index) in filteredGames" :key="game.id" class="animated-card"
-          :style="{ animationDelay: `${index * 0.04}s` }">
-          <GameCard :game="game" />
+        <template v-if="!isLoading">
+          <div v-for="(game, index) in filteredGames" :key="game.GameAutoNo || index" class="animated-card"
+            :style="{ animationDelay: `${index * 0.04}s` }">
+            <GameCard :game="game" />
+          </div>
+        </template>
+        <div v-else style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+          載入中...
         </div>
       </div>
 
@@ -69,8 +74,12 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { fetchFilteredGamesApi } from '@/assets/utils/api'
+import { useUserStore } from '@/stores/user'
 import GameCard from '@/components/GameCard.vue'
+
+const userStore = useUserStore()
 
 const categoryList = ref([
   {
@@ -105,84 +114,108 @@ const selectedIds = ref({
 
 const isFullyMatch = ref(false)
 
+const filteredGames = ref([])
+const isLoading = ref(true)
+
+const fetchGames = async () => {
+  isLoading.value = true
+  try {
+    let labelTypeStr = ''
+    if (!selectedIds.value.genre.includes(0)) {
+      labelTypeStr = selectedIds.value.genre.join(',')
+    }
+
+    const conformAnyStr = isFullyMatch.value ? 'N' : 'Y'
+
+    const gameStatusNum = selectedIds.value.mode
+
+    const result = await fetchFilteredGamesApi(
+      userStore.account,
+      userStore.token,
+      labelTypeStr,
+      conformAnyStr,
+      gameStatusNum
+    )
+
+    if (result.code === 0) {
+      filteredGames.value = result.da || []
+    } else {
+      console.error('獲取篩選結果失敗:', result.msg)
+      filteredGames.value = []
+    }
+  } catch (error) {
+    console.error('API 錯誤:', error)
+    filteredGames.value = []
+  } finally {
+    isLoading.value = false
+  }
+}
+
 const refreshKey = computed(() => {
   return JSON.stringify(selectedIds.value) + isFullyMatch.value
 })
 
 const toggleMatchMode = () => {
   isFullyMatch.value = !isFullyMatch.value
+  fetchGames()
 }
 
 const updateSelection = (type, tagId) => {
   if (type === 'mode') {
+    // 單選邏輯 (解鎖狀態)
     selectedIds.value[type] = tagId
-    return
-  }
-
-  let ids = [...selectedIds.value[type]]
-
-  if (tagId === 0) {
-    ids = [0]
   } else {
-    if (ids.includes(0)) {
-      ids = []
-    }
+    // 多選邏輯 (遊戲類別)
+    let ids = [...selectedIds.value[type]]
 
-    const index = ids.indexOf(tagId)
-    if (index > -1) {
-      ids.splice(index, 1)
+    if (tagId === 0) {
+      ids = [0] // 如果點了全部，清空其他選項
     } else {
-      ids.push(tagId)
+      if (ids.includes(0)) {
+        ids = [] // 如果原本有全部，把它移除
+      }
+      const index = ids.indexOf(tagId)
+      if (index > -1) {
+        ids.splice(index, 1) // 取消選取
+      } else {
+        ids.push(tagId) // 加入選取
+      }
+      if (ids.length === 0) {
+        ids = [0] // 預設回到選全部
+      }
     }
-
-    if (ids.length === 0) {
-      ids = [0]
-    }
+    selectedIds.value[type] = ids
   }
-
-  selectedIds.value[type] = ids
+  fetchGames()
 }
 
-const mockDatabase = Array.from({ length: 40 }, (_, i) => {
-  const genres = [Math.floor(Math.random() * 7) + 1]
-  if (Math.random() > 0.7) genres.push(Math.floor(Math.random() * 7) + 1)
-
-  // 確保 mode 是一個單一數字
-  const modes = Math.random() > 0.5 ? 1 : 2
-
-  return {
-    id: i + 1,
-    title: `精彩遊戲 ${i + 1}`,
-    thumb: `https://picsum.photos/seed/${i + 100}/300/300`,
-    category: categoryList.value[0].list.find(l => l.id === genres[0]).name,
-    players: Math.floor(Math.random() * 50000) + 1000,
-    tags: { genre: genres, mode: modes }
-  }
+onMounted(() => {
+  fetchGames()
 })
 
-const allGames = ref(mockDatabase)
+// const allGames = ref(mockDatabase)
 
-const filteredGames = computed(() => {
-  return allGames.value.filter(game => {
-    const genreFilter = selectedIds.value.genre
-    const isGenreMatch = genreFilter.includes(0) || genreFilter.some(id => game.tags.genre.includes(id))
+// const filteredGames = computed(() => {
+//   return allGames.value.filter(game => {
+//     const genreFilter = selectedIds.value.genre
+//     const isGenreMatch = genreFilter.includes(0) || genreFilter.some(id => game.tags.genre.includes(id))
 
-    const modeFilter = selectedIds.value.mode
-    const isModeMatch = modeFilter === 0 || game.tags.mode === modeFilter
+//     const modeFilter = selectedIds.value.mode
+//     const isModeMatch = modeFilter === 0 || game.tags.mode === modeFilter
 
-    // 匹配模式
-    if (!isFullyMatch.value) {
-      // 寬鬆匹配 (符合任一條件)
-      if (genreFilter.includes(0) && modeFilter === 0) return true;
-      if (genreFilter.includes(0)) return isModeMatch;
-      if (modeFilter === 0) return isGenreMatch;
-      return isGenreMatch || isModeMatch;
-    } else {
-      // 精準匹配 (符合所有條件)
-      return isGenreMatch && isModeMatch;
-    }
-  })
-})
+//     // 匹配模式
+//     if (!isFullyMatch.value) {
+//       // 寬鬆匹配 (符合任一條件)
+//       if (genreFilter.includes(0) && modeFilter === 0) return true;
+//       if (genreFilter.includes(0)) return isModeMatch;
+//       if (modeFilter === 0) return isGenreMatch;
+//       return isGenreMatch || isModeMatch;
+//     } else {
+//       // 精準匹配 (符合所有條件)
+//       return isGenreMatch && isModeMatch;
+//     }
+//   })
+// })
 </script>
 
 <style scoped>

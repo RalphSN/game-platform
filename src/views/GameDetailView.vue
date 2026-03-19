@@ -2,7 +2,7 @@
   <div class="game-detail-view">
     <section class="game-hero fade-in-up">
       <div class="hero-bg" :class="{ 'skeleton-bg': isLoadingData }"
-        :style="isLoadingData ? {} : { backgroundImage: `url(${game.banner})` }"></div>
+        :style="isLoadingData || !currentBanner ? {} : { backgroundImage: `url(${currentBanner})` }"></div>
       <div class="hero-overlay"></div>
 
       <div class="hero-content">
@@ -29,8 +29,8 @@
 
         <div class="hero-right">
           <div class="hero-actions">
-            <button class="hero-favorite-btn" :class="{ active: isFavorite }" @click="toggleFavorite"
-              :disabled="isLoadingData" :title="isFavorite ? '取消收藏' : '加入收藏'">
+            <button class="hero-favorite-btn" :class="{ active: localFavorite }" @click="toggleFavorite"
+              :disabled="isLoadingData" :title="localFavorite ? '取消收藏' : '加入收藏'">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round">
                 <path
@@ -108,16 +108,36 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
+import { fetchGameInfoApi } from '@/assets/utils/api'
+import { useUserStore } from '@/stores/user'
 import GameSection from '@/components/GameSection.vue'
 import startIcon from '@/assets/images/icon/start.png'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
+
 const isLoading = ref(false)
 const isLoadingData = ref(true)
-const isFavorite = ref(false)
+
+const game = ref({
+  id: 0,
+  title: '',
+  thumb: '',
+  pcBanner: '',
+  mobileBanner: '',
+  category: '',
+  players: 0,
+  description: '',
+  isLocked: false,
+  jumpUrl: ''
+})
+
+// 本地收藏狀態
+const localFavorite = ref(false)
+const relatedGames = ref([]) // 目前 API 規格沒有推薦遊戲，先給空陣列或保留假資料
 
 const formatPlayers = (num) => {
   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
@@ -125,77 +145,109 @@ const formatPlayers = (num) => {
   return num
 }
 
-const game = ref({
-  id: 0,
-  title: '',
-  thumb: '',
-  banner: '',
-  category: '',
-  players: 0,
-  description: '',
-  controls: []
-})
+const categoryMap = {
+  '1': '休閒益智', '2': '動作闖關', '3': '策略塔防', '4': '模擬經營',
+  '5': '競技對戰', '6': '角色冒險', '7': '精選合集'
+}
 
-const relatedGames = ref([])
+const getCategoryName = (labelStr) => {
+  if (!labelStr) return '未分類'
+  const firstCode = labelStr.split(',')[0]
+  return categoryMap[firstCode] || '未分類'
+}
 
-const toggleFavorite = () => {
-  if (isLoadingData.value) return
-  isFavorite.value = !isFavorite.value
+
+const toggleFavorite = async () => {
+  if (isLoadingData.value || game.value.id === 0) return
+
+  const currentStatus = localFavorite.value
+  localFavorite.value = !currentStatus
+  try {
+    await userStore.toggleFavorite(game.value.id)
+  } catch (error) {
+    localFavorite.value = currentStatus
+    console.error('切換收藏失敗:', error)
+  }
 }
 
 const fetchGameData = async (gameId) => {
   isLoadingData.value = true
+  try {
+    const result = await fetchGameInfoApi(userStore.account, userStore.token, gameId)
 
-  return new Promise((resolve) => {
-    setTimeout(() => {
+    if (result.code === 0 && result.da) {
+      const data = result.da
       game.value = {
-        id: gameId,
-        title: `夢幻廚房 (ID: ${gameId})`,
-        thumb: `https://picsum.photos/seed/${gameId * 10}/300/300`,
-        banner: `https://picsum.photos/seed/${gameId * 20}/1200/400`,
-        category: '休閒益智',
-        players: Math.floor(Math.random() * 50000) + 1000,
-        description: '<p>這是一款非常有趣的模擬經營遊戲。</p><p>在這裡，你將經營一家屬於自己的夢幻廚房，從挑選食材、烹飪美食到服務顧客，體驗完整的餐廳經營樂趣。</p><p>不斷解鎖新食譜，升級廚房設備，打造世界頂級的米其林餐廳！豐富的關卡與挑戰等你來發掘。</p>',
-        controls: [
-          '滑鼠左鍵：點擊食材與廚具進行互動',
-          '拖曳：移動畫面或分配食物給顧客',
-          'ESC：暫停遊戲或開啟選單'
-        ]
+        id: data.GameAutoNo,
+        title: data.GameName,
+        thumb: data.IconURL,
+        pcBanner: data.Introduce1URL,    // PC版Banner
+        mobileBanner: data.Introduce1MURL, // 手機版Banner
+        category: getCategoryName(data.LabelType),
+        players: data.PlayerNum || 0,
+        description: data.Introduce || '<p>暫無介紹</p>',
+        isLocked: data.Lock,
+        jumpUrl: data.JumpUrl || ''
       }
+      localFavorite.value = data.Favorite
 
-      isFavorite.value = Math.random() > 0.5
-
-      relatedGames.value = Array.from({ length: 6 }, (_, i) => ({
-        id: i + 20 + parseInt(gameId),
-        title: `推薦遊戲 ${i + 1}`,
-        thumb: `https://picsum.photos/seed/${i + 200 + parseInt(gameId)}/300/300`,
-        category: i % 2 === 0 ? '休閒益智' : '動作闖關',
-        players: Math.floor(Math.random() * 50000) + 1000,
-        isFavorite: Math.random() > 0.5
-      }))
-
-      isLoadingData.value = false
-      resolve()
-    }, 1500)
-  })
+      relatedGames.value = []
+    } else {
+      console.error('獲取遊戲詳情失敗:', result.msg)
+      router.push('/')
+    }
+  } catch (error) {
+    console.error('API 錯誤:', error)
+  } finally {
+    isLoadingData.value = false
+  }
 }
 
 const startGame = () => {
+  if (game.value.isLocked) {
+    alert('遊戲尚未解鎖！')
+    return
+  }
+
+  if (game.value.jumpUrl && game.value.jumpUrl.trim() !== '') {
+    window.location.href = game.value.jumpUrl
+    return
+  }
+
   isLoading.value = true
   setTimeout(() => {
     isLoading.value = false
     router.push({
       name: 'play',
       params: { id: game.value.id },
-      query: { token: localStorage.getItem('user_token') || 'guest_token' }
+      query: { token: userStore.token || 'guest_token' }
     })
   }, 500)
 }
 
+
+const windowWidth = ref(window.innerWidth)
+const handleResize = () => { windowWidth.value = window.innerWidth }
+
+const currentBanner = computed(() => {
+  if (!game.value.pcBanner && !game.value.mobileBanner) return ''
+
+  if (windowWidth.value <= 768) {
+    return game.value.mobileBanner || game.value.pcBanner
+  }
+
+  return game.value.pcBanner || game.value.mobileBanner
+})
+
 onMounted(() => {
   window.scrollTo(0, 0)
-  const id = route.params.id || 1
-  fetchGameData(id)
+  window.addEventListener('resize', handleResize)
+  const id = route.params.id
+  if (id) fetchGameData(id)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', handleResize)
 })
 
 watch(() => route.params.id, (newId) => {
