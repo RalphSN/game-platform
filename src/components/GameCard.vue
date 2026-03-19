@@ -17,7 +17,8 @@
         </div>
       </div>
 
-      <button class="favorite-btn" :class="{ active: isFavorite }" @click.stop="toggleFavorite" title="加入/移除收藏">
+      <button v-if="!hideFavorite" class="favorite-btn" :class="{ active: isFavorite }" @click.stop="toggleFavorite"
+        title="加入/移除收藏">
         <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round">
           <path
@@ -38,11 +39,10 @@
 </template>
 
 <script setup>
-import { computed } from 'vue'
+import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
-
-const defaultThumb = 'https://via.placeholder.com/300x300?text=Game'
+import defaultThumb from '@/assets/images/default-img.jpg'
 
 const props = defineProps({
   game: {
@@ -58,21 +58,34 @@ const props = defineProps({
       Lock: false,
       JumpUrl: ''
     })
+  },
+  hideFavorite: {
+    type: Boolean,
+    default: false
   }
 })
 
 const userStore = useUserStore()
 const router = useRouter()
+const localFavorite = ref(props.game.Favorite)
 
 const isFavorite = computed(() => {
   if (!userStore.token) return false
-  return userStore.favoriteGames.includes(Number(props.game.GameAutoNo)) || props.game.Favorite
+  return userStore.favoriteGames.includes(Number(props.game.GameAutoNo)) || localFavorite.value
 })
 
 const toggleFavorite = async (event) => {
   event.stopPropagation()
   if (props.game.GameAutoNo === 0) return
-  await userStore.toggleFavorite(props.game.GameAutoNo)
+
+  const currentStatus = isFavorite.value
+  localFavorite.value = !currentStatus
+  try {
+    await userStore.toggleFavorite(props.game.GameAutoNo)
+  } catch (error) {
+    localFavorite.value = currentStatus
+    console.error('收藏狀態切換失敗:', error)
+  }
 }
 
 const goToGame = () => {
@@ -110,6 +123,14 @@ const parsedCategory = computed(() => {
   const firstLabelCode = labels.split(',')[0]
   return categoryMap[firstLabelCode] || '未分類'
 })
+
+watch(
+  () => props.game.Favorite,
+  (newVal) => {
+    localFavorite.value = newVal
+  }
+)
+
 </script>
 
 <style scoped>

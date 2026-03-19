@@ -115,6 +115,16 @@ export const fetchFavoriteListApi = async (account, token) => {
   return await sendRequest('/member/likeList', requestData)
 }
 
+// 取得首頁遊戲清單API
+export const fetchGameListAllApi = async (account = '', token = '') => {
+  // 即使未登入 (訪客模式)，也可以傳空字串過去
+  const requestData = {
+    Account: account,
+    Token: token,
+  }
+  return await sendRequest('game/gameListAll', requestData)
+}
+
 // 模擬熱門關鍵字 API
 export const fetchHotKeywords = async () => {
   return new Promise((resolve) => {

@@ -17,32 +17,41 @@
     </section>
 
     <div class="feed-container">
-      <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" icon="🔥" categoryId="hot"
-        :games="games.slice(0, 6)" />
+      <div v-if="isLoading" style="text-align: center; padding: 40px;">載入中...</div>
 
-      <div class="ad-wrapper fade-in-up" style="animation-delay: 0.2s;">
-        <AdBanner :ad="ads[0]" />
-      </div>
+      <template v-else>
+        <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" icon="🔥" categoryId="hot"
+          :games="hotGames.slice(0, 6)" />
 
-      <GameSection class="fade-in-up" style="animation-delay: 0.3s;" title="動作冒險" icon="⚔️" categoryId="action"
-        :games="games.slice(6, 12)" />
+        <div class="ad-wrapper fade-in-up" style="animation-delay: 0.2s;">
+          <AdBanner :ad="ads[0]" />
+        </div>
 
-      <GameSection class="fade-in-up" style="animation-delay: 0.4s;" title="休閒益智" icon="🧩" categoryId="puzzle"
-        :games="games.slice(12, 18)" />
+        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" title="動作冒險" icon="⚔️" categoryId="action"
+          :games="actionGames.slice(0, 6)" />
 
-      <div class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
-        <AdBanner :ad="ads[1]" />
-        <AdBanner :ad="ads[2]" />
-      </div>
+        <GameSection class="fade-in-up" style="animation-delay: 0.4s;" title="休閒益智" icon="🧩" categoryId="puzzle"
+          :games="puzzleGames.slice(0, 6)" />
 
-      <GameSection class="fade-in-up" style="animation-delay: 0.6s;" title="角色扮演" icon="🛡️" categoryId="rpg"
-        :games="games.slice(18, 24)" />
+        <div class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
+          <AdBanner :ad="ads[1]" />
+          <AdBanner :ad="ads[2]" />
+        </div>
+
+        <GameSection class="fade-in-up" style="animation-delay: 0.6s;" title="角色扮演" icon="🛡️" categoryId="rpg"
+          :games="rpgGames.slice(0, 6)" />
+
+        <GameSection class="fade-in-up" style="animation-delay: 0.7s;" title="香蕉遊戲" icon="🍌" categoryId="banana"
+          :games="bananaGames.slice(0, 6)" />
+      </template>
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
+import { fetchGameListAllApi } from '@/assets/utils/api'
+import { useUserStore } from '@/stores/user'
 import GameSection from '@/components/GameSection.vue'
 import AdBanner from '@/components/AdBanner.vue'
 
@@ -58,8 +67,40 @@ import ad1m from '@/assets/images/ad1-m.jpg'
 import ad2 from '@/assets/images/ad2.jpg'
 import ad2m from '@/assets/images/ad2-m.jpg'
 
-import game1 from '@/assets/images/game1.jpg'
-import game2 from '@/assets/images/game2.jpg'
+
+const userStore = useUserStore()
+
+// 建立用來儲存各分類遊戲的變數
+const hotGames = ref([])     // 對應分類 7 (精選合集/熱門)
+const bananaGames = ref([])  // 對應分類 0 (香蕉遊戲)
+const actionGames = ref([])  // 對應分類 2 (動作闖關)
+const puzzleGames = ref([])  // 對應分類 1 (休閒益智)
+const rpgGames = ref([])     // 對應分類 6 (角色冒險)
+
+const isLoading = ref(true)
+
+// 定義獲取資料的函數
+const loadGames = async () => {
+  isLoading.value = true
+  try {
+    // 如果是訪客模式 userStore.account 會是空的
+    const result = await fetchGameListAllApi(userStore.account, userStore.token)
+
+    if (result.code === 0) {
+      hotGames.value = result['7'] || []
+      bananaGames.value = result['0'] || []
+      actionGames.value = result['2'] || [] 
+      puzzleGames.value = result['1'] || []
+      rpgGames.value = result['6'] || []
+    } else {
+      console.error('獲取遊戲列表失敗:', result.msg)
+    }
+  } catch (error) {
+    console.error('API 錯誤:', error)
+  } finally {
+    isLoading.value = false
+  }
+}
 
 const banners = ref([
   { id: 1, src: banner1, srcMobile: banner1m, alt: '活動 Banner 1' },
@@ -90,26 +131,13 @@ const pauseAutoPlay = () => {
 
 onMounted(() => {
   startAutoPlay()
+  loadGames()
 })
 
 onUnmounted(() => {
   pauseAutoPlay()
 })
 
-const customGames = [
-  { id: 1, title: '鍛劍開天', thumb: game1, category: '角色扮演', players: 8400 },
-  { id: 2, title: '夢幻廚房', thumb: game2, category: '休閒益智', players: 12500 }
-]
-
-const randomGames = Array.from({ length: 28 }, (_, i) => ({
-  id: i + 3,
-  title: `網頁遊戲 ${i + 3}`,
-  thumb: `https://picsum.photos/seed/${i + 3}/300/300`,
-  category: (i + 2) % 3 === 0 ? '角色扮演' : (i + 2) % 2 === 0 ? '休閒益智' : '動作冒險',
-  players: Math.floor(Math.random() * 50000) + 1000
-}))
-
-const mockGames = [...customGames, ...randomGames]
 
 const mockAds = [
   { id: 101, title: '廣告 1', imageUrl: ad1, imageUrlMobile: ad1m, link: '#' },
@@ -117,7 +145,6 @@ const mockAds = [
   { id: 103, title: '廣告 3', imageUrl: ad1, imageUrlMobile: ad1m, link: '#' },
 ]
 
-const games = ref(mockGames)
 const ads = ref(mockAds)
 </script>
 

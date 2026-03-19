@@ -13,7 +13,8 @@
 
     <div class="section-content">
       <div class="game-grid">
-        <GameCard v-for="game in games" :key="game.id" :game="game" />
+        <GameCard v-for="(game, index) in games" :key="game.GameAutoNo || index" :game="game"
+          :hideFavorite="categoryId === 'banana' || categoryId === '0' || categoryId === 0" />
       </div>
     </div>
   </section>
