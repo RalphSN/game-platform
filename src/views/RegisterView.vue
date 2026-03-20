@@ -49,6 +49,8 @@ import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
 
+const router = useRouter()
+
 const form = reactive({
   account: '',
   password: ''

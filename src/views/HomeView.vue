@@ -3,15 +3,15 @@
     <section class="hero-banner fade-in-up" style="animation-delay: 0s;" @mouseenter="pauseAutoPlay"
       @mouseleave="startAutoPlay">
       <transition-group name="fade" tag="div" class="carousel-inner">
-        <picture v-for="(banner, index) in banners" :key="banner.id" v-show="currentIndex === index"
-          class="hero-img-container">
-          <source media="(max-width: 768px)" :srcset="banner.srcMobile" />
-          <img :src="banner.src" :alt="banner.alt" class="hero-img" />
+        <picture v-for="(banner, index) in banners" :key="banner.No" v-show="currentIndex === index"
+          class="hero-img-container" @click="handleBannerClick(banner)" style="cursor: pointer;">
+          <source media="(max-width: 768px)" :srcset="banner.PicURL2" referrerpolicy="no-referrer" />
+          <img :src="banner.PicURL" alt="活動 Banner" class="hero-img" referrerpolicy="no-referrer" />
         </picture>
       </transition-group>
 
       <div class="carousel-indicators">
-        <span v-for="(banner, index) in banners" :key="'dot-' + banner.id" :class="{ active: currentIndex === index }"
+        <span v-for="(banner, index) in banners" :key="banner.No" :class="{ active: currentIndex === index }"
           @click="goToSlide(index)"></span>
       </div>
     </section>
@@ -23,8 +23,8 @@
         <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" icon="🔥" categoryId="hot"
           :games="hotGames.slice(0, 6)" />
 
-        <div class="ad-wrapper fade-in-up" style="animation-delay: 0.2s;">
-          <AdBanner :ad="ads[0]" />
+        <div v-if="adMiddle" class="ad-wrapper fade-in-up" style="animation-delay: 0.2s;">
+          <AdBanner :ad="adMiddle" />
         </div>
 
         <GameSection class="fade-in-up" style="animation-delay: 0.3s;" title="動作冒險" icon="⚔️" categoryId="action"
@@ -33,9 +33,9 @@
         <GameSection class="fade-in-up" style="animation-delay: 0.4s;" title="休閒益智" icon="🧩" categoryId="puzzle"
           :games="puzzleGames.slice(0, 6)" />
 
-        <div class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
-          <AdBanner :ad="ads[1]" />
-          <AdBanner :ad="ads[2]" />
+        <div v-if="adLeft || adRight" class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
+          <AdBanner v-if="adLeft" :ad="adLeft" />
+          <AdBanner v-if="adRight" :ad="adRight" />
         </div>
 
         <GameSection class="fade-in-up" style="animation-delay: 0.6s;" title="角色扮演" icon="🛡️" categoryId="rpg"
@@ -50,36 +50,32 @@
 
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
-import { fetchGameListAllApi } from '@/assets/utils/api'
+import { fetchGameListAllApi, fetchBannerListAllApi, trackBannerClickApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 import GameSection from '@/components/GameSection.vue'
 import AdBanner from '@/components/AdBanner.vue'
 
-import banner1 from '@/assets/images/banner1.jpg'
-import banner2 from '@/assets/images/banner2.jpg'
-import banner3 from '@/assets/images/banner3.jpg'
-import banner1m from '@/assets/images/banner1-m.jpg'
-import banner2m from '@/assets/images/banner2-m.jpg'
-import banner3m from '@/assets/images/banner3-m.jpg'
-
-import ad1 from '@/assets/images/ad1.jpg'
-import ad1m from '@/assets/images/ad1-m.jpg'
-import ad2 from '@/assets/images/ad2.jpg'
-import ad2m from '@/assets/images/ad2-m.jpg'
-
+import { useRouter } from 'vue-router'
 
 const userStore = useUserStore()
+const router = useRouter()
 
-// 建立用來儲存各分類遊戲的變數
+// 儲存各分類遊戲
 const hotGames = ref([])     // 對應分類 7 (精選合集/熱門)
 const bananaGames = ref([])  // 對應分類 0 (香蕉遊戲)
 const actionGames = ref([])  // 對應分類 2 (動作闖關)
 const puzzleGames = ref([])  // 對應分類 1 (休閒益智)
 const rpgGames = ref([])     // 對應分類 6 (角色冒險)
 
+// Banner與廣告
+const banners = ref([])    // 對應 BType: 1 (輪播大 BANNER)
+const adMiddle = ref(null) // 對應 BType: 2 (中間廣告)
+const adLeft = ref(null)   // 對應 BType: 3 (BANNER 左)
+const adRight = ref(null)  // 對應 BType: 4 (BANNER 右)
+
 const isLoading = ref(true)
 
-// 定義獲取資料的函數
+// 獲取資料
 const loadGames = async () => {
   isLoading.value = true
   try {
@@ -89,7 +85,7 @@ const loadGames = async () => {
     if (result.code === 0) {
       hotGames.value = result['7'] || []
       bananaGames.value = result['0'] || []
-      actionGames.value = result['2'] || [] 
+      actionGames.value = result['2'] || []
       puzzleGames.value = result['1'] || []
       rpgGames.value = result['6'] || []
     } else {
@@ -102,11 +98,38 @@ const loadGames = async () => {
   }
 }
 
-const banners = ref([
-  { id: 1, src: banner1, srcMobile: banner1m, alt: '活動 Banner 1' },
-  { id: 2, src: banner2, srcMobile: banner2m, alt: '活動 Banner 2' },
-  { id: 3, src: banner3, srcMobile: banner3m, alt: '活動 Banner 3' }
-])
+// 獲取Banner
+const loadBanners = async () => {
+  try {
+    const result = await fetchBannerListAllApi(userStore.account, userStore.token)
+
+    if (result.code === 0) {
+      banners.value = result['1'] || []
+
+      adMiddle.value = result['2']?.[0] || null
+      adLeft.value = result['3']?.[0] || null
+      adRight.value = result['4']?.[0] || null
+    } else {
+      console.error('獲取 Banner 失敗:', result.msg)
+    }
+  } catch (error) {
+    console.error('Banner API 錯誤:', error)
+  }
+}
+
+const handleBannerClick = (banner) => {
+  if (!banner.JumpURL) return
+
+  // 點擊廣告API
+  trackBannerClickApi(banner.No).catch(err => console.error('追蹤點擊失敗:', err))
+
+  // 跳轉
+  if (banner.URLType === 1) {
+    router.push(banner.JumpURL)
+  } else if (banner.URLType === 2) {
+    window.open(banner.JumpURL, '_blank')
+  }
+}
 
 const currentIndex = ref(0)
 let timer = null
@@ -132,20 +155,13 @@ const pauseAutoPlay = () => {
 onMounted(() => {
   startAutoPlay()
   loadGames()
+  loadBanners()
 })
 
 onUnmounted(() => {
   pauseAutoPlay()
 })
 
-
-const mockAds = [
-  { id: 101, title: '廣告 1', imageUrl: ad1, imageUrlMobile: ad1m, link: '#' },
-  { id: 102, title: '廣告 2', imageUrl: ad2, imageUrlMobile: ad2m, link: '#' },
-  { id: 103, title: '廣告 3', imageUrl: ad1, imageUrlMobile: ad1m, link: '#' },
-]
-
-const ads = ref(mockAds)
 </script>
 
 <style scoped>

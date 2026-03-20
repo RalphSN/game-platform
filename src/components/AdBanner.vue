@@ -1,32 +1,47 @@
 <template>
-  <a :href="ad.link" target="_blank" class="ad-banner" @click="trackAdClick">
+  <div class="ad-banner" @click="handleAdClick" style="cursor: pointer;">
     <picture>
-      <source v-if="ad.imageUrlMobile" media="(max-width: 768px)" :srcset="ad.imageUrlMobile" />
-      <img :src="ad.imageUrl" :alt="ad.title" class="ad-img" loading="lazy" />
+      <source v-if="ad.PicURL2" media="(max-width: 768px)" :srcset="ad.PicURL2" referrerpolicy="no-referrer"/>
+      <img :src="ad.PicURL" alt="廣告" class="ad-img" loading="lazy" referrerpolicy="no-referrer"/>
     </picture>
 
     <div class="ad-badge">AD</div>
     <div class="shine-effect"></div>
-  </a>
+  </div>
 </template>
 
 <script setup>
+import { useRouter } from 'vue-router'
+import { trackBannerClickApi } from '@/assets/utils/api'
+
+const router = useRouter()
+
 const props = defineProps({
   ad: {
     type: Object,
     required: true,
     default: () => ({
-      id: 0,
-      title: '預設廣告',
-      imageUrl: 'https://via.placeholder.com/1200x200?text=AD',
-      imageUrlMobile: null,
-      link: '#'
+      No: 0,
+      URLType: 0,
+      JumpURL: '',
+      PicURL: 'https://via.placeholder.com/1200x200?text=AD',
+      PicURL2: ''
     })
   }
 })
 
-const trackAdClick = () => {
-  console.log(`[Mock API] 記錄廣告點擊: ID ${props.ad.id}`)
+const handleAdClick = () => {
+  if (!props.ad.JumpURL) return
+
+  // 點擊廣告API
+  trackBannerClickApi(props.ad.No).catch(err => console.error('廣告追蹤失敗:', err))
+
+  // 跳轉
+  if (props.ad.URLType === 1) {
+    router.push(props.ad.JumpURL)
+  } else if (props.ad.URLType === 2) {
+    window.open(props.ad.JumpURL, '_blank')
+  }
 }
 </script>
 

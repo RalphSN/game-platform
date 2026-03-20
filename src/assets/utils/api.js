@@ -1,4 +1,4 @@
-const BASE_URL = 'http://190.92.230.160:8021/apisrv/'
+const BASE_URL = 'http://190.92.230.160:8021/apisrv'
 
 const encryptPayload = (data) => {
   return data
@@ -122,7 +122,7 @@ export const fetchGameListAllApi = async (account = '', token = '') => {
     Account: account,
     Token: token,
   }
-  return await sendRequest('game/gameListAll', requestData)
+  return await sendRequest('/game/gameListAll', requestData)
 }
 
 // 取得篩選遊戲清單
@@ -134,17 +134,37 @@ export const fetchFilteredGamesApi = async (account, token, labelType, conformAn
     ConformAny: conformAny, // "Y" (任一) 或 "N" (全部)
     GameStatus: gameStatus, // 0 (全部), 1 (已解鎖), 2 (未解鎖)
   }
-  return await sendRequest('game/gameList', requestData)
+  return await sendRequest('/game/gameList', requestData)
 }
 
-// 取得單一遊戲詳細資訊 
+// 取得單一遊戲詳細資訊
 export const fetchGameInfoApi = async (account, token, gameId) => {
   const requestData = {
     Account: account,
     Token: token,
     GameAutoNo: parseInt(gameId, 10)
   }
-  return await sendRequest('game/gameInfo', requestData)
+  return await sendRequest('/game/gameInfo', requestData)
+}
+
+// 取得首頁所有 Banner 與廣告
+export const fetchBannerListAllApi = async (account = '', token = '') => {
+  const requestData = {
+    Account: account,
+    Token: token,
+  }
+  return await sendRequest('/game/bannerListAll', requestData)
+}
+
+// 追蹤點擊廣告API
+export const trackBannerClickApi = async (bannerNo) => {
+  const currentIp = await getPublicIp()
+
+  const requestData = {
+    CreateIP: currentIp,
+    No: parseInt(bannerNo)
+  }
+  return await sendRequest('/ctrate/bannerHit', requestData)
 }
 
 // 模擬熱門關鍵字 API
