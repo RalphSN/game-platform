@@ -189,7 +189,7 @@ onUnmounted(() => {
 .hero-banner {
   position: relative;
   width: 100%;
-  aspect-ratio: 1440 / 580;
+  aspect-ratio: 1440 / 450;
   max-height: 580px;
   border-radius: 16px;
   overflow: hidden;

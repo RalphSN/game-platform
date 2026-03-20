@@ -153,7 +153,7 @@
                     <th>日期</th>
                     <th>金額</th>
                     <th>獲得代幣</th>
-                    <th>狀態</th>
+                    <!-- <th>狀態</th> -->
                   </tr>
                 </thead>
                 <tbody>
@@ -162,11 +162,11 @@
                     <td>{{ tx.date }}</td>
                     <td class="amount">NT$ {{ tx.amount }}</td>
                     <td class="coins">+{{ tx.coins }} 💎</td>
-                    <td>
+                    <!-- <td>
                       <span class="status-badge" :class="tx.status.toLowerCase()">
                         {{ tx.statusText }}
                       </span>
-                    </td>
+                    </td> -->
                   </tr>
                 </tbody>
               </table>
@@ -339,9 +339,9 @@ const favoriteGames = ref([])
 const isLoadingFavorites = ref(false)
 
 const transactions = ref([
-  { id: 1, orderId: 'TX99201', date: '2023-11-15', amount: 500, coins: 550, status: 'success', statusText: '成功' },
-  { id: 2, orderId: 'TX99158', date: '2023-11-01', amount: 1000, coins: 1200, status: 'success', statusText: '成功' },
-  { id: 3, orderId: 'TX98902', date: '2023-10-15', amount: 300, coins: 300, status: 'failed', statusText: '失敗' }
+  { id: 1, orderId: 'TX99201', date: '2023-11-15', amount: 500, coins: 550, status: 'success' },
+  { id: 2, orderId: 'TX99158', date: '2023-11-01', amount: 1000, coins: 1200, status: 'success' },
+  { id: 3, orderId: 'TX98902', date: '2023-10-15', amount: 300, coins: 300, status: 'failed' }
 ])
 
 watch(activeTab, async (newTab) => {

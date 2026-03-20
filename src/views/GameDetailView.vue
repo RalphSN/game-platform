@@ -391,7 +391,9 @@ watch(() => route.params.id, (newId) => {
 .game-hero {
   position: relative;
   width: 100%;
-  height: 320px;
+  aspect-ratio: 1440 / 450;
+  max-height: 450px;
+  /* height: 320px; */
   border-radius: 20px;
   overflow: hidden;
   display: flex;
@@ -708,6 +710,9 @@ watch(() => route.params.id, (newId) => {
 @media (max-width: 768px) {
   .game-hero {
     height: auto;
+    /* aspect-ratio: 1 /1; */
+    aspect-ratio: 1080 / 650;
+    /* min-height: auto; */
     min-height: 380px;
     flex-direction: column;
     align-items: center;
