@@ -167,6 +167,46 @@ export const trackBannerClickApi = async (bannerNo) => {
   return await sendRequest('/ctrate/bannerHit', requestData)
 }
 
+// 取得客訴清單
+export const fetchTicketListApi = async (account, token) => {
+  const requestData = { Account: account, Token: token }
+  return await sendRequest('/membercontact/membercontact', requestData)
+}
+
+// 取得單一客訴詳細資料
+export const fetchTicketDetailApi = async (account, token, detailId) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    DetailID: parseInt(detailId)
+  }
+  return await sendRequest('/membercontact/memberContactDetail', requestData)
+}
+
+// 送出新問題 (filesObj 包含 chat_1, chat_2, chat_3 的 Base64 字串)
+export const submitTicketApi = async (account, token, type, info, filesObj) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    Type: parseInt(type),
+    Info: info,
+    ...filesObj
+  }
+  return await sendRequest('/membercontact/addMemberContact', requestData)
+}
+
+// 玩家回覆問題
+export const replyTicketApi = async (account, token, detailId, info, filesObj) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    DetailID: parseInt(detailId),
+    Info: info,
+    ...filesObj
+  }
+  return await sendRequest('/membercontact/addMemberContactReply', requestData)
+}
+
 // 模擬熱門關鍵字 API
 export const fetchHotKeywords = async () => {
   return new Promise((resolve) => {

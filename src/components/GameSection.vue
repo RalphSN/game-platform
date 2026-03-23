@@ -2,7 +2,7 @@
   <section class="game-section">
     <div class="section-header">
       <h3 class="section-title">
-        <span class="title-icon" v-if="icon">{{ icon }}</span>
+        <span class="title-icon" v-if="icon" v-html="icon"></span>
         {{ title }}
       </h3>
 
@@ -83,6 +83,9 @@ const goToCategory = () => {
 
 .title-icon {
   font-size: 1.4rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 /* 「查看更多」 */

@@ -20,29 +20,29 @@
       <div v-if="isLoading" style="text-align: center; padding: 40px;">載入中...</div>
 
       <template v-else>
-        <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" icon="🔥" categoryId="hot"
-          :games="hotGames.slice(0, 6)" />
+        <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" :icon="svgIcons.hot"
+          categoryId="hot" :games="hotGames.slice(0, 6)" />
 
         <div v-if="adMiddle" class="ad-wrapper fade-in-up" style="animation-delay: 0.2s;">
           <AdBanner :ad="adMiddle" />
         </div>
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" title="動作冒險" icon="⚔️" categoryId="action"
-          :games="actionGames.slice(0, 6)" />
+        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" title="動作冒險" :icon="svgIcons.action"
+          categoryId="action" :games="actionGames.slice(0, 6)" />
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.4s;" title="休閒益智" icon="🧩" categoryId="puzzle"
-          :games="puzzleGames.slice(0, 6)" />
+        <GameSection class="fade-in-up" style="animation-delay: 0.4s;" title="休閒益智" :icon="svgIcons.puzzle"
+          categoryId="puzzle" :games="puzzleGames.slice(0, 6)" />
 
         <div v-if="adLeft || adRight" class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
           <AdBanner v-if="adLeft" :ad="adLeft" />
           <AdBanner v-if="adRight" :ad="adRight" />
         </div>
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.6s;" title="角色扮演" icon="🛡️" categoryId="rpg"
-          :games="rpgGames.slice(0, 6)" />
+        <GameSection class="fade-in-up" style="animation-delay: 0.6s;" title="角色扮演" :icon="svgIcons.rpg"
+          categoryId="rpg" :games="rpgGames.slice(0, 6)" />
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.7s;" title="香蕉遊戲" icon="🍌" categoryId="banana"
-          :games="bananaGames.slice(0, 6)" />
+        <GameSection class="fade-in-up" style="animation-delay: 0.7s;" title="香蕉遊戲" :icon="svgIcons.banana"
+          categoryId="banana" :games="bananaGames.slice(0, 6)" />
       </template>
     </div>
   </div>
@@ -74,6 +74,21 @@ const adLeft = ref(null)   // 對應 BType: 3 (BANNER 左)
 const adRight = ref(null)  // 對應 BType: 4 (BANNER 右)
 
 const isLoading = ref(true)
+
+const svgIcons = {
+
+  hot: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-flame-icon lucide-flame"><path d="M12 3q1 4 4 6.5t3 5.5a1 1 0 0 1-14 0 5 5 0 0 1 1-3 1 1 0 0 0 5 0c0-2-1.5-3-1.5-5q0-2 2.5-4"/></svg>`,
+
+  action: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-swords-icon lucide-swords"><polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" x2="19" y1="19" y2="13"/><line x1="16" x2="20" y1="16" y2="20"/><line x1="19" x2="21" y1="21" y2="19"/><polyline points="14.5 6.5 18 3 21 3 21 6 17.5 9.5"/><line x1="5" x2="9" y1="14" y2="18"/><line x1="7" x2="4" y1="17" y2="20"/><line x1="3" x2="5" y1="19" y2="21"/></svg>`,
+
+  puzzle: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-puzzle-icon lucide-puzzle"><path d="M15.39 4.39a1 1 0 0 0 1.68-.474 2.5 2.5 0 1 1 3.014 3.015 1 1 0 0 0-.474 1.68l1.683 1.682a2.414 2.414 0 0 1 0 3.414L19.61 15.39a1 1 0 0 1-1.68-.474 2.5 2.5 0 1 0-3.014 3.015 1 1 0 0 1 .474 1.68l-1.683 1.682a2.414 2.414 0 0 1-3.414 0L8.61 19.61a1 1 0 0 0-1.68.474 2.5 2.5 0 1 1-3.014-3.015 1 1 0 0 0 .474-1.68l-1.683-1.682a2.414 2.414 0 0 1 0-3.414L4.39 8.61a1 1 0 0 1 1.68.474 2.5 2.5 0 1 0 3.014-3.015 1 1 0 0 1-.474-1.68l1.683-1.682a2.414 2.414 0 0 1 3.414 0z"/></svg>
+`,
+
+  rpg: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>`,
+
+  banana: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-banana-icon lucide-banana"><path d="M4 13c3.5-2 8-2 10 2a5.5 5.5 0 0 1 8 5"/><path d="M5.15 17.89c5.52-1.52 8.65-6.89 7-12C11.55 4 11.5 2 13 2c3.22 0 5 5.5 5 8 0 6.5-4.2 12-10.49 12C5.11 22 2 22 2 20c0-1.5 1.14-1.55 3.15-2.11Z"/></svg>`
+
+}
 
 // 獲取資料
 const loadGames = async () => {
