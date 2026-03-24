@@ -31,196 +31,187 @@
       </aside>
 
       <main class="support-content fade-in-up" style="animation-delay: 0.1s;">
-
-        <div v-if="currentTab === 'new'" class="support-container">
-          <div class="support-header">
-            <!-- <div class="header-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                <path
-                  d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
-                </path>
-              </svg>
-            </div> -->
-            <h2>聯絡客服</h2>
-            <p>遇到問題了嗎？請填寫下方表單，我們將盡快為您處理。</p>
-          </div>
-
-          <div v-if="isSuccess" class="success-message fade-in-up">
-            <div class="success-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round">
-                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
-                <polyline points="22 4 12 14.01 9 11.01"></polyline>
-              </svg>
-            </div>
-            <h3>回報已成功送出！</h3>
-            <p>您的問題已記錄 (單號：<span class="ticket-id">＃{{ ticketId }}</span>)</p>
-            <p class="sub-text">客服人員將於 1-2 個工作天內透過 Email 與您聯繫。</p>
-            <button @click="resetForm" class="primary-btn">返回填寫新單</button>
-          </div>
-
-          <form v-else @submit.prevent="handleSubmit" class="support-form">
-            <div class="form-row">
-              <div class="form-group half-width">
-                <label for="issueType">問題類型</label>
-                <div class="input-wrapper">
-                  <select id="issueType" v-model="form.type" required :disabled="isLoading">
-                    <option value="" disabled>請選擇類型</option>
-                    <option value="account">帳號與登入問題</option>
-                    <option value="payment">儲值與購買異常</option>
-                    <option value="bug">遊戲 Bug 回報</option>
-                    <option value="suggestion">功能建議</option>
-                    <option value="other">其他</option>
-                  </select>
-                </div>
-              </div>
+        <transition name="fade-slide" mode="out-in">
+          <div v-if="currentTab === 'new'" key="new" class="support-container">
+            <div class="support-header">
+              <h2>聯絡客服</h2>
+              <p>遇到問題了嗎？請填寫下方表單，我們將盡快為您處理。</p>
             </div>
 
-            <div class="form-group">
-              <label for="description">詳細說明</label>
-              <div class="input-wrapper">
-                <textarea id="description" v-model="form.description" required rows="5"
-                  placeholder="請詳細描述您遇到的狀況、發生時間及操作步驟..." :disabled="isLoading"></textarea>
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label>上傳截圖 <span class="optional-tag">(選填，最多 3 張)</span></label>
-              <div class="upload-zone"
-                :class="{ 'is-dragging': isDragging, 'is-disabled': isLoading || previewImages.length >= 3 }"
-                @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false" @drop.prevent="handleDrop"
-                @click="triggerFileInput">
-                <input type="file" ref="fileInput" multiple accept="image/png, image/jpeg, image/jpg"
-                  @change="handleFileSelect" style="display: none;"
-                  :disabled="isLoading || previewImages.length >= 3" />
-                <div class="upload-placeholder">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                    stroke-linejoin="round">
-                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                    <polyline points="17 8 12 3 7 8"></polyline>
-                    <line x1="12" y1="3" x2="12" y2="15"></line>
-                  </svg>
-                  <span>點擊或將圖片拖曳至此處</span>
-                  <span class="upload-hint">支援 JPG, PNG 格式</span>
-                </div>
-              </div>
-
-              <div v-if="previewImages.length > 0" class="image-preview-area">
-                <div v-for="(img, index) in previewImages" :key="index" class="preview-item fade-in-up"
-                  :style="{ animationDelay: `${index * 0.1}s` }">
-                  <img :src="img.url" alt="upload preview" />
-                  <button type="button" class="remove-btn" @click.stop="removeImage(index)" :disabled="isLoading">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <line x1="18" y1="6" x2="6" y2="18"></line>
-                      <line x1="6" y1="6" x2="18" y2="18"></line>
-                    </svg>
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            <button type="submit" class="submit-btn" :disabled="isLoading">
-              <span v-if="isLoading" class="loader"></span>
-              <span v-else>送出回報</span>
-            </button>
-          </form>
-        </div>
-
-        <div v-else-if="currentTab === 'list'" class="support-container list-container">
-          <div class="support-header">
-            <h2>客服紀錄</h2>
-          </div>
-          <div class="ticket-list">
-            <div v-for="ticket in ticketList" :key="ticket.AutoNo" class="ticket-card" @click="viewTicket(ticket)">
-              <div class="ticket-top">
-                <span class="ticket-type">{{ getTicketTypeName(ticket.Type) }}</span>
-                <span class="ticket-status" :class="getStatusClass(ticket.Status)">
-                  {{ getStatusName(ticket.Status) }}
-                </span>
-              </div>
-              <p class="ticket-info">{{ ticket.Info }}</p>
-              <div class="ticket-bottom">
-                <span class="ticket-date">{{ ticket.CreateTime }}</span>
-                <span class="ticket-no">單號 ＃{{ ticket.AutoNo }}</span>
-              </div>
-            </div>
-            <div v-if="ticketList.length === 0" class="empty-state">
-              <div class="empty-icon">
+            <div v-if="isSuccess" class="success-message fade-in-up">
+              <div class="success-icon">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                   stroke-linejoin="round">
-                  <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-                  <line x1="9" y1="3" x2="9" y2="21"></line>
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
               </div>
-              <p>目前沒有客服紀錄</p>
-            </div>
-          </div>
-        </div>
-
-        <div v-else-if="currentTab === 'detail'" class="support-container detail-container">
-          <div class="detail-header">
-            <button class="back-btn" @click="switchTab('list')">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
-                stroke-linejoin="round">
-                <line x1="19" y1="12" x2="5" y2="12"></line>
-                <polyline points="12 19 5 12 12 5"></polyline>
-              </svg>
-              返回列表
-            </button>
-            <span class="ticket-status" :class="getStatusClass(selectedTicket.Status)">
-              {{ getStatusName(selectedTicket.Status) }}
-            </span>
-          </div>
-
-          <div class="chat-container" ref="chatContainer">
-            <div v-for="(msg, index) in ticketDetail.contactDetail" :key="index" class="chat-bubble-wrapper"
-              :class="{ 'is-player': msg.MsgBy === 0, 'is-cs': msg.MsgBy === 1 }">
-              <div class="chat-avatar">
-                <svg v-if="msg.MsgBy === 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
-                  <path
-                    d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
-                  </path>
-                </svg>
-              </div>
-              <div class="chat-content">
-                <div class="chat-bubble">{{ msg.Info }}</div>
-                <div class="chat-time">{{ msg.CreateTime }}</div>
-              </div>
+              <h3>回報已成功送出！</h3>
+              <p>您的問題已記錄 (單號：<span class="ticket-id">＃{{ ticketId }}</span>)</p>
+              <p class="sub-text">客服人員將於 1-2 個工作天內透過 Email 與您聯繫。</p>
+              <button @click="resetForm" class="primary-btn">返回填寫新單</button>
             </div>
 
-            <div v-if="ticketDetail.filePath && ticketDetail.filePath.length > 0" class="attachment-area">
-              <h4>夾帶圖片：</h4>
-              <div class="image-preview-area">
-                <div v-for="(path, index) in ticketDetail.filePath" :key="index" class="preview-item">
-                  <img :src="path" alt="attachment" />
+            <form v-else @submit.prevent="handleSubmit" class="support-form">
+              <div class="form-row">
+                <div class="form-group half-width">
+                  <label for="issueType">問題類型</label>
+                  <div class="input-wrapper">
+                    <select id="issueType" v-model="form.type" required :disabled="isLoading">
+                      <option value="" disabled>請選擇類型</option>
+                      <option value="account">帳號與登入問題</option>
+                      <option value="payment">儲值與購買異常</option>
+                      <option value="bug">遊戲 Bug 回報</option>
+                      <option value="suggestion">功能建議</option>
+                      <option value="other">其他</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description">詳細說明</label>
+                <div class="input-wrapper">
+                  <textarea id="description" v-model="form.description" required rows="5"
+                    placeholder="請詳細描述您遇到的狀況、發生時間及操作步驟..." :disabled="isLoading"></textarea>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>上傳截圖 <span class="optional-tag">(選填，最多 3 張)</span></label>
+                <div class="upload-zone"
+                  :class="{ 'is-dragging': isDragging, 'is-disabled': isLoading || previewImages.length >= 3 }"
+                  @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
+                  @drop.prevent="handleDrop" @click="triggerFileInput">
+                  <input type="file" ref="fileInput" multiple accept="image/png, image/jpeg, image/jpg"
+                    @change="handleFileSelect" style="display: none;"
+                    :disabled="isLoading || previewImages.length >= 3" />
+                  <div class="upload-placeholder">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                      <polyline points="17 8 12 3 7 8"></polyline>
+                      <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    <span>點擊或將圖片拖曳至此處</span>
+                    <span class="upload-hint">支援 JPG, PNG 格式</span>
+                  </div>
+                </div>
+
+                <div v-if="previewImages.length > 0" class="image-preview-area">
+                  <div v-for="(img, index) in previewImages" :key="index" class="preview-item fade-in-up"
+                    :style="{ animationDelay: `${index * 0.1}s` }">
+                    <img :src="img.url" alt="upload preview" />
+                    <button type="button" class="remove-btn" @click.stop="removeImage(index)" :disabled="isLoading">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <button type="submit" class="submit-btn" :disabled="isLoading">
+                <span v-if="isLoading" class="loader"></span>
+                <span v-else>送出回報</span>
+              </button>
+            </form>
+          </div>
+
+          <div v-else-if="currentTab === 'list'" key="list" class="support-container list-container">
+            <div class="support-header">
+              <h2>客服紀錄</h2>
+            </div>
+            <div class="ticket-list">
+              <div v-for="ticket in ticketList" :key="ticket.AutoNo" class="ticket-card" @click="viewTicket(ticket)">
+                <div class="ticket-top">
+                  <span class="ticket-type">{{ getTicketTypeName(ticket.Type) }}</span>
+                  <span class="ticket-status" :class="getStatusClass(ticket.Status)">
+                    {{ getStatusName(ticket.Status) }}
+                  </span>
+                </div>
+                <p class="ticket-info">{{ ticket.Info }}</p>
+                <div class="ticket-bottom">
+                  <span class="ticket-date">{{ ticket.CreateTime }}</span>
+                  <span class="ticket-no">單號 ＃{{ ticket.AutoNo }}</span>
+                </div>
+              </div>
+              <div v-if="ticketList.length === 0" class="empty-state">
+                <div class="empty-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                  </svg>
+                </div>
+                <p>目前沒有客服紀錄</p>
+              </div>
+            </div>
+          </div>
+
+          <div v-else-if="currentTab === 'detail'" key="detail" class="support-container detail-container">
+            <div class="detail-header">
+              <button class="back-btn" @click="switchTab('list')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                  stroke-linejoin="round">
+                  <line x1="19" y1="12" x2="5" y2="12"></line>
+                  <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                返回列表
+              </button>
+              <span class="ticket-status" :class="getStatusClass(selectedTicket.Status)">
+                {{ getStatusName(selectedTicket.Status) }}
+              </span>
+            </div>
+
+            <div class="chat-container" ref="chatContainer">
+              <div v-for="(msg, index) in ticketDetail.contactDetail" :key="index" class="chat-bubble-wrapper"
+                :class="{ 'is-player': msg.MsgBy === 0, 'is-cs': msg.MsgBy === 1 }">
+                <div class="chat-avatar">
+                  <svg v-if="msg.MsgBy === 0" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <svg v-else viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 18v-6a9 9 0 0 1 18 0v6"></path>
+                    <path
+                      d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z">
+                    </path>
+                  </svg>
+                </div>
+                <div class="chat-content">
+                  <div class="chat-bubble">{{ msg.Info }}</div>
+                  <div class="chat-time">{{ msg.CreateTime }}</div>
+                </div>
+              </div>
+
+              <div v-if="ticketDetail.filePath && ticketDetail.filePath.length > 0" class="attachment-area">
+                <h4>夾帶圖片：</h4>
+                <div class="image-preview-area">
+                  <div v-for="(path, index) in ticketDetail.filePath" :key="index" class="preview-item">
+                    <img :src="path" alt="attachment" />
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
 
-          <div v-if="selectedTicket.Status !== 2" class="reply-section">
-            <div class="form-group">
-              <div class="input-wrapper">
-                <textarea v-model="replyText" rows="3" placeholder="請輸入您的回覆..." :disabled="isLoading"></textarea>
+            <div v-if="selectedTicket.Status !== 2" class="reply-section">
+              <div class="form-group">
+                <div class="input-wrapper">
+                  <textarea v-model="replyText" rows="3" placeholder="請輸入您的回覆..." :disabled="isLoading"></textarea>
+                </div>
               </div>
+              <button class="submit-btn" @click="submitReply" :disabled="isLoading || !replyText.trim()">
+                <span v-if="isLoading" class="loader"></span>
+                <span v-else>送出回覆</span>
+              </button>
             </div>
-            <button class="submit-btn" @click="submitReply" :disabled="isLoading || !replyText.trim()">
-              <span v-if="isLoading" class="loader"></span>
-              <span v-else>送出回覆</span>
-            </button>
           </div>
-        </div>
-
+        </transition>
       </main>
     </div>
   </div>
@@ -324,11 +315,14 @@ const viewTicket = async (ticket) => {
       }
       selectedTicket.value.Status = ticketDetail.value.status
 
-      nextTick(() => {
+      setTimeout(() => {
         if (chatContainer.value) {
-          chatContainer.value.scrollTop = chatContainer.value.scrollHeight
+          chatContainer.value.scrollTo({
+            top: chatContainer.value.scrollHeight,
+            behavior: 'smooth' 
+          })
         }
-      })
+      }, 350)
     }
   } catch (error) {
     console.error(error)
@@ -495,6 +489,21 @@ onUnmounted(() => {
 .fade-in-up {
   opacity: 0;
   animation: fadeInUp 0.5s ease-out forwards;
+}
+
+.fade-slide-enter-active,
+.fade-slide-leave-active {
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.fade-slide-enter-from {
+  opacity: 0;
+  transform: translateY(15px);
+}
+
+.fade-slide-leave-to {
+  opacity: 0;
+  transform: translateY(-15px);
 }
 
 .support-view {

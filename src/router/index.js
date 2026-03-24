@@ -65,6 +65,11 @@ const router = createRouter({
       name: 'category',
       component: () => import('../views/CategoryView.vue'),
     },
+    {
+      path: '/recharge',
+      name: 'recharge',
+      component: () => import('../views/RechargeView.vue'),
+    },
     // ==========================================
     // 預留路由，目前註解
     // ==========================================
