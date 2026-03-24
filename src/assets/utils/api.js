@@ -207,6 +207,15 @@ export const replyTicketApi = async (account, token, detailId, info, filesObj) =
   return await sendRequest('/membercontact/addMemberContactReply', requestData)
 }
 
+// 玩家儲值紀錄
+export const fetchChargeListApi = async (account, token) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+  }
+  return await sendRequest('/member/chargeList', requestData)
+}
+
 // 模擬熱門關鍵字 API
 export const fetchHotKeywords = async () => {
   return new Promise((resolve) => {

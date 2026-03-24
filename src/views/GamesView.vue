@@ -60,8 +60,8 @@
             <GameCard :game="game" />
           </div>
         </template>
-        <div v-else style="grid-column: 1 / -1; text-align: center; padding: 40px;">
-          載入中...
+        <div v-else class="loading-wrapper">
+          <LoadingSpinner text="遊戲資料讀取中..." />
         </div>
       </div>
 
@@ -78,6 +78,7 @@ import { ref, computed, onMounted } from 'vue'
 import { fetchFilteredGamesApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 import GameCard from '@/components/GameCard.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const userStore = useUserStore()
 
@@ -120,6 +121,10 @@ const isLoading = ref(true)
 const fetchGames = async () => {
   isLoading.value = true
   try {
+
+    // 測試用延遲
+    // await new Promise(resolve => setTimeout(resolve, 2000))
+
     let labelTypeStr = ''
     if (!selectedIds.value.genre.includes(0)) {
       labelTypeStr = selectedIds.value.genre.join(',')
@@ -421,6 +426,14 @@ onMounted(() => {
 .empty-state p {
   color: var(--color-text-sub);
   font-size: 1rem;
+}
+
+.loading-wrapper {
+  grid-column: 1 / -1; /* 讓載入動畫橫跨所有的 grid 欄位 */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 200px; /* 給予最小高度避免畫面跳動過大 */
 }
 
 @media (max-width: 1024px) {

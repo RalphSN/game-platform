@@ -145,32 +145,42 @@
 
           <section v-else-if="activeTab === 'transactions'" key="transactions" class="content-section">
             <h3 class="section-title">儲值紀錄</h3>
-            <div class="transaction-table-wrapper">
-              <table class="transaction-table">
-                <thead>
-                  <tr>
-                    <th>訂單編號</th>
-                    <th>日期</th>
-                    <th>金額</th>
-                    <th>獲得代幣</th>
-                    <!-- <th>狀態</th> -->
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="tx in transactions" :key="tx.id">
-                    <td>#{{ tx.orderId }}</td>
-                    <td>{{ tx.date }}</td>
-                    <td class="amount">NT$ {{ tx.amount }}</td>
-                    <td class="coins">+{{ tx.coins }} 💎</td>
-                    <!-- <td>
-                      <span class="status-badge" :class="tx.status.toLowerCase()">
-                        {{ tx.statusText }}
-                      </span>
-                    </td> -->
-                  </tr>
-                </tbody>
-              </table>
+
+            <div v-if="isLoadingTransactions" class="loading-state" style="text-align: center; padding: 40px;">
+              <span class="loader"
+                style="border-color: var(--color-primary) transparent var(--color-primary) transparent;"></span>
+              <p>載入中...</p>
             </div>
+
+            <template v-else>
+              <div v-if="transactions.length > 0" class="transaction-table-wrapper">
+                <table class="transaction-table">
+                  <thead>
+                    <tr>
+                      <th>訂單編號</th>
+                      <th>日期</th>
+                      <th>金額</th>
+                      <th>獲得代幣</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="tx in transactions" :key="tx.OrderId">
+                      <td>#{{ tx.OrderId }}</td>
+                      <td>{{ tx.CreateTime }}</td>
+                      <td class="amount">
+                        {{ tx.Currency === 'CNY' ? '¥' : 'NT$' }} {{ tx.Pay }}
+                      </td>
+                      <td class="coins">+{{ tx.Points }} 💎</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div v-else class="empty-state"
+                style="text-align: center; padding: 40px; color: var(--color-text-muted);">
+                <p>目前沒有儲值紀錄</p>
+              </div>
+            </template>
           </section>
 
         </transition>
@@ -182,10 +192,11 @@
 <script setup>
 import { ref, reactive, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { updatePasswordApi, updatePlayerInfoApi, fetchFavoriteListApi } from '@/assets/utils/api'
+import { updatePasswordApi, updatePlayerInfoApi, fetchFavoriteListApi, fetchChargeListApi } from '@/assets/utils/api'
 import GameCard from '@/components/GameCard.vue'
 
 const activeTab = ref('profile')
+
 
 const userStore = useUserStore()
 
@@ -338,11 +349,14 @@ const playHistory = ref([
 const favoriteGames = ref([])
 const isLoadingFavorites = ref(false)
 
-const transactions = ref([
-  { id: 1, orderId: 'TX99201', date: '2023-11-15', amount: 500, coins: 550, status: 'success' },
-  { id: 2, orderId: 'TX99158', date: '2023-11-01', amount: 1000, coins: 1200, status: 'success' },
-  { id: 3, orderId: 'TX98902', date: '2023-10-15', amount: 300, coins: 300, status: 'failed' }
-])
+
+const transactions = ref([])
+const isLoadingTransactions = ref(false)
+// const transactions = ref([
+//   { id: 1, orderId: 'TX99201', date: '2023-11-15', amount: 500, coins: 550, status: 'success' },
+//   { id: 2, orderId: 'TX99158', date: '2023-11-01', amount: 1000, coins: 1200, status: 'success' },
+//   { id: 3, orderId: 'TX98902', date: '2023-10-15', amount: 300, coins: 300, status: 'failed' }
+// ])
 
 watch(activeTab, async (newTab) => {
   if (newTab === 'favorites') {
@@ -361,6 +375,24 @@ watch(activeTab, async (newTab) => {
       console.error('API 錯誤:', error)
     } finally {
       isLoadingFavorites.value = false
+    }
+  }
+  else if (newTab === 'transactions') {
+    isLoadingTransactions.value = true
+    try {
+      const result = await fetchChargeListApi(userStore.account, userStore.token)
+      if (result.code === 0) {
+        transactions.value = result.da || []
+      } else {
+        console.error('獲取儲值紀錄失敗:', result.msg)
+        if (result.code === 3) {
+          setTimeout(() => userStore.logout(), 2000)
+        }
+      }
+    } catch (error) {
+      console.error('API 錯誤:', error)
+    } finally {
+      isLoadingTransactions.value = false
     }
   }
 })

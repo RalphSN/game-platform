@@ -33,7 +33,8 @@ const currentYear = computed(() => new Date().getFullYear())
   background-color: var(--color-bg-footer);
   color: var(--color-footer-text);
   padding: 40px 24px 24px;
-  margin-top: auto;
+  /* margin-top: auto; */
+  margin-top: 5rem;
 }
 
 .footer-container {
