@@ -10,7 +10,8 @@ export default defineConfig({
     vue(),
     // vueDevTools(),
   ],
-  base: '/game-platform/',
+  // base: '/game-platform/',
+  base: '/',
   resolve: {
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))

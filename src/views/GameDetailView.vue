@@ -179,7 +179,7 @@ const fetchGameData = async (gameId) => {
   try {
     const result = await fetchGameInfoApi(userStore.account, userStore.token, gameId)
 
-    if (result.code === 0 && result.da) {
+    if ((result.code === 0 || result.code === 888) && result.da) {
       const data = result.da
       game.value = {
         id: data.GameAutoNo,
@@ -224,7 +224,7 @@ const startGame = () => {
     router.push({
       name: 'play',
       params: { id: game.value.id },
-      query: { token: userStore.token || 'guest_token' }
+      // query: { token: userStore.token || 'guest_token' }
     })
   }, 500)
 }

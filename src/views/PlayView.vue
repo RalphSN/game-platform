@@ -142,18 +142,11 @@ onMounted(() => {
   // 取得路由中的遊戲 ID
   const gameId = route.params.id
 
-  // 從模擬的資料庫中取得基礎網址
+  // 取得基礎網址 (未來這裡會改成打 API拿後端給的真實網址)
   const baseUrl = getBaseGameUrl(gameId)
 
-  // 3. 從 localStorage 或路由 query 中取得 Token (這裡從 localStorage 拿最穩)
-  const token = localStorage.getItem('user_token') || 'guest'
-
-  // 4. 組合最終的 URL，將 Token 當作參數傳給遊戲端
-  // 如果 baseUrl 本身已經有 ? 參數，就要用 & 連接
-  const separator = baseUrl.includes('?') ? '&' : '?'
-  gameUrl.value = `${baseUrl}${separator}token=${token}`
-  // gameUrl.value = baseUrl
-
+  // 依照後端指示：直接開那個 url參數就好，前端不再手動拼接 Token
+  gameUrl.value = baseUrl
 })
 
 onUnmounted(() => {

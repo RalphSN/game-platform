@@ -10,7 +10,8 @@
     "lint": "run-s lint:*",
     "lint:oxlint": "oxlint . --fix",
     "lint:eslint": "eslint . --fix --cache",
-    "format": "prettier --write --experimental-cli src/"
+    "format": "prettier --write --experimental-cli src/",
+    "build:server": "vite build --base=/"
   },
   "dependencies": {
     "pinia": "^3.0.4",

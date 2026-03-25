@@ -17,7 +17,9 @@
     </section>
 
     <div class="feed-container">
-      <div v-if="isLoading" style="text-align: center; padding: 40px;">載入中...</div>
+      <div v-if="isLoading" class="loading-wrapper">
+        <LoadingSpinner text="loading..." />
+      </div>
 
       <template v-else>
         <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" :icon="svgIcons.hot"
@@ -54,6 +56,7 @@ import { fetchGameListAllApi, fetchBannerListAllApi, trackBannerClickApi } from 
 import { useUserStore } from '@/stores/user'
 import GameSection from '@/components/GameSection.vue'
 import AdBanner from '@/components/AdBanner.vue'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 import { useRouter } from 'vue-router'
 
@@ -97,7 +100,7 @@ const loadGames = async () => {
     // 如果是訪客模式 userStore.account 會是空的
     const result = await fetchGameListAllApi(userStore.account, userStore.token)
 
-    if (result.code === 0) {
+    if (result.code === 0 || result.code === 888) {
       hotGames.value = result['7'] || []
       bananaGames.value = result['0'] || []
       actionGames.value = result['2'] || []

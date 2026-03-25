@@ -61,7 +61,7 @@
           </div>
         </template>
         <div v-else class="loading-wrapper">
-          <LoadingSpinner text="遊戲資料讀取中..." />
+          <LoadingSpinner text="loading..." />
         </div>
       </div>
 
@@ -142,7 +142,7 @@ const fetchGames = async () => {
       gameStatusNum
     )
 
-    if (result.code === 0) {
+    if (result.code === 0 || result.code === 888) {
       filteredGames.value = result.da || []
     } else {
       console.error('獲取篩選結果失敗:', result.msg)
