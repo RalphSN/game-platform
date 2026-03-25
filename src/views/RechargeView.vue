@@ -96,11 +96,15 @@
 
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import iconAlipay from '@/assets/images/recharge/alipay.svg'
 import iconWeixin from '@/assets/images/recharge/weixin.svg'
 import iconJkopay from '@/assets/images/recharge/jkopay.svg'
 import iconLinepay from '@/assets/images/recharge/linepay.png'
 import iconApplepay from '@/assets/images/recharge/applepay.png'
+
+const router = useRouter()
+const route = useRoute()
 
 const rechargeData = {
   CNY: {
@@ -200,7 +204,16 @@ const handlePayment = () => {
 
   setTimeout(() => {
     isLoading.value = false
-    alert(`[Mock] 準備前往 ${currentMethod.value.name} 付款 ${selectedOption.value.amount} 元`)
+    alert(`[Mock] 成功前往 ${currentMethod.value.name} 付款 ${selectedOption.value.amount} 元！`)
+
+    const redirectUrl = route.query.redirect
+
+    if (redirectUrl) {
+      router.push(redirectUrl)
+    } else {
+      router.push('/')
+    }
+    selectedOption.value = null
   }, 1000)
 }
 </script>

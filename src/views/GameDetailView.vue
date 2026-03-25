@@ -21,7 +21,8 @@
               </template>
               <template v-else>
                 <span class="tag category-tag">{{ game.category }}</span>
-                <span class="tag players-tag">🔥 {{ formatPlayers(game.players) }} 人在玩</span>
+                <!-- <span class="tag players-tag">🔥{{ formatPlayers(game.players) }} 人 在 遊 玩 </span> -->
+                <span class="tag players-tag">🔥 {{ game.players }} 人 在 遊 玩 </span>
               </template>
             </div>
           </div>
@@ -51,6 +52,39 @@
 
     <div class="content-layout">
       <main class="main-column fade-in-up" style="animation-delay: 0.1s;">
+        <div v-if="game.isLocked && !isLoadingData" class="info-card unlock-card"
+          :class="{ 'highlight-pulse': isPulsing }">
+          <div class="card-header warning-header">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round" class="card-icon warning-icon">
+              <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+              <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+            </svg>
+            <h2>解鎖條件</h2>
+          </div>
+
+          <div class="card-body unlock-content">
+            <template v-if="game.gamePlayStatus === 1">
+              <p class="unlock-desc">此遊戲需要登入會員才能遊玩</p>
+              <div class="unlock-actions">
+                <button class="action-btn"
+                  @click="router.push({ path: '/login', query: { redirect: route.fullPath } })">
+                  前往登入 / 註冊
+                </button>
+              </div>
+            </template>
+
+            <template v-else-if="game.gamePlayStatus === 2">
+              <p class="unlock-desc">
+                需要花費 <strong class="highlight-coins">{{ game.gamePay }}</strong> 代幣以解鎖此遊戲
+              </p>
+              <div class="unlock-actions">
+                <!-- <span class="current-coins">您目前擁有: {{ userStore.points || 0 }} 代幣</span> -->
+                <button class="action-btn unlock-pay-btn" @click="handleUnlockGame">立即解鎖</button>
+              </div>
+            </template>
+          </div>
+        </div>
         <div class="info-card">
           <div class="card-header">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -121,6 +155,7 @@ const userStore = useUserStore()
 
 const isLoading = ref(false)
 const isLoadingData = ref(true)
+const isPulsing = ref(false)
 
 const svgIcons = {
   related: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gamepad2-icon lucide-gamepad-2"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>`,
@@ -136,7 +171,10 @@ const game = ref({
   players: 0,
   description: '',
   isLocked: false,
-  jumpUrl: ''
+  jumpUrl: '',
+
+  gamePlayStatus: 0,
+  gamePay: 0,
 })
 
 // 本地收藏狀態
@@ -191,7 +229,10 @@ const fetchGameData = async (gameId) => {
         players: data.PlayerNum || 0,
         description: data.Introduce || '<p>暫無介紹</p>',
         isLocked: data.Lock,
-        jumpUrl: data.JumpUrl || ''
+        jumpUrl: data.JumpUrl || '',
+
+        gamePlayStatus: data.GamePlayStatus || 0,
+        gamePay: data.GamePay || 0,
       }
       localFavorite.value = data.Favorite
 
@@ -209,7 +250,11 @@ const fetchGameData = async (gameId) => {
 
 const startGame = () => {
   if (game.value.isLocked) {
-    alert('遊戲尚未解鎖！')
+    document.querySelector('.unlock-card')?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    isPulsing.value = true
+    setTimeout(() => {
+      isPulsing.value = false
+    }, 2000)
     return
   }
 
@@ -227,6 +272,47 @@ const startGame = () => {
       // query: { token: userStore.token || 'guest_token' }
     })
   }, 500)
+}
+
+const handleUnlockGame = () => {
+  // 如果沒登入
+  if (!userStore.token) {
+    alert('請先登入！')
+    router.push({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    })
+    return
+  }
+  // 如果餘額不夠
+  if (userStore.points < game.value.gamePay) {
+    alert('代幣餘額不足，請先前往儲值中心！')
+    router.push({
+      path: '/recharge',
+      query: { redirect: route.fullPath }
+    })
+    return
+  }
+
+  try {
+    isLoadingData.value = true // 開啟骨架屏或 Loading
+
+    // TODO: 未來這裡要換成真的 API 呼叫
+    // const result = await unlockGameApi(userStore.account, userStore.token, game.value.id)
+
+    // 模擬打 API 經過了 1 秒鐘
+    setTimeout(() => {
+      alert(`成功花費 ${game.value.gamePay} 代幣解鎖遊戲！`)
+
+      // 解鎖成功後，重新抓取一次遊戲資料
+      // 這樣遊戲的 Lock 狀態就會變成 false，解鎖區塊會自動消失，開始遊戲按鈕亮起來
+      fetchGameData(game.value.id)
+    }, 1000)
+
+  } catch (error) {
+    console.error('解鎖失敗:', error)
+    isLoadingData.value = false
+  }
 }
 
 
@@ -288,6 +374,22 @@ watch(() => route.params.id, (newId) => {
     box-shadow: 0 0 0 0 rgba(94, 96, 206, 0);
   }
 }
+
+@keyframes warningPulse {
+  0% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6);
+  }
+
+  70% {
+    box-shadow: 0 0 0 20px rgba(245, 158, 11, 0);
+  }
+
+  100% {
+    box-shadow: 0 0 0 0 rgba(245, 158, 11, 0);
+  }
+}
+
+
 
 @keyframes spin {
   0% {
@@ -490,6 +592,10 @@ watch(() => route.params.id, (newId) => {
   background-color: rgba(255, 255, 255, 0.15);
   color: #ffffff;
   backdrop-filter: blur(4px);
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
 }
 
 .hero-actions {
@@ -709,6 +815,87 @@ watch(() => route.params.id, (newId) => {
 .description-text.rich-text-content :deep(strong),
 .description-text.rich-text-content :deep(b) {
   font-weight: bold;
+}
+
+/* 解鎖區塊 */
+.unlock-card {
+  border: 2px solid rgba(245, 158, 11, 0.3);
+  background: linear-gradient(to bottom, rgba(245, 158, 11, 0.05), transparent);
+}
+
+.warning-header h2 {
+  color: #f59e0b !important;
+}
+
+.warning-icon {
+  color: #f59e0b;
+}
+
+.unlock-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+  padding: 16px 0;
+}
+
+.unlock-desc {
+  font-size: 1.1rem;
+  color: var(--color-text-main);
+  margin: 0;
+}
+
+.highlight-coins {
+  color: #f59e0b;
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0 4px;
+}
+
+.unlock-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  align-items: center;
+  width: 100%;
+  max-width: 300px;
+}
+
+.current-coins {
+  font-size: 0.9rem;
+  color: var(--color-text-sub);
+}
+
+.action-btn {
+  width: 100%;
+  padding: 12px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 1rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  background-color: var(--color-primary-hover);
+}
+
+.unlock-pay-btn {
+  background-color: #f59e0b;
+}
+
+.unlock-pay-btn:hover {
+  background-color: #d97706;
+}
+
+.highlight-pulse {
+  animation: warningPulse 2s cubic-bezier(0.4, 0, 0.6, 1);
+  border-color: rgba(245, 158, 11, 0.8) !important;
 }
 
 @media (max-width: 768px) {

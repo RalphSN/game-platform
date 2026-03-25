@@ -32,7 +32,8 @@
       <h4 class="game-title">{{ game.GameName }}</h4>
       <div class="game-meta">
         <span class="game-tag">{{ parsedCategory }}</span>
-        <span class="game-players">🔥 {{ formatPlayers(game.PlayerNum) }}</span>
+        <!-- <span class="game-players">🔥 {{ formatPlayers(game.PlayerNum) }}</span> -->
+        <span class="game-players">🔥 {{ game.PlayerNum }}</span>
       </div>
     </div>
   </div>
@@ -333,5 +334,9 @@ watch(
 .game-players {
   color: var(--color-text-sub);
   font-size: 0.8rem;
+
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
 }
 </style>

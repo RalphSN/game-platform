@@ -46,13 +46,14 @@
 
 <script setup>
 import { reactive, ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 
 const userStore = useUserStore()
 
 const router = useRouter()
+const route = useRoute()
 
 const form = reactive({
   account: '',
@@ -91,7 +92,8 @@ const handleLogin = async () => {
       userStore.setLoginData(result.Info.Account, result.Info.Token)
       await userStore.getPlayerInfo(userIP)
       alert('登入成功！')
-      router.push('/')
+      const redirectUrl = route.query.redirect || '/'
+      router.push(redirectUrl)
     } else {
       switch (result.code) {
         case 1: throw new Error('參數錯誤')
