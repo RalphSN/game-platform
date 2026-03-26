@@ -1,8 +1,11 @@
 <template>
   <div class="ad-banner" @click="handleAdClick" style="cursor: pointer;">
     <picture>
-      <source v-if="ad.PicURL2" media="(max-width: 768px)" :srcset="ad.PicURL2" referrerpolicy="no-referrer"/>
-      <img :src="ad.PicURL" alt="廣告" class="ad-img" loading="lazy" referrerpolicy="no-referrer"/>
+      <source v-if="ad.PicURL2" media="(max-width: 768px)" :srcset="getImageUrlWithCacheBuster(ad.PicURL2)"
+        referrerpolicy="no-referrer" />
+
+      <img :src="getImageUrlWithCacheBuster(ad.PicURL)" alt="廣告" class="ad-img" loading="lazy"
+        referrerpolicy="no-referrer" />
     </picture>
 
     <div class="ad-badge">AD</div>
@@ -13,6 +16,7 @@
 <script setup>
 import { useRouter } from 'vue-router'
 import { trackBannerClickApi } from '@/assets/utils/api'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 
 const router = useRouter()
 

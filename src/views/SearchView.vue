@@ -51,6 +51,7 @@
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { searchGames } from '@/assets/utils/api'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 
 const route = useRoute()
 const router = useRouter()
@@ -68,8 +69,11 @@ const performSearch = async (keyword) => {
   isLoading.value = true
   try {
     const res = await searchGames(keyword)
-    if (res.code === 0) {
-      searchResults.value = res.data
+    if (res.code === 0 && res.data) {
+      searchResults.value = res.data.map(game => ({
+        ...game,
+        thumb: getImageUrlWithCacheBuster(game.thumb)
+      }))
     } else {
       searchResults.value = []
     }

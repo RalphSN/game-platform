@@ -146,6 +146,7 @@ import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchGameInfoApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import GameSection from '@/components/GameSection.vue'
 import startIcon from '@/assets/images/icon/start.png'
 
@@ -222,7 +223,7 @@ const fetchGameData = async (gameId) => {
       game.value = {
         id: data.GameAutoNo,
         title: data.GameName,
-        thumb: data.IconURL,
+        thumb: getImageUrlWithCacheBuster(data.IconURL),
         pcBanner: data.Introduce1URL,    // PC版Banner
         mobileBanner: data.Introduce1MURL, // 手機版Banner
         category: getCategoryName(data.LabelType),

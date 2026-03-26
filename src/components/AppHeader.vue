@@ -142,6 +142,7 @@
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import SearchModal from './SearchModal.vue'
 import logoUrl from '@/assets/images/logo/logo-dark.svg'
 // import searchIcon from '@/assets/images/icon/search.png'
@@ -152,7 +153,8 @@ const isMobileMenuOpen = ref(false)
 const isProfileMenuOpen = ref(false)
 const userAvatar = computed(() => {
   const name = userStore.nickname || userStore.account || 'Player'
-  return `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
+  const originalUrl = `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
+  return getImageUrlWithCacheBuster(originalUrl)
 })
 const isSearchOpen = ref(false)
 

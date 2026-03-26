@@ -45,7 +45,7 @@
             </div>
             <div class="tag-list">
               <span v-for="item in hotKeywords" :key="item" class="tag hot-tag" @click="applyKeyword(item)">{{ item
-                }}</span>
+              }}</span>
             </div>
           </div>
         </div>
@@ -59,6 +59,7 @@
 import { ref, onMounted, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
 import { fetchHotKeywords, searchGames } from '@/assets/utils/api'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 
 const props = defineProps({
   isOpen: Boolean
@@ -135,7 +136,14 @@ const handleInput = () => {
   isSearching.value = true
   debounceTimer = setTimeout(async () => {
     const res = await searchGames(keyword.value.trim())
-    if (res.code === 0) searchResults.value = res.data
+    if (res.code === 0 && res.data) {
+      searchResults.value = res.data.map(game => ({
+        ...game,
+        thumb: getImageUrlWithCacheBuster(game.thumb)
+      }))
+    } else {
+      searchResults.value = []
+    }
     isSearching.value = false
   }, 400)
 }

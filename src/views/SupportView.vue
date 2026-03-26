@@ -226,6 +226,7 @@ import {
   submitTicketApi,
   replyTicketApi
 } from '@/assets/utils/api'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 
 const userStore = useUserStore()
 
@@ -308,8 +309,10 @@ const viewTicket = async (ticket) => {
   try {
     const res = await fetchTicketDetailApi(userStore.account, userStore.token, ticket.AutoNo)
     if (res.code === 0) {
+      const rawFilePaths = res.filePath || []
+
       ticketDetail.value = {
-        filePath: res.filePath || [],
+        filePath: rawFilePaths.map(path => getImageUrlWithCacheBuster(path)),
         contactDetail: res.contactDetail || [],
         status: res.status !== undefined ? res.status : ticket.Status
       }
@@ -319,7 +322,7 @@ const viewTicket = async (ticket) => {
         if (chatContainer.value) {
           chatContainer.value.scrollTo({
             top: chatContainer.value.scrollHeight,
-            behavior: 'smooth' 
+            behavior: 'smooth'
           })
         }
       }, 350)

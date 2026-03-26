@@ -54,6 +54,7 @@
 import { ref, onMounted, onUnmounted } from 'vue'
 import { fetchGameListAllApi, fetchBannerListAllApi, trackBannerClickApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import GameSection from '@/components/GameSection.vue'
 import AdBanner from '@/components/AdBanner.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
@@ -120,9 +121,14 @@ const loadGames = async () => {
 const loadBanners = async () => {
   try {
     const result = await fetchBannerListAllApi(userStore.account, userStore.token)
+    if (result.code === 0 || result.code === 888) {
 
-    if (result.code === 0) {
-      banners.value = result['1'] || []
+      const rawBanners = result['1'] || []
+      banners.value = rawBanners.map(banner => ({
+        ...banner,
+        PicURL: getImageUrlWithCacheBuster(banner.PicURL),
+        PicURL2: getImageUrlWithCacheBuster(banner.PicURL2)
+      }))
 
       adMiddle.value = result['2']?.[0] || null
       adLeft.value = result['3']?.[0] || null

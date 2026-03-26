@@ -1,7 +1,7 @@
 <template>
   <div class="game-card" :class="{ 'is-locked': game.Lock }" @click="goToGame">
     <div class="thumb-wrapper">
-      <img :src="game.IconURL || defaultThumb" :alt="game.GameName" class="game-thumb" loading="lazy" />
+      <img :src="getImageUrlWithCacheBuster(game.IconURL) || defaultThumb" :alt="game.GameName" class="game-thumb" loading="lazy" />
 
       <div v-if="game.Lock" class="lock-indicator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -43,6 +43,7 @@
 import { computed, ref, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import defaultThumb from '@/assets/images/default-img.jpg'
 
 const props = defineProps({

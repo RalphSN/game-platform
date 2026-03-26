@@ -193,6 +193,7 @@
 import { ref, reactive, computed, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { updatePasswordApi, updatePlayerInfoApi, fetchFavoriteListApi, fetchChargeListApi } from '@/assets/utils/api'
+import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import GameCard from '@/components/GameCard.vue'
 
 const activeTab = ref('profile')
@@ -363,9 +364,13 @@ watch(activeTab, async (newTab) => {
     isLoadingFavorites.value = true
     try {
       const result = await fetchFavoriteListApi(userStore.account, userStore.token)
-      if (result.code === 0) {
-        favoriteGames.value = result.da || []
+      if (result.code === 0 && result.da) {
+        favoriteGames.value = result.da.map(game => ({
+          ...game,
+          IconURL: getImageUrlWithCacheBuster(game.IconURL)
+        }))
       } else {
+        favoriteGames.value = []
         console.error('獲取收藏清單失敗:', result.msg)
         if (result.code === 3) {
           setTimeout(() => userStore.logout(), 2000)
