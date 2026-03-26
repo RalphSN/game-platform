@@ -142,7 +142,7 @@ export const fetchGameInfoApi = async (account, token, gameId) => {
   const requestData = {
     Account: account,
     Token: token,
-    GameAutoNo: parseInt(gameId, 10)
+    GameAutoNo: parseInt(gameId, 10),
   }
   return await sendRequest('/game/gameInfo', requestData)
 }
@@ -162,7 +162,7 @@ export const trackBannerClickApi = async (bannerNo) => {
 
   const requestData = {
     CreateIP: currentIp,
-    No: parseInt(bannerNo)
+    No: parseInt(bannerNo),
   }
   return await sendRequest('/ctrate/bannerHit', requestData)
 }
@@ -178,7 +178,7 @@ export const fetchTicketDetailApi = async (account, token, detailId) => {
   const requestData = {
     Account: account,
     Token: token,
-    DetailID: parseInt(detailId)
+    DetailID: parseInt(detailId),
   }
   return await sendRequest('/membercontact/memberContactDetail', requestData)
 }
@@ -190,7 +190,7 @@ export const submitTicketApi = async (account, token, type, info, filesObj) => {
     Token: token,
     Type: parseInt(type),
     Info: info,
-    ...filesObj
+    ...filesObj,
   }
   return await sendRequest('/membercontact/addMemberContact', requestData)
 }
@@ -202,7 +202,7 @@ export const replyTicketApi = async (account, token, detailId, info, filesObj) =
     Token: token,
     DetailID: parseInt(detailId),
     Info: info,
-    ...filesObj
+    ...filesObj,
   }
   return await sendRequest('/membercontact/addMemberContactReply', requestData)
 }
@@ -214,6 +214,15 @@ export const fetchChargeListApi = async (account, token) => {
     Token: token,
   }
   return await sendRequest('/member/chargeList', requestData)
+}
+
+// 取得單一遊戲網址
+export const fetchGamePlayUrlApi = async (account, token, gameId) => {
+  return await sendRequest('/game/gamePlay', {
+    Account: account || '',
+    Token: token || '',
+    GameAutoNo: Number(gameId),
+  })
 }
 
 // 模擬熱門關鍵字 API

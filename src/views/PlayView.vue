@@ -59,7 +59,10 @@
 
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { fetchGamePlayUrlApi } from '@/assets/utils/api'
 
+const userStore = useUserStore()
 const router = useRouter()
 const route = useRoute()
 const playContainer = ref(null)
@@ -70,11 +73,13 @@ const isFullscreen = ref(false)
 const isToolbarHidden = ref(false)
 const showExitWarning = ref(false)
 let hideToolbarTimer = null
+let loadingTimeout = null
 
 const gameUrl = ref('')
 
 const handleLoad = () => {
   isLoading.value = false
+  clearTimeout(loadingTimeout)
   startToolbarTimer()
 }
 
@@ -124,36 +129,67 @@ const handleMouseMove = () => {
 }
 
 // 建立模擬的遊戲網址資料庫
-const getBaseGameUrl = (gameId) => {
-  const gameMap = {
-    '1': 'http://60.250.78.9:8081/',
-    '2': 'http://60.250.78.9:8082/'
-    // 可以繼續新增其他 ID 的對應
-  }
-  // 如果找不到對應的 ID，回傳一個預設網址或錯誤提示頁面
-  return gameMap[gameId] || 'http://60.250.78.9:8081/'
-}
+// const getBaseGameUrl = (gameId) => {
+//   const gameMap = {
+//     '1': 'http://60.250.78.9:8081/',
+//     '2': 'http://60.250.78.9:8082/'
+//     // 可以繼續新增其他 ID 的對應
+//   }
+//   // 如果找不到對應的 ID，回傳一個預設網址或錯誤提示頁面
+//   return gameMap[gameId] || 'http://60.250.78.9:8081/'
+// }
 
-onMounted(() => {
+onMounted(async () => {
+  document.body.style.overflow = 'hidden'
+  document.body.style.overscrollBehavior = 'none'
+
   document.addEventListener('fullscreenchange', handleFullscreenChange)
   window.addEventListener('mousemove', handleMouseMove)
   window.addEventListener('touchstart', handleMouseMove)
 
-  // 取得路由中的遊戲 ID
   const gameId = route.params.id
 
-  // 取得基礎網址 (未來這裡會改成打 API拿後端給的真實網址)
-  const baseUrl = getBaseGameUrl(gameId)
+  try {
+    const result = await fetchGamePlayUrlApi(userStore.account, userStore.token, gameId)
 
-  // 依照後端指示：直接開那個 url參數就好，前端不再手動拼接 Token
-  gameUrl.value = baseUrl
+    if (result.code === 0 && result.url) {
+      gameUrl.value = result.url
+
+      loadingTimeout = setTimeout(() => {
+        if (isLoading.value) {
+          alert('遊戲伺服器連線超時，請檢查網路或稍後再試')
+          router.replace(`/game/${gameId}`)
+        }
+      }, 15000)
+
+    } else {
+      if (result.code === 3) {
+        alert('訪客模式無法遊玩此遊戲，請先登入')
+      } else if (result.code === 4) {
+        alert('您尚未解鎖此遊戲，請先進行解鎖')
+      } else if (result.code === 999) {
+        alert('帳號遭封鎖')
+      } else {
+        alert(result.msg || '無法取得遊戲網址，請稍後再試')
+      }
+      router.replace(`/game/${gameId}`)
+    }
+  } catch (error) {
+    console.error('取得遊戲網址發生錯誤:', error)
+    alert('系統連線錯誤，請稍後再試')
+    router.replace(`/game/${gameId}`)
+  }
 })
 
 onUnmounted(() => {
+  document.body.style.overflow = 'auto'
+  document.body.style.overscrollBehavior = 'auto'
+
   document.removeEventListener('fullscreenchange', handleFullscreenChange)
   window.removeEventListener('mousemove', handleMouseMove)
   window.removeEventListener('touchstart', handleMouseMove)
   clearTimeout(hideToolbarTimer)
+  clearTimeout(loadingTimeout)
 })
 </script>
 
