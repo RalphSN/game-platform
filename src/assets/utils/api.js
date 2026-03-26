@@ -225,6 +225,38 @@ export const fetchGamePlayUrlApi = async (account, token, gameId) => {
   })
 }
 
+// 取得支付方式列表
+export const fetchPayTypeApi = async (account, token) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+  }
+  return await sendRequest('/pay/paytype', requestData)
+}
+
+// 新增支付訂單
+export const addPayOrderApi = async (account, token, payType, payAmount) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    PayType: parseInt(payType),
+    Pay: parseInt(payAmount),
+    PlayerDev: 0, // 依據規格書預設 0: PC
+  }
+  return await sendRequest('/pay/addPayOrder', requestData)
+}
+
+// 購買/解鎖遊戲 API
+export const buyGameApi = async (account, token, gameId) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    GameAutoNo: parseInt(gameId),
+    PlayerDev: 0,
+  }
+  return await sendRequest('/game/gameBuy', requestData)
+}
+
 // 模擬熱門關鍵字 API
 export const fetchHotKeywords = async () => {
   return new Promise((resolve) => {

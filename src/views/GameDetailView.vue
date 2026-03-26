@@ -80,7 +80,10 @@
               </p>
               <div class="unlock-actions">
                 <!-- <span class="current-coins">您目前擁有: {{ userStore.points || 0 }} 代幣</span> -->
-                <button class="action-btn unlock-pay-btn" @click="handleUnlockGame">立即解鎖</button>
+                <button class="action-btn unlock-pay-btn" @click="handleUnlockGame" :disabled="isBuying">
+                  <span v-if="isBuying" class="loader" style="width: 20px; height: 20px; border-width: 2px;"></span>
+                  <span v-else>立即解鎖</span>
+                </button>
               </div>
             </template>
           </div>
@@ -144,7 +147,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchGameInfoApi } from '@/assets/utils/api'
+import { fetchGameInfoApi, buyGameApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import GameSection from '@/components/GameSection.vue'
@@ -157,6 +160,7 @@ const userStore = useUserStore()
 const isLoading = ref(false)
 const isLoadingData = ref(true)
 const isPulsing = ref(false)
+const isBuying = ref(false)
 
 const svgIcons = {
   related: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-gamepad2-icon lucide-gamepad-2"><line x1="6" x2="10" y1="11" y2="11"/><line x1="8" x2="8" y1="9" y2="13"/><line x1="15" x2="15.01" y1="12" y2="12"/><line x1="18" x2="18.01" y1="10" y2="10"/><path d="M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/></svg>`,
@@ -275,44 +279,58 @@ const startGame = () => {
   }, 500)
 }
 
-const handleUnlockGame = () => {
-  // 如果沒登入
+const handleUnlockGame = async () => {
   if (!userStore.token) {
     alert('請先登入！')
-    router.push({
-      path: '/login',
-      query: { redirect: route.fullPath }
-    })
-    return
-  }
-  // 如果餘額不夠
-  if (userStore.points < game.value.gamePay) {
-    alert('代幣餘額不足，請先前往儲值中心！')
-    router.push({
-      path: '/recharge',
-      query: { redirect: route.fullPath }
-    })
+    router.push({ path: '/login', query: { redirect: route.fullPath } })
     return
   }
 
+  // 把儲值幣免費幣加起來當作總財產來判斷
+  const totalPoints = userStore.points + userStore.freePoints
+  if (totalPoints < game.value.gamePay) {
+    if (confirm('代幣餘額不足，是否要前往儲值中心？')) {
+      router.push({ path: '/recharge', query: { redirect: route.fullPath } })
+    }
+    return
+  }
+
+  // 二次確認
+  if (!confirm(`確定要花費 ${game.value.gamePay} 代幣解鎖此遊戲嗎？`)) return
+
+  isBuying.value = true
   try {
-    isLoadingData.value = true // 開啟骨架屏或 Loading
+    // 購買 API
+    const result = await buyGameApi(userStore.account, userStore.token, game.value.id)
 
-    // TODO: 未來這裡要換成真的 API 呼叫
-    // const result = await unlockGameApi(userStore.account, userStore.token, game.value.id)
+    if (result.code === 0) {
+      alert('解鎖成功！馬上開始遊玩吧！')
 
-    // 模擬打 API 經過了 1 秒鐘
-    setTimeout(() => {
-      alert(`成功花費 ${game.value.gamePay} 代幣解鎖遊戲！`)
+      // 重新抓取一次遊戲資料 (讓畫面的黃色解鎖框消失)
+      await fetchGameData(game.value.id)
 
-      // 解鎖成功後，重新抓取一次遊戲資料
-      // 這樣遊戲的 Lock 狀態就會變成 false，解鎖區塊會自動消失，開始遊戲按鈕亮起來
-      fetchGameData(game.value.id)
-    }, 1000)
+      // 呼叫Store
+      await userStore.getPlayerInfo()
 
+    } else {
+      // 攔截後端的錯誤狀態
+      if (result.code === 2 || result.code === 3) {
+        alert('無法購買：訪客模式或遊戲不存在！')
+      } else if (result.code === 6) {
+        if (confirm('您的點數餘額不足，是否要前往儲值中心？')) {
+          router.push('/recharge')
+        }
+      } else if (result.code === 999) {
+        alert('帳號遭封鎖(IP)！')
+      } else {
+        alert(result.msg || '解鎖失敗，請稍後再試')
+      }
+    }
   } catch (error) {
-    console.error('解鎖失敗:', error)
-    isLoadingData.value = false
+    console.error('解鎖發生錯誤:', error)
+    alert('系統連線錯誤，請稍後再試')
+  } finally {
+    isBuying.value = false
   }
 }
 

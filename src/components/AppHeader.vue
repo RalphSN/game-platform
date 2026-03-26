@@ -175,7 +175,9 @@ const handleLogoutAndCloseMenu = () => {
 }
 
 onMounted(() => {
-
+  if (userStore.token) {
+    userStore.getPlayerInfo()
+  }
 })
 
 onUnmounted(() => {

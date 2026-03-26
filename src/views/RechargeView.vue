@@ -84,8 +84,8 @@
             {{ currentCurrency === 'CNY' ? '¥' : 'NT$' }} {{ selectedOption ? selectedOption.amount : '0' }}
           </span>
         </div>
-        <button class="submit-btn" :disabled="!selectedOption || isLoading" @click="handlePayment">
-          <span v-if="isLoading" class="loader"></span>
+        <button class="submit-btn" :disabled="!selectedOption || isSubmitting" @click="handlePayment">
+          <span v-if="isSubmitting" class="loader"></span>
           <span v-else>前往付款</span>
         </button>
       </div>
@@ -97,86 +97,37 @@
 <script setup>
 import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
+import { useUserStore } from '@/stores/user'
+import { fetchPayTypeApi, addPayOrderApi } from '@/assets/utils/api'
+
+import defaultPayIcon from '@/assets/images/recharge/mycard.png'
 import iconAlipay from '@/assets/images/recharge/alipay.svg'
-import iconWeixin from '@/assets/images/recharge/weixin.svg'
-import iconJkopay from '@/assets/images/recharge/jkopay.svg'
-import iconLinepay from '@/assets/images/recharge/linepay.png'
-import iconApplepay from '@/assets/images/recharge/applepay.png'
+import iconFamilymart from '@/assets/images/recharge/familymart.png'
+import iconHilife from '@/assets/images/recharge/hilife.png'
+import icon711 from '@/assets/images/recharge/711.png'
+import iconCtbc from '@/assets/images/recharge/ctbc.png'
+import iconHwanan from '@/assets/images/recharge/hwanan.png'
+import iconShanghai from '@/assets/images/recharge/shanghai.png'
+import iconCreditcard from '@/assets/images/recharge/creditcard.png'
+// import iconWeixin from '@/assets/images/recharge/weixin.svg'
+// import iconJkopay from '@/assets/images/recharge/jkopay.svg'
+// import iconLinepay from '@/assets/images/recharge/linepay.png'
+// import iconApplepay from '@/assets/images/recharge/applepay.png'
 
 const router = useRouter()
-const route = useRoute()
+// const route = useRoute()
+const userStore = useUserStore()
 
-const rechargeData = {
-  CNY: {
-    label: '人民幣 (CNY)',
-    methods: [
-      {
-        id: 'alipay',
-        name: '支付寶',
-        icon: iconAlipay, options: [
-          { id: 'cny_ali_1', amount: 10, points: 100 },
-          { id: 'cny_ali_2', amount: 20, points: 200 },
-          { id: 'cny_ali_3', amount: 30, points: 300 },
-          { id: 'cny_ali_4', amount: 50, points: 520 },
-        ]
-      },
-      {
-        id: 'wechat',
-        name: '微信支付',
-        icon: iconWeixin, options: [
-          { id: 'cny_wc_1', amount: 15, points: 150 },
-          { id: 'cny_wc_2', amount: 30, points: 300 },
-          { id: 'cny_wc_3', amount: 60, points: 620 },
-          { id: 'cny_wc_4', amount: 100, points: 1050 },
-        ]
-      }
-    ]
-  },
-  TWD: {
-    label: '新台幣 (TWD)',
-    methods: [
-      {
-        id: 'jkopay',
-        name: '街口支付',
-        icon: iconJkopay, options: [
-          { id: 'twd_jko_1', amount: 50, points: 100 },
-          { id: 'twd_jko_2', amount: 150, points: 300 },
-          { id: 'twd_jko_3', amount: 300, points: 610 },
-          { id: 'twd_jko_4', amount: 500, points: 1050 },
-        ]
-      },
-      {
-        id: 'linepay',
-        name: 'LINE Pay',
-        icon: iconLinepay, options: [
-          { id: 'twd_line_1', amount: 100, points: 200 },
-          { id: 'twd_line_2', amount: 300, points: 600 },
-          { id: 'twd_line_3', amount: 500, points: 1020 },
-          { id: 'twd_line_4', amount: 1000, points: 2100 },
-        ]
-      },
-      {
-        id: 'applepay',
-        name: 'Apple Pay',
-        icon: iconApplepay, options: [
-          { id: 'twd_apple_1', amount: 80, points: 160 },
-          { id: 'twd_apple_2', amount: 240, points: 480 },
-          { id: 'twd_apple_3', amount: 500, points: 1100 },
-          { id: 'twd_apple_4', amount: 1000, points: 2200 },
-        ]
-      },
-    ]
-  }
-}
-
+const rechargeData = ref({})
 
 const currentCurrency = ref('CNY')
 const currentMethod = ref(null)
 const selectedOption = ref(null)
 const isLoading = ref(false)
+const isSubmitting = ref(false)
 
 const availableMethods = computed(() => {
-  return rechargeData[currentCurrency.value]?.methods || []
+  return rechargeData.value[currentCurrency.value]?.methods || []
 })
 
 watch(currentCurrency, () => {
@@ -192,30 +143,135 @@ watch(currentMethod, () => {
   selectedOption.value = null
 })
 
-onMounted(() => {
-  if (availableMethods.value.length > 0) {
-    currentMethod.value = availableMethods.value[0]
+const getPayIcon = (title) => {
+  if (title.includes('支付寶')) return iconAlipay
+  if (title.includes('信用卡')) return iconCreditcard
+  if (title.includes('全家')) return iconFamilymart
+  if (title.includes('萊爾富')) return iconHilife
+  if (title.includes('中信')) return iconCtbc
+  if (title.includes('華南')) return iconHwanan
+  if (title.includes('上海')) return iconShanghai
+  if (title.includes('7-11') || title.includes('IBON')) return icon711
+
+
+  // 如果都不符合，回傳預設圖示 (防呆)
+  return defaultPayIcon
+}
+
+// 載入支付方式資料
+const loadPayTypes = async () => {
+  if (!userStore.token) {
+    alert('請先登入會員')
+    router.push('/login')
+    return
   }
+
+  isLoading.value = true
+  try {
+    const result = await fetchPayTypeApi(userStore.account, userStore.token)
+
+    if (result.code === 0 && result.da) {
+      const parsedData = {}
+
+      for (const [currencyKey, methodsArray] of Object.entries(result.da)) {
+
+        const parsedMethods = methodsArray.map(item => {
+          // 將 "30,50,90" 切割成陣列
+          const amounts = item.Amount.split(',')
+          const points = item.MatchPoint.split(',')
+
+          const options = amounts.map((amt, index) => ({
+            id: `${item.AutoNo}_${index}`,
+            amount: parseInt(amt),
+            points: parseInt(points[index] || amt) // 如果points陣列長度不對拿amount頂替
+          }))
+
+          return {
+            id: item.AutoNo,
+            name: item.Title,
+            icon: getPayIcon(item.Title),
+            options: options
+          }
+        })
+
+        parsedData[currencyKey] = {
+          label: currencyKey === 'CNY' ? '人民幣 (CNY)' : (currencyKey === 'TWD' ? '新台幣 (TWD)' : currencyKey),
+          methods: parsedMethods
+        }
+      }
+
+      rechargeData.value = parsedData
+
+      const availableCurrencies = Object.keys(parsedData)
+      if (availableCurrencies.length > 0) {
+        const firstCurrency = availableCurrencies[0]
+        currentCurrency.value = firstCurrency
+        currentMethod.value = parsedData[firstCurrency].methods[0] || null
+      }
+
+    } else {
+      alert(result.msg || '獲取支付方式失敗')
+    }
+  } catch (error) {
+    console.error('取得支付方式發生錯誤:', error)
+    alert('系統連線錯誤，請稍後再試')
+  } finally {
+    isLoading.value = false
+  }
+}
+
+// 前往付款
+const handlePayment = async () => {
+  if (!selectedOption.value || !currentMethod.value) return
+  isSubmitting.value = true
+
+  try {
+    const result = await addPayOrderApi(
+      userStore.account,
+      userStore.token,
+      currentMethod.value.id, // PayType (AutoNo)
+      selectedOption.value.amount // Pay (金額)
+    )
+
+    if (result.code === 0 && result.da) {
+      const data = result.da
+
+      // FormData為'Y'後端會傳送 FORM 碼
+      if (data.FormData === 'Y' && data.FormInfo) {
+        // 建立一個暫時的 div 來裝載後端給的 form
+        const tempDiv = document.createElement('div')
+        tempDiv.innerHTML = data.FormInfo
+        tempDiv.style.display = 'none'
+        document.body.appendChild(tempDiv)
+
+        // 找到form自動送出
+        const formElement = tempDiv.querySelector('form')
+        if (formElement) {
+          formElement.submit()
+        } else {
+          alert('金流表單解析失敗，請聯繫客服')
+          isSubmitting.value = false
+        }
+      }
+      // FormData為'N'直接跳轉網址
+      else if (data.OpenURL) {
+        window.location.href = data.OpenURL
+      }
+    } else {
+      alert(result.msg || '建立訂單失敗')
+      isSubmitting.value = false
+    }
+  } catch (error) {
+    console.error('建立訂單發生錯誤:', error)
+    alert('系統連線錯誤，請稍後再試')
+    isSubmitting.value = false
+  }
+}
+
+onMounted(() => {
+  loadPayTypes()
 })
 
-const handlePayment = () => {
-  if (!selectedOption.value) return
-  isLoading.value = true
-
-  setTimeout(() => {
-    isLoading.value = false
-    alert(`[Mock] 成功前往 ${currentMethod.value.name} 付款 ${selectedOption.value.amount} 元！`)
-
-    const redirectUrl = route.query.redirect
-
-    if (redirectUrl) {
-      router.push(redirectUrl)
-    } else {
-      router.push('/')
-    }
-    selectedOption.value = null
-  }, 1000)
-}
 </script>
 
 <style scoped>
@@ -409,11 +465,15 @@ const handlePayment = () => {
 .method-icon img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
+
+  mix-blend-mode: multiply
 }
 
 .method-name {
   font-weight: 600;
   color: var(--color-text-main);
+  text-align: center;
 }
 
 .check-circle {
