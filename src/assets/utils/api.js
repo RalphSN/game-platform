@@ -126,15 +126,46 @@ export const fetchGameListAllApi = async (account = '', token = '') => {
 }
 
 // 取得篩選遊戲清單
-export const fetchFilteredGamesApi = async (account, token, labelType, conformAny, gameStatus) => {
+export const fetchFilteredGamesApi = async (
+  account,
+  token,
+  labelType,
+  conformAny,
+  gameStatus,
+  keyword = '',
+  start = 0,
+  length = 20,
+) => {
   const requestData = {
     Account: account,
     Token: token,
     LabelType: labelType, //  "1,2" 或者 "0"
     ConformAny: conformAny, // "Y" (任一) 或 "N" (全部)
     GameStatus: gameStatus, // 0 (全部), 1 (已解鎖), 2 (未解鎖)
+
+    Keyword: keyword,
+    Start: start,
+    Length: length,
   }
   return await sendRequest('/game/gameList', requestData)
+}
+
+// 取得玩家最近搜尋
+export const getRecentSearchApi = async (account, token, length = 6) => {
+  const requestData = {
+    Account: account || '',
+    Token: token || '',
+    Length: length,
+  }
+  return await sendRequest('/game/keySearch', requestData)
+}
+
+// 取得熱門搜尋
+export const getHotSearchApi = async (length = 6) => {
+  const requestData = {
+    Length: length,
+  }
+  return await sendRequest('/game/keyHotSearch', requestData)
 }
 
 // 取得單一遊戲詳細資訊

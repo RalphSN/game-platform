@@ -220,8 +220,6 @@
 <script setup>
 import { reactive, ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { useUserStore } from '@/stores/user'
-import { useRouter, useRoute } from 'vue-router'
-import { showToast, showDialog } from '@/assets/utils/swal'
 import {
   fetchTicketListApi,
   fetchTicketDetailApi,
@@ -231,8 +229,6 @@ import {
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 
 const userStore = useUserStore()
-const router = useRouter()
-const route = useRoute()
 
 const chatContainer = ref(null)
 
@@ -354,10 +350,10 @@ const submitReply = async () => {
     if (response.code === 0) {
       await viewTicket(selectedTicket.value)
     } else {
-      showDialog('回覆失敗', response.msg, 'error')
+      alert(response.msg || '回覆失敗')
     }
   } catch (error) {
-    showDialog('系統連線錯誤', '請稍後再試', 'error')
+    alert('連線失敗，請稍後再試。')
   } finally {
     isLoading.value = false
   }
@@ -384,7 +380,7 @@ const handleFileProcessing = (newFiles) => {
   Array.from(newFiles).forEach(file => {
     if (previewImages.value.length >= 3) return
     if (!allowedTypes.includes(file.type)) {
-      showToast('僅支援 JPG 與 PNG 圖片格式','warning')
+      alert('僅支援 JPG 與 PNG 圖片格式')
       return
     }
 
@@ -419,7 +415,7 @@ const removeImage = (index) => {
 }
 
 const handleSubmit = async () => {
-  if (!userStore.account) return showToast('請先登入','warning')
+  if (!userStore.account) return alert('請先登入！')
   isLoading.value = true
 
   try {
@@ -439,10 +435,10 @@ const handleSubmit = async () => {
       ticketId.value = response.LastAutoNo || ''
       isSuccess.value = true
     } else {
-      showDialog('送出失敗', response.msg, 'error')
+      alert(response.msg || '送出失敗')
     }
   } catch (error) {
-    showDialog('系統連線錯誤', '請稍後再試', 'error')
+    alert('連線失敗，請稍後再試。')
   } finally {
     isLoading.value = false
   }
@@ -460,14 +456,6 @@ const resetForm = () => {
 }
 
 onMounted(() => {
-  if (!userStore.token) {
-    showToast('請先登入會員','warning')
-    router.replace({
-      path: '/login',
-      query: { redirect: route.fullPath }
-    })
-    return
-  }
   if (currentTab.value === 'list') {
     loadTicketList()
   }

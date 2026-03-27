@@ -29,23 +29,25 @@
         </div>
 
         <div class="search-default-area" v-else>
-          <div class="section-block" v-if="history.length > 0">
+          <div class="section-block" v-if="userStore.token && recentSearches.length > 0">
             <div class="section-header">
               <h3>最近搜尋</h3>
-              <button class="text-action" @click="clearHistory">清除</button>
             </div>
             <div class="tag-list">
-              <span v-for="item in history" :key="item" class="tag" @click="applyKeyword(item)">{{ item }}</span>
+              <span v-for="item in recentSearches" :key="item" class="tag" @click="applyKeyword(item)">
+                {{ item }}
+              </span>
             </div>
           </div>
 
-          <div class="section-block">
+          <div class="section-block" v-if="hotSearches.length > 0">
             <div class="section-header">
               <h3>熱門搜尋</h3>
             </div>
             <div class="tag-list">
-              <span v-for="item in hotKeywords" :key="item" class="tag hot-tag" @click="applyKeyword(item)">{{ item
-              }}</span>
+              <span v-for="item in hotSearches" :key="item" class="tag hot-tag" @click="applyKeyword(item)">
+                {{ item }}
+              </span>
             </div>
           </div>
         </div>
@@ -56,10 +58,11 @@
 </template>
 
 <script setup>
-import { ref, onMounted, watch, nextTick } from 'vue'
+import { ref, watch, nextTick } from 'vue'
 import { useRouter } from 'vue-router'
-import { fetchHotKeywords, searchGames } from '@/assets/utils/api'
+import { getRecentSearchApi, getHotSearchApi, fetchFilteredGamesApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
+import { useUserStore } from '@/stores/user'
 
 const props = defineProps({
   isOpen: Boolean
@@ -67,24 +70,28 @@ const props = defineProps({
 
 const emit = defineEmits(['update:isOpen'])
 const router = useRouter()
+const userStore = useUserStore()
 
 const searchInput = ref(null)
 const keyword = ref('')
 const isSearching = ref(false)
 const searchResults = ref([])
-const history = ref([])
-const hotKeywords = ref([])
+
+const recentSearches = ref([])
+const hotSearches = ref([])
 
 let debounceTimer = null
 
-// 自動聚焦功能
-watch(() => props.isOpen, (newVal) => {
-  if (newVal) {
-    nextTick(() => {
-      searchInput.value?.focus()
-    })
-  }
-})
+// 分類名稱轉換
+const categoryMap = {
+  '1': '休閒益智', '2': '動作闖關', '3': '策略塔防', '4': '模擬經營',
+  '5': '競技對戰', '6': '角色冒險', '7': '精選合集'
+}
+const getCategoryName = (labelStr) => {
+  if (!labelStr) return '未分類'
+  const firstCode = labelStr.split(',')[0]
+  return categoryMap[firstCode] || '未分類'
+}
 
 const closeModal = () => {
   emit('update:isOpen', false)
@@ -95,34 +102,9 @@ const closeModal = () => {
 const clearKeyword = () => {
   keyword.value = ''
   searchResults.value = []
-  // 清除後重新聚焦
   nextTick(() => {
     searchInput.value?.focus()
   })
-}
-
-const loadHistory = () => {
-  const saved = localStorage.getItem('search_history')
-  if (saved) {
-    history.value = JSON.parse(saved)
-  }
-}
-
-const saveHistory = (term) => {
-  if (!term.trim()) return
-  const newHistory = [term, ...history.value.filter(i => i !== term)].slice(0, 5)
-  history.value = newHistory
-  localStorage.setItem('search_history', JSON.stringify(newHistory))
-}
-
-const clearHistory = () => {
-  history.value = []
-  localStorage.removeItem('search_history')
-}
-
-const fetchHot = async () => {
-  const res = await fetchHotKeywords()
-  if (res.code === 0) hotKeywords.value = res.data
 }
 
 const handleInput = () => {
@@ -135,45 +117,53 @@ const handleInput = () => {
 
   isSearching.value = true
   debounceTimer = setTimeout(async () => {
-    const res = await searchGames(keyword.value.trim())
-    if (res.code === 0 && res.data) {
-      searchResults.value = res.data.map(game => ({
-        ...game,
-        thumb: getImageUrlWithCacheBuster(game.thumb)
-      }))
-    } else {
+    try {
+      // 呼叫真實 API，設定 Length = 4 (只抓 4 筆當預覽)
+      const res = await fetchFilteredGamesApi(
+        userStore.account || '',
+        userStore.token || '',
+        '0', 'N', 0,
+        keyword.value.trim(),
+        0, 4
+      )
+
+      if ((res.code === 0 || res.code === 888) && res.da) {
+        searchResults.value = res.da.map(game => ({
+          id: game.GameAutoNo,
+          title: game.GameName,
+          category: getCategoryName(game.LabelType),
+          thumb: getImageUrlWithCacheBuster(game.IconURL)
+        }))
+      } else {
+        searchResults.value = []
+      }
+    } catch (error) {
+      console.error('預覽搜尋發生錯誤:', error)
       searchResults.value = []
+    } finally {
+      isSearching.value = false
     }
-    isSearching.value = false
-  }, 400)
+  }, 400) // 玩家停下打字 400 毫秒後才發 API
+}
+
+const handleEnterKey = () => {
+  const finalKeyword = keyword.value.trim()
+  if (!finalKeyword) return
+
+  closeModal()
+  router.push(`/search?q=${encodeURIComponent(finalKeyword)}`)
 }
 
 const applyKeyword = (term) => {
   keyword.value = term
-  handleInput()
+  handleEnterKey()
 }
 
 const goToGame = (id) => {
-  saveHistory(keyword.value)
   closeModal()
   router.push(`/game/${id}`)
 }
 
-// 修正連按兩次 Enter 的錯誤
-const handleEnterKey = () => {
-  if (!keyword.value.trim()) return
-  if (isSearching.value) return
-  goToSearchPage()
-}
-
-const goToSearchPage = () => {
-  saveHistory(keyword.value)
-  const queryWord = keyword.value
-  closeModal()
-  router.push(`/search?q=${encodeURIComponent(queryWord)}`)
-}
-
-// 高亮關鍵字功能
 const highlightText = (text, query) => {
   if (!query) return text
   const escapedQuery = query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
@@ -182,9 +172,36 @@ const highlightText = (text, query) => {
   return safeText.replace(regex, '<span class="highlight">$1</span>')
 }
 
-onMounted(() => {
-  loadHistory()
-  fetchHot()
+// 撈取熱門與最近搜尋資料
+const fetchKeywords = async () => {
+  try {
+    const hotRes = await getHotSearchApi(6)
+    if (hotRes.code === 0 && hotRes.key) {
+      hotSearches.value = hotRes.key
+    }
+
+    if (userStore.token) {
+      const recentRes = await getRecentSearchApi(userStore.account, userStore.token, 6)
+      if (recentRes.code === 0 && recentRes.key) {
+        recentSearches.value = recentRes.key
+      }
+    }
+  } catch (error) {
+    console.error('取得搜尋關鍵字失敗:', error)
+  }
+}
+
+// 每次打開彈窗時執行
+watch(() => props.isOpen, async (newVal) => {
+  if (newVal) {
+    await fetchKeywords()
+    nextTick(() => {
+      searchInput.value?.focus()
+    })
+  } else {
+    keyword.value = ''
+    searchResults.value = []
+  }
 })
 </script>
 
@@ -308,6 +325,9 @@ onMounted(() => {
   font-size: 0.9rem;
   cursor: pointer;
   transition: all 0.2s;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .tag:hover {

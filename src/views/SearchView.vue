@@ -41,7 +41,7 @@
     <div v-else-if="searchQuery && !isLoading" class="empty-state fade-in-up" style="animation-delay: 0.1s;">
       <div class="empty-icon">🛸</div>
       <h3>找不到符合條件的遊戲</h3>
-      <p>試著換個關鍵字，例如「角色扮演」或「廚房」再試一次吧！</p>
+      <p>試著換個關鍵字再試一次吧！</p>
       <button class="back-btn" @click="goToHome">回首頁探索</button>
     </div>
   </div>
@@ -50,15 +50,28 @@
 <script setup>
 import { ref, computed, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { searchGames } from '@/assets/utils/api'
+import { fetchFilteredGamesApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
+import { useUserStore } from '@/stores/user'
 
 const route = useRoute()
 const router = useRouter()
+const userStore = useUserStore()
 
 const searchQuery = computed(() => route.query.q || '')
 const isLoading = ref(false)
 const searchResults = ref([])
+
+const categoryMap = {
+  '1': '休閒益智', '2': '動作闖關', '3': '策略塔防', '4': '模擬經營',
+  '5': '競技對戰', '6': '角色冒險', '7': '精選合集'
+}
+
+const getCategoryName = (labelStr) => {
+  if (!labelStr) return '未分類'
+  const firstCode = labelStr.split(',')[0]
+  return categoryMap[firstCode] || '未分類'
+}
 
 const performSearch = async (keyword) => {
   if (!keyword.trim()) {
@@ -68,11 +81,24 @@ const performSearch = async (keyword) => {
 
   isLoading.value = true
   try {
-    const res = await searchGames(keyword)
-    if (res.code === 0 && res.data) {
-      searchResults.value = res.data.map(game => ({
-        ...game,
-        thumb: getImageUrlWithCacheBuster(game.thumb)
+    //  keyword 在第 6 個位置
+    const res = await fetchFilteredGamesApi(
+      userStore.account || '', // Account
+      userStore.token || '',   // Token
+      '0',                     // LabelType: 0 (全選)
+      'N',                     // ConformAny: N
+      0,                       // GameStatus: 0 (全部)
+      keyword,                 // Keyword
+      0,                       // Start: 從第 0 筆開始
+      50                       // Length: 搜尋結果頁先要個 50 筆
+    )
+
+    if ((res.code === 0 || res.code === 888) && res.da) {
+      searchResults.value = res.da.map(game => ({
+        id: game.GameAutoNo,
+        title: game.GameName,
+        category: getCategoryName(game.LabelType),
+        thumb: getImageUrlWithCacheBuster(game.IconURL)
       }))
     } else {
       searchResults.value = []
