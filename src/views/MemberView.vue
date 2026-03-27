@@ -190,7 +190,8 @@
 </template>
 
 <script setup>
-import { ref, reactive, computed, watch } from 'vue'
+import { ref, reactive, computed, watch, onMounted } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { updatePasswordApi, updatePlayerInfoApi, fetchFavoriteListApi, fetchChargeListApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
@@ -200,6 +201,8 @@ const activeTab = ref('profile')
 
 
 const userStore = useUserStore()
+const router = useRouter()
+const route = useRoute()
 
 const getClientIP = async () => {
   try {
@@ -399,6 +402,17 @@ watch(activeTab, async (newTab) => {
     } finally {
       isLoadingTransactions.value = false
     }
+  }
+})
+
+onMounted(() => {
+  if (!userStore.token) {
+    alert('請先登入會員！')
+
+    router.replace({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    })
   }
 })
 </script>

@@ -220,6 +220,7 @@
 <script setup>
 import { reactive, ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useRouter, useRoute } from 'vue-router'
 import {
   fetchTicketListApi,
   fetchTicketDetailApi,
@@ -229,6 +230,8 @@ import {
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 
 const userStore = useUserStore()
+const router = useRouter()
+const route = useRoute()
 
 const chatContainer = ref(null)
 
@@ -456,6 +459,14 @@ const resetForm = () => {
 }
 
 onMounted(() => {
+  if (!userStore.token) {
+    alert('請先登入會員！')
+    router.replace({
+      path: '/login',
+      query: { redirect: route.fullPath }
+    })
+    return
+  }
   if (currentTab.value === 'list') {
     loadTicketList()
   }

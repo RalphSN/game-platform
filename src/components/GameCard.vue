@@ -1,7 +1,8 @@
 <template>
   <div class="game-card" :class="{ 'is-locked': game.Lock }" @click="goToGame">
     <div class="thumb-wrapper">
-      <img :src="getImageUrlWithCacheBuster(game.IconURL) || defaultThumb" :alt="game.GameName" class="game-thumb" loading="lazy" />
+      <img :src="getImageUrlWithCacheBuster(game.IconURL) || defaultThumb" :alt="game.GameName" class="game-thumb"
+        loading="lazy" />
 
       <div v-if="game.Lock" class="lock-indicator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -31,9 +32,9 @@
     <div class="game-info">
       <h4 class="game-title">{{ game.GameName }}</h4>
       <div class="game-meta">
-        <span class="game-tag">{{ parsedCategory }}</span>
+        <span class="game-tag">{{ finalCategory }}</span>
         <!-- <span class="game-players">🔥 {{ formatPlayers(game.PlayerNum) }}</span> -->
-        <span class="game-players">🔥 {{ game.PlayerNum }}</span>
+        <span class="game-players" v-if="!isBanana">🔥 {{ game.PlayerNum }}</span>
       </div>
     </div>
   </div>
@@ -62,6 +63,10 @@ const props = defineProps({
     })
   },
   hideFavorite: {
+    type: Boolean,
+    default: false
+  },
+  isBanana: {
     type: Boolean,
     default: false
   }
@@ -124,6 +129,11 @@ const parsedCategory = computed(() => {
 
   const firstLabelCode = labels.split(',')[0]
   return categoryMap[firstLabelCode] || '未分類'
+})
+
+const finalCategory = computed(() => {
+  if (props.isBanana) return '手機遊戲'
+  return parsedCategory.value
 })
 
 watch(
