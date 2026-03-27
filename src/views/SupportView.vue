@@ -221,6 +221,7 @@
 import { reactive, ref, onUnmounted, onMounted, nextTick } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { useRouter, useRoute } from 'vue-router'
+import { showToast, showDialog } from '@/assets/utils/swal'
 import {
   fetchTicketListApi,
   fetchTicketDetailApi,
@@ -353,10 +354,10 @@ const submitReply = async () => {
     if (response.code === 0) {
       await viewTicket(selectedTicket.value)
     } else {
-      alert(response.msg || '回覆失敗')
+      showDialog('回覆失敗', response.msg, 'error')
     }
   } catch (error) {
-    alert('連線失敗，請稍後再試。')
+    showDialog('系統連線錯誤', '請稍後再試', 'error')
   } finally {
     isLoading.value = false
   }
@@ -383,7 +384,7 @@ const handleFileProcessing = (newFiles) => {
   Array.from(newFiles).forEach(file => {
     if (previewImages.value.length >= 3) return
     if (!allowedTypes.includes(file.type)) {
-      alert('僅支援 JPG 與 PNG 圖片格式')
+      showToast('僅支援 JPG 與 PNG 圖片格式','warning')
       return
     }
 
@@ -418,7 +419,7 @@ const removeImage = (index) => {
 }
 
 const handleSubmit = async () => {
-  if (!userStore.account) return alert('請先登入！')
+  if (!userStore.account) return showToast('請先登入','warning')
   isLoading.value = true
 
   try {
@@ -438,10 +439,10 @@ const handleSubmit = async () => {
       ticketId.value = response.LastAutoNo || ''
       isSuccess.value = true
     } else {
-      alert(response.msg || '送出失敗')
+      showDialog('送出失敗', response.msg, 'error')
     }
   } catch (error) {
-    alert('連線失敗，請稍後再試。')
+    showDialog('系統連線錯誤', '請稍後再試', 'error')
   } finally {
     isLoading.value = false
   }
@@ -460,7 +461,7 @@ const resetForm = () => {
 
 onMounted(() => {
   if (!userStore.token) {
-    alert('請先登入會員！')
+    showToast('請先登入會員','warning')
     router.replace({
       path: '/login',
       query: { redirect: route.fullPath }

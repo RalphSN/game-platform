@@ -49,6 +49,7 @@ import { reactive, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
+import { showToast, showDialog } from '@/assets/utils/swal'
 
 const userStore = useUserStore()
 
@@ -91,7 +92,7 @@ const handleLogin = async () => {
     if (result.code === 0) {
       userStore.setLoginData(result.Info.Account, result.Info.Token)
       await userStore.getPlayerInfo(userIP)
-      alert('登入成功！')
+      showToast('登入成功！','success')
       const redirectUrl = route.query.redirect || '/'
       router.push(redirectUrl)
     } else {

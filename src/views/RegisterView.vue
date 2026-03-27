@@ -48,6 +48,7 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
+import { showToast, showDialog } from '@/assets/utils/swal'
 
 const router = useRouter()
 
@@ -100,7 +101,7 @@ const handleRegister = async () => {
 
 
     if (result.code === 0) {
-      alert('註冊成功！請使用新帳號登入。')
+      showToast('註冊成功！請使用新帳號登入！','success')
       router.push({ name: 'login', query: { account: form.account } })
     } else {
       switch (result.code) {

@@ -12,7 +12,8 @@
         <nav class="pc-nav">
           <router-link to="/" exact-active-class="active">首頁</router-link>
           <router-link to="/games" active-class="active">遊戲列表</router-link>
-          <router-link to="/news" active-class="active">最新消息</router-link>
+          <!-- 初版先不做 -->
+          <!-- <router-link to="/news" active-class="active">最新消息</router-link> -->
           <!-- <router-link to="/leaderboard" active-class="active">排行榜</router-link> -->
         </nav>
       </div>
@@ -143,6 +144,8 @@ import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
+import { showToast } from '@/assets/utils/swal'
+
 import SearchModal from './SearchModal.vue'
 import logoUrl from '@/assets/images/logo/logo-dark.svg'
 // import searchIcon from '@/assets/images/icon/search.png'
@@ -165,8 +168,8 @@ const toggleMenu = () => {
 const handleLogout = () => {
   userStore.logout()
   isProfileMenuOpen.value = false
-  alert('已成功登出！')
-  window.location.href = '/'
+  showToast('已成功登出！', 'success')
+  router.push('/')
 }
 
 const handleLogoutAndCloseMenu = () => {

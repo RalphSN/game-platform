@@ -150,6 +150,8 @@ import { useRoute, useRouter } from 'vue-router'
 import { fetchGameInfoApi, buyGameApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
+import { showToast, showDialog } from '@/assets/utils/swal'
+import { showConfirm } from '@/assets/utils/swal'
 import GameSection from '@/components/GameSection.vue'
 import startIcon from '@/assets/images/icon/start.png'
 
@@ -281,7 +283,7 @@ const startGame = () => {
 
 const handleUnlockGame = async () => {
   if (!userStore.token) {
-    alert('請先登入！')
+    showToast('請先登入','warning')
     router.push({ path: '/login', query: { redirect: route.fullPath } })
     return
   }
@@ -289,14 +291,16 @@ const handleUnlockGame = async () => {
   // 把儲值幣免費幣加起來當作總財產來判斷
   const totalPoints = userStore.points + userStore.freePoints
   if (totalPoints < game.value.gamePay) {
-    if (confirm('代幣餘額不足，是否要前往儲值中心？')) {
+    const balanceConfirm = await showConfirm('代幣餘額不足', '是否要前往儲值中心？')
+    if (balanceConfirm.isConfirmed) {
       router.push({ path: '/recharge', query: { redirect: route.fullPath } })
     }
     return
   }
 
   // 二次確認
-  if (!confirm(`確定要花費 ${game.value.gamePay} 代幣解鎖此遊戲嗎？`)) return
+  const unlockConfirm = await showConfirm(`確定要花費 ${game.value.gamePay} 代幣解鎖此遊戲嗎？`)
+  if (!unlockConfirm.isConfirmed) return
 
   isBuying.value = true
   try {
@@ -304,7 +308,7 @@ const handleUnlockGame = async () => {
     const result = await buyGameApi(userStore.account, userStore.token, game.value.id)
 
     if (result.code === 0) {
-      alert('解鎖成功！馬上開始遊玩吧！')
+      showToast('解鎖成功！馬上開始遊玩吧！','success')
 
       // 重新抓取一次遊戲資料 (讓畫面的黃色解鎖框消失)
       await fetchGameData(game.value.id)
@@ -315,20 +319,21 @@ const handleUnlockGame = async () => {
     } else {
       // 攔截後端的錯誤狀態
       if (result.code === 2 || result.code === 3) {
-        alert('無法購買：訪客模式或遊戲不存在！')
+        showToast('無法購買','warning')
       } else if (result.code === 6) {
-        if (confirm('您的點數餘額不足，是否要前往儲值中心？')) {
+        const res = await showConfirm('您的點數餘額不足，是否要前往儲值中心？')
+        if (res.isConfirmed) {
           router.push('/recharge')
         }
       } else if (result.code === 999) {
-        alert('帳號遭封鎖(IP)！')
+        showToast('帳號遭封鎖(IP)','warning')
       } else {
-        alert(result.msg || '解鎖失敗，請稍後再試')
+        showToast(result.msg || '解鎖失敗，請稍後再試','warning')
       }
     }
   } catch (error) {
     console.error('解鎖發生錯誤:', error)
-    alert('系統連線錯誤，請稍後再試')
+    showToast('系統連線錯誤，請稍後再試','warning')
   } finally {
     isBuying.value = false
   }

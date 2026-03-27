@@ -99,6 +99,7 @@ import { ref, computed, watch, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { fetchPayTypeApi, addPayOrderApi } from '@/assets/utils/api'
+import { showToast, showDialog } from '@/assets/utils/swal'
 
 import defaultPayIcon from '@/assets/images/recharge/mycard.png'
 import iconAlipay from '@/assets/images/recharge/alipay.svg'
@@ -161,7 +162,7 @@ const getPayIcon = (title) => {
 // 載入支付方式資料
 const loadPayTypes = async () => {
   if (!userStore.token) {
-    alert('請先登入會員')
+    showToast('請先登入會員','warning')
     router.push('/login')
     return
   }
@@ -210,11 +211,11 @@ const loadPayTypes = async () => {
       }
 
     } else {
-      alert(result.msg || '獲取支付方式失敗')
+      showToast(result.msg || '獲取支付方式失敗','warning')
     }
   } catch (error) {
     console.error('取得支付方式發生錯誤:', error)
-    alert('系統連線錯誤，請稍後再試')
+    showDialog('系統連線錯誤', '請稍後再試', 'error')
   } finally {
     isLoading.value = false
   }
@@ -249,7 +250,7 @@ const handlePayment = async () => {
         if (formElement) {
           formElement.submit()
         } else {
-          alert('金流表單解析失敗，請聯繫客服')
+          showToast('表單失效，請聯繫客服','warning')
           isSubmitting.value = false
         }
       }
@@ -258,12 +259,12 @@ const handlePayment = async () => {
         window.location.href = data.OpenURL
       }
     } else {
-      alert(result.msg || '建立訂單失敗')
+      showDialog('建立訂單失敗', result.msg, 'error')
       isSubmitting.value = false
     }
   } catch (error) {
     console.error('建立訂單發生錯誤:', error)
-    alert('系統連線錯誤，請稍後再試')
+    showDialog('系統連線錯誤，請稍後再試','error')
     isSubmitting.value = false
   }
 }

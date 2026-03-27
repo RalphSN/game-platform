@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { fetchPlayerInfo, addFavoriteApi, removeFavoriteApi } from '@/assets/utils/api'
+import { showToast, showDialog } from '@/assets/utils/swal'
 export const useUserStore = defineStore('user', {
   state: () => ({
     account: localStorage.getItem('user_account') || '',
@@ -40,7 +41,7 @@ export const useUserStore = defineStore('user', {
     // 切換收藏狀態 (加入或取消)
     async toggleFavorite(gameId, ip = '127.0.0.1') {
       if (!this.account || !this.token) {
-        alert('請先登入才能收藏遊戲')
+        showToast('請先登入才能收藏遊戲','warning')
         throw new Error('未登入')
       }
 

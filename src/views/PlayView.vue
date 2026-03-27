@@ -61,6 +61,8 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { fetchGamePlayUrlApi } from '@/assets/utils/api'
+import { showToast, showDialog } from '@/assets/utils/swal'
+import { showConfirm } from '@/assets/utils/swal'
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -106,7 +108,7 @@ const toggleFullscreen = async () => {
     }
   } catch (err) {
     console.error('全螢幕切換失敗:', err)
-    alert('您的瀏覽器不支援全螢幕功能')
+    showToast('您的瀏覽器不支援全螢幕功能','warning')
   }
 }
 
@@ -157,26 +159,26 @@ onMounted(async () => {
 
       loadingTimeout = setTimeout(() => {
         if (isLoading.value) {
-          alert('遊戲伺服器連線超時，請檢查網路或稍後再試')
+          showToast('遊戲伺服器連線超時，請檢查網路或稍後再試','warning')
           router.replace(`/game/${gameId}`)
         }
       }, 15000)
 
     } else {
       if (result.code === 3) {
-        alert('訪客模式無法遊玩此遊戲，請先登入')
+        showToast('訪客模式無法遊玩此遊戲，請先登入','warning')
       } else if (result.code === 4) {
-        alert('您尚未解鎖此遊戲，請先進行解鎖')
+        showToast('您尚未解鎖此遊戲，請先進行解鎖','warning')
       } else if (result.code === 999) {
-        alert('帳號遭封鎖')
+        showToast('帳號遭封鎖','warning')
       } else {
-        alert(result.msg || '無法取得遊戲網址，請稍後再試')
+        showToast(result.msg || '無法取得遊戲網址，請稍後再試','warning')
       }
       router.replace(`/game/${gameId}`)
     }
   } catch (error) {
     console.error('取得遊戲網址發生錯誤:', error)
-    alert('系統連線錯誤，請稍後再試')
+    showToast('系統連線錯誤，請稍後再試','warning')
     router.replace(`/game/${gameId}`)
   }
 })

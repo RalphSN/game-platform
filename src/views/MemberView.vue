@@ -195,6 +195,8 @@ import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { updatePasswordApi, updatePlayerInfoApi, fetchFavoriteListApi, fetchChargeListApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
+import { showToast, showDialog } from '@/assets/utils/swal'
+import { showConfirm } from '@/assets/utils/swal'
 import GameCard from '@/components/GameCard.vue'
 
 const activeTab = ref('profile')
@@ -407,7 +409,7 @@ watch(activeTab, async (newTab) => {
 
 onMounted(() => {
   if (!userStore.token) {
-    alert('請先登入會員！')
+    showToast('請先登入會員','warning')
 
     router.replace({
       path: '/login',
