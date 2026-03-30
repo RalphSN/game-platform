@@ -11,7 +11,7 @@
           <line x1="18" y1="11" x2="18.01" y2="11"></line>
         </svg>
       </div>
-      <span class="tab-label">遊戲</span>
+      <span class="tab-label">{{ $t('tabBar.games') }}</span>
     </router-link>
 
     <router-link to="/recharge" class="tab-item" active-class="active">
@@ -22,7 +22,7 @@
           <line x1="2" y1="10" x2="22" y2="10"></line>
         </svg>
       </div>
-      <span class="tab-label">儲值</span>
+      <span class="tab-label">{{ $t('tabBar.recharge') }}</span>
     </router-link>
 
     <router-link to="/" class="tab-item center-item" exact-active-class="active">
@@ -43,7 +43,7 @@
           <circle cx="12" cy="7" r="4"></circle>
         </svg>
       </div>
-      <span class="tab-label">會員</span>
+      <span class="tab-label">{{ $t('tabBar.member') }}</span>
     </router-link>
 
     <router-link to="/support" class="tab-item" active-class="active">
@@ -56,7 +56,7 @@
           </path>
         </svg>
       </div>
-      <span class="tab-label">客服</span>
+      <span class="tab-label">{{ $t('tabBar.support') }}</span>
     </router-link>
   </nav>
 </template>

@@ -1,0 +1,17 @@
+{
+  "header": {
+    "home": "首页",
+    "gameList": "游戏列表",
+    "leaderboard": "排行榜",
+    "login": "登录",
+    "register": "注册",
+    "memberCenter": "会员中心",
+    "recharge": "充值中心",
+    "support": "联系客服",
+    "logout": "退出账号",
+    "menu": "菜单",
+    "chargeCoins": "充值代币",
+    "freeCoins": "免费代币",
+    "logoutSuccess": "已成功退出！"
+  }
+}

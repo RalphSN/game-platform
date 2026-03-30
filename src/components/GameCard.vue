@@ -14,12 +14,12 @@
 
       <div class="hover-overlay">
         <div class="play-btn" :class="{ 'unlock-btn': game.Lock }">
-          {{ game.Lock ? '查看解鎖條件' : '▶ 立即遊玩' }}
+          {{ game.Lock ? $t('gameCard.viewUnlock') : $t('gameCard.playNow') }}
         </div>
       </div>
 
       <button v-if="!hideFavorite" class="favorite-btn" :class="{ active: isFavorite }" @click.stop="toggleFavorite"
-        title="加入/移除收藏">
+        :title="$t('gameCard.toggleFavorite')">
         <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
           stroke-linejoin="round">
           <path
@@ -30,7 +30,7 @@
     </div>
 
     <div class="game-info">
-      <h4 class="game-title">{{ game.GameName }}</h4>
+      <h4 class="game-title">{{ game.GameName || $t('gameCard.loading') }}</h4>
       <div class="game-meta">
         <span class="game-tag">{{ finalCategory }}</span>
         <!-- <span class="game-players">🔥 {{ formatPlayers(game.PlayerNum) }}</span> -->
@@ -46,6 +46,8 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import defaultThumb from '@/assets/images/default-img.jpg'
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const props = defineProps({
   game: {
@@ -54,7 +56,7 @@ const props = defineProps({
     default: () => ({
       GameAutoNo: 0,
       IconURL: '',
-      GameName: '載入中...',
+      GameName: '',
       LabelType: '',
       PlayerNum: 0,
       Favorite: false,
@@ -106,33 +108,40 @@ const goToGame = () => {
   router.push(`/game/${props.game.GameAutoNo}`)
 }
 
-const formatPlayers = (num) => {
-  if (!num) return 0
-  if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
-  return num
-}
+// const formatPlayers = (num) => {
+//   if (!num) return 0
+//   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
+//   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+//   return num
+// }
 
-const categoryMap = {
-  '1': '休閒益智',
-  '2': '動作闖關',
-  '3': '策略塔防',
-  '4': '模擬經營',
-  '5': '競技對戰',
-  '6': '角色冒險',
-  '7': '精選合集'
-}
+// const categoryMap = {
+//   '1': t('category.1'),
+//   '2': t('category.2'),
+//   '3': t('category.3'),
+//   '4': t('category.4'),
+//   '5': t('category.5'),
+//   '6': t('category.6'),
+//   '7': t('category.7')
+// }
 
 const parsedCategory = computed(() => {
   const labels = props.game.LabelType
-  if (!labels) return '未分類'
+  if (!labels) return t('gameCard.uncategorized')
 
   const firstLabelCode = labels.split(',')[0]
-  return categoryMap[firstLabelCode] || '未分類'
+
+  // 如果 firstLabelCode 是 '1'，就會去查 'category.1'
+  // 檢查 1~7 的範圍，在範圍內就查字典，否則回傳未分類
+  if (['1', '2', '3', '4', '5', '6', '7'].includes(firstLabelCode)) {
+    return t(`category.${firstLabelCode}`)
+  }
+
+  return t('gameCard.uncategorized')
 })
 
 const finalCategory = computed(() => {
-  if (props.isBanana) return '手機遊戲'
+  if (props.isBanana) return t('gameCard.mobileGame')
   return parsedCategory.value
 })
 

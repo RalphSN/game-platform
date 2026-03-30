@@ -22,7 +22,7 @@
               <template v-else>
                 <span class="tag category-tag">{{ game.category }}</span>
                 <!-- <span class="tag players-tag">🔥{{ formatPlayers(game.players) }} 人 在 遊 玩 </span> -->
-                <span class="tag players-tag">🔥 {{ game.players }} 人 在 遊 玩 </span>
+                <span class="tag players-tag">{{ $t('gameDetail.playingCount', { count: game.players }) }}</span>
               </template>
             </div>
           </div>
@@ -31,7 +31,8 @@
         <div class="hero-right">
           <div class="hero-actions">
             <button class="hero-favorite-btn" :class="{ active: localFavorite }" @click="toggleFavorite"
-              :disabled="isLoadingData" :title="localFavorite ? '取消收藏' : '加入收藏'">
+              :disabled="isLoadingData"
+              :title="localFavorite ? $t('gameDetail.removeFavorite') : $t('gameDetail.addFavorite')">
               <svg viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round"
                 stroke-linejoin="round">
                 <path
@@ -42,7 +43,7 @@
             <button class="play-btn" @click="startGame" :disabled="isLoading || isLoadingData">
               <span v-if="isLoading" class="loader"></span>
               <template v-else>
-                <img :src="startIcon" alt="開始遊戲">
+                <img :src="startIcon" :alt="$t('gameDetail.startGame')">
               </template>
             </button>
           </div>
@@ -60,29 +61,30 @@
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
-            <h2>解鎖條件</h2>
+            <h2>{{ $t('gameDetail.unlockConditions') }}</h2>
           </div>
 
           <div class="card-body unlock-content">
             <template v-if="game.gamePlayStatus === 1">
-              <p class="unlock-desc">此遊戲需要登入會員才能遊玩</p>
+              <p class="unlock-desc">{{ $t('gameDetail.loginRequired') }}</p>
               <div class="unlock-actions">
                 <button class="action-btn"
                   @click="router.push({ path: '/login', query: { redirect: route.fullPath } })">
-                  前往登入 / 註冊
+                  {{ $t('gameDetail.goToLogin') }}
                 </button>
               </div>
             </template>
 
             <template v-else-if="game.gamePlayStatus === 2">
               <p class="unlock-desc">
-                需要花費 <strong class="highlight-coins">{{ game.gamePay }}</strong> 代幣以解鎖此遊戲
+                {{ $t('gameDetail.unlockCostPrefix') }} <strong class="highlight-coins">{{ game.gamePay }}</strong> {{
+                  $t('gameDetail.unlockCostSuffix') }}
               </p>
               <div class="unlock-actions">
                 <!-- <span class="current-coins">您目前擁有: {{ userStore.points || 0 }} 代幣</span> -->
                 <button class="action-btn unlock-pay-btn" @click="handleUnlockGame" :disabled="isBuying">
                   <span v-if="isBuying" class="loader" style="width: 20px; height: 20px; border-width: 2px;"></span>
-                  <span v-else>立即解鎖</span>
+                  <span v-else>{{ $t('gameDetail.unlockNow') }}</span>
                 </button>
               </div>
             </template>
@@ -96,7 +98,7 @@
               <line x1="12" y1="16" x2="12" y2="12"></line>
               <line x1="12" y1="8" x2="12.01" y2="8"></line>
             </svg>
-            <h2>遊戲簡介</h2>
+            <h2>{{ $t('gameDetail.gameIntro') }}</h2>
           </div>
           <div class="card-body">
             <template v-if="isLoadingData">
@@ -139,7 +141,8 @@
     </div>
 
     <div class="related-section fade-in-up" style="animation-delay: 0.3s;">
-      <GameSection title="其他人也都在玩" :icon="svgIcons.related" categoryId="related" :games="relatedGames" />
+      <GameSection :title="$t('gameDetail.othersAlsoPlay')" :icon="svgIcons.related" categoryId="related"
+        :games="relatedGames" />
     </div>
   </div>
 </template>
@@ -150,10 +153,13 @@ import { useRoute, useRouter } from 'vue-router'
 import { fetchGameInfoApi, buyGameApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
-import { showToast, showDialog } from '@/assets/utils/swal'
+import { showToast } from '@/assets/utils/swal'
 import { showConfirm } from '@/assets/utils/swal'
 import GameSection from '@/components/GameSection.vue'
 import startIcon from '@/assets/images/icon/start.png'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const route = useRoute()
 const router = useRouter()
@@ -188,21 +194,19 @@ const game = ref({
 const localFavorite = ref(false)
 const relatedGames = ref([]) // 目前 API 規格沒有推薦遊戲，先給空陣列或保留假資料
 
-const formatPlayers = (num) => {
-  if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
-  if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
-  return num
-}
-
-const categoryMap = {
-  '1': '休閒益智', '2': '動作闖關', '3': '策略塔防', '4': '模擬經營',
-  '5': '競技對戰', '6': '角色冒險', '7': '精選合集'
-}
+// const formatPlayers = (num) => {
+//   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
+//   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
+//   return num
+// }
 
 const getCategoryName = (labelStr) => {
-  if (!labelStr) return '未分類'
+  if (!labelStr) return t('gameCard.uncategorized')
   const firstCode = labelStr.split(',')[0]
-  return categoryMap[firstCode] || '未分類'
+  if (['1', '2', '3', '4', '5', '6', '7'].includes(firstCode)) {
+    return t(`category.${firstCode}`)
+  }
+  return t('gameCard.uncategorized')
 }
 
 
@@ -234,7 +238,7 @@ const fetchGameData = async (gameId) => {
         mobileBanner: data.Introduce1MURL, // 手機版Banner
         category: getCategoryName(data.LabelType),
         players: data.PlayerNum || 0,
-        description: data.Introduce || '<p>暫無介紹</p>',
+        description: data.Introduce || `<p>${t('gameDetail.noIntro')}</p>`,
         isLocked: data.Lock,
         jumpUrl: data.JumpUrl || '',
 
@@ -283,7 +287,7 @@ const startGame = () => {
 
 const handleUnlockGame = async () => {
   if (!userStore.token) {
-    showToast('請先登入','warning')
+    showToast(t('gameDetail.messages.loginFirst'), 'warning')
     router.push({ path: '/login', query: { redirect: route.fullPath } })
     return
   }
@@ -291,7 +295,8 @@ const handleUnlockGame = async () => {
   // 把儲值幣免費幣加起來當作總財產來判斷
   const totalPoints = userStore.points + userStore.freePoints
   if (totalPoints < game.value.gamePay) {
-    const balanceConfirm = await showConfirm('代幣餘額不足', '是否要前往儲值中心？')
+    const balanceConfirm = await showConfirm(t('gameDetail.messages.insufficientCoinsTitle'),
+      t('gameDetail.messages.goToRecharge'))
     if (balanceConfirm.isConfirmed) {
       router.push({ path: '/recharge', query: { redirect: route.fullPath } })
     }
@@ -299,7 +304,7 @@ const handleUnlockGame = async () => {
   }
 
   // 二次確認
-  const unlockConfirm = await showConfirm(`確定要花費 ${game.value.gamePay} 代幣解鎖此遊戲嗎？`)
+  const unlockConfirm = await showConfirm(t('gameDetail.messages.confirmUnlock', { coins: game.value.gamePay }))
   if (!unlockConfirm.isConfirmed) return
 
   isBuying.value = true
@@ -308,7 +313,7 @@ const handleUnlockGame = async () => {
     const result = await buyGameApi(userStore.account, userStore.token, game.value.id)
 
     if (result.code === 0) {
-      showToast('解鎖成功！馬上開始遊玩吧！','success')
+      showToast(t('gameDetail.messages.unlockSuccess'), 'success')
 
       // 重新抓取一次遊戲資料 (讓畫面的黃色解鎖框消失)
       await fetchGameData(game.value.id)
@@ -319,21 +324,21 @@ const handleUnlockGame = async () => {
     } else {
       // 攔截後端的錯誤狀態
       if (result.code === 2 || result.code === 3) {
-        showToast('無法購買','warning')
+        showToast(t('gameDetail.messages.cannotBuy'), 'warning')
       } else if (result.code === 6) {
-        const res = await showConfirm('您的點數餘額不足，是否要前往儲值中心？')
+        const res = await showConfirm(t('gameDetail.messages.goToRecharge'))
         if (res.isConfirmed) {
           router.push('/recharge')
         }
       } else if (result.code === 999) {
-        showToast('帳號遭封鎖(IP)','warning')
+        showToast(t('gameDetail.messages.accountBlocked'), 'warning')
       } else {
-        showToast(result.msg || '解鎖失敗，請稍後再試','warning')
+        showToast(result.msg || t('gameDetail.messages.unlockFailed'), 'warning')
       }
     }
   } catch (error) {
     console.error('解鎖發生錯誤:', error)
-    showToast('系統連線錯誤，請稍後再試','warning')
+    showToast(t('gameDetail.messages.systemError'), 'warning')
   } finally {
     isBuying.value = false
   }

@@ -1,0 +1,184 @@
+{
+  "common": {
+    "loading": "載入中..."
+  },
+  "header": {
+    "home": "首頁",
+    "gameList": "遊戲列表",
+    "leaderboard": "排行榜",
+    "login": "登入",
+    "register": "註冊",
+    "memberCenter": "會員中心",
+    "recharge": "儲值中心",
+    "support": "聯繫客服",
+    "logout": "登出",
+    "menu": "選單",
+    "chargeCoins": "儲值代幣",
+    "freeCoins": "免費代幣",
+    "logoutSuccess": "已成功登出！"
+  },
+  "footer": {
+    "termsOfService": "服務條款",
+    "privacyPolicy": "隱私權政策",
+    "contactSupport": "聯絡客服",
+    "businessCooperation": "商務合作"
+  },
+  "homeView": {
+    "eventBanner": "活動 Banner",
+    "sections": {
+      "hot": "熱門推薦",
+      "action": "動作冒險",
+      "puzzle": "休閒益智",
+      "rpg": "角色扮演",
+      "banana": "香蕉遊戲"
+    }
+  },
+  "gameCard": {
+    "viewUnlock": "查看解鎖條件",
+    "playNow": "▶ 立即遊玩",
+    "toggleFavorite": "加入/移除收藏",
+    "loading": "載入中...",
+    "uncategorized": "未分類",
+    "mobileGame": "手機遊戲"
+  },
+  "category": {
+    "1": "休閒益智",
+    "2": "動作闖關",
+    "3": "策略塔防",
+    "4": "模擬經營",
+    "5": "競技對戰",
+    "6": "角色冒險",
+    "7": "精選合集"
+  },
+  "gameSection": {
+    "viewMore": "查看更多",
+    "featuredGames": "精選遊戲"
+  },
+  "tabBar": {
+    "games": "遊戲",
+    "recharge": "儲值",
+    "member": "會員",
+    "support": "客服"
+  },
+  "searchModal": {
+    "placeholder": "搜尋遊戲名稱或類型...",
+    "close": "關閉",
+    "searching": "搜尋中...",
+    "noResultFound": "找不到符合「{keyword}」的遊戲",
+    "recentSearches": "最近搜尋",
+    "hotSearches": "熱門搜尋"
+  },
+  "categoryView": {
+    "back": "返回",
+    "allGames": "全部遊戲",
+    "categories": {
+      "hot": "熱門推薦",
+      "banana": "香蕉遊戲",
+      "action": "動作冒險",
+      "puzzle": "休閒益智",
+      "rpg": "角色扮演"
+    }
+  },
+  "gameDetail": {
+    "playingCount": "🔥 {count} 人 在 遊 玩",
+    "removeFavorite": "取消收藏",
+    "addFavorite": "加入收藏",
+    "startGame": "開始遊戲",
+    "unlockConditions": "解鎖條件",
+    "loginRequired": "此遊戲需要登入會員才能遊玩",
+    "goToLogin": "前往登入 / 註冊",
+    "unlockCostPrefix": "需要花費 ",
+    "unlockCostSuffix": " 代幣以解鎖此遊戲",
+    "unlockNow": "立即解鎖",
+    "gameIntro": "遊戲簡介",
+    "noIntro": "暫無介紹",
+    "othersAlsoPlay": "其他人也都在玩",
+    "messages": {
+      "loginFirst": "請先登入",
+      "insufficientCoinsTitle": "代幣餘額不足",
+      "goToRecharge": "是否要前往儲值中心？",
+      "confirmUnlock": "確定要花費 {coins} 代幣解鎖此遊戲嗎？",
+      "unlockSuccess": "解鎖成功！馬上開始遊玩吧！",
+      "cannotBuy": "無法購買",
+      "accountBlocked": "帳號遭封鎖(IP)",
+      "unlockFailed": "解鎖失敗，請稍後再試",
+      "systemError": "系統連線錯誤，請稍後再試"
+    }
+  },
+  "gamesView": {
+    "filterTitle": "篩選條件",
+    "looseMatch": "寬鬆匹配",
+    "exactMatch": "精準匹配",
+    "matchAll": "(符合所有條件)",
+    "matchAny": "(符合任一條件)",
+    "genre": "遊戲類別",
+    "status": "遊戲狀態",
+    "all": "全部",
+    "unlocked": "已解鎖",
+    "locked": "未解鎖",
+    "filterResult": "篩選結果",
+    "noResult": "找不到符合條件的遊戲，請嘗試放寬篩選條件。"
+  },
+  "auth": {
+    "loginTitle": "歡迎回來",
+    "loginSubtitle": "請登入您的帳號繼續遊玩",
+    "account": "帳號",
+    "password": "密碼",
+    "accountPlaceholder": "請輸入帳號",
+    "passwordPlaceholder": "請輸入密碼",
+    "loginBtn": "登入",
+    "noAccount": "還沒有帳號嗎？",
+    "registerNow": "立即註冊",
+    "loginSuccess": "登入成功！",
+    "errors": {
+      "params": "參數錯誤",
+      "format": "帳密格式錯誤 (6~20碼，必須包含1英文1數字)",
+      "failed": "登入失敗",
+      "frozen": "該帳號為凍結狀態",
+      "blocked": "帳號遭封鎖(IP)",
+      "unknown": "登入失敗，請重試"
+    }
+  },
+  "member": {
+    "sidebar": {
+      "depositCoins": "儲值代幣",
+      "freeCoins": "免費代幣",
+      "profile": "個人資料",
+      "favorites": "收藏清單",
+      "transactions": "儲值紀錄"
+    },
+    "profile": {
+      "title": "個人資料",
+      "account": "帳號",
+      "nickname": "暱稱",
+      "saveBtn": "儲存修改",
+      "updateSuccess": "暱稱已成功更新！",
+      "changePassword": "修改密碼",
+      "newPassword": "新密碼",
+      "confirmPassword": "確認新密碼",
+      "newPasswordPlaceholder": "請輸入新密碼",
+      "confirmPasswordPlaceholder": "請再次輸入新密碼",
+      "updatePasswordBtn": "更新密碼",
+      "passwordSuccess": "密碼已成功更新！",
+      "passwordMismatch": "兩次輸入的新密碼不一致！"
+    },
+    "favorites": {
+      "title": "收藏清單",
+      "empty": "目前沒有收藏的遊戲喔！"
+    },
+    "transactions": {
+      "title": "儲值紀錄",
+      "orderId": "訂單編號",
+      "date": "日期",
+      "amount": "金額",
+      "gotCoins": "獲得代幣",
+      "empty": "目前沒有儲值紀錄"
+    },
+    "errors": {
+      "loginExpired": "登入已過期，請重新登入",
+      "userNotFound": "玩家帳號不存在",
+      "passwordSame": "與原密碼相同，無法變更",
+      "passwordFormat": "密碼格式錯誤 (6~20碼，必須包含1英文1數字)"
+    }
+  }
+}

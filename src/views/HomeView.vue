@@ -6,7 +6,7 @@
         <picture v-for="(banner, index) in banners" :key="banner.No" v-show="currentIndex === index"
           class="hero-img-container" @click="handleBannerClick(banner)" style="cursor: pointer;">
           <source media="(max-width: 768px)" :srcset="banner.PicURL2" referrerpolicy="no-referrer" />
-          <img :src="banner.PicURL" alt="活動 Banner" class="hero-img" referrerpolicy="no-referrer" />
+          <img :src="banner.PicURL" :alt="$t('homeView.eventBanner')" class="hero-img" referrerpolicy="no-referrer" />
         </picture>
       </transition-group>
 
@@ -18,21 +18,21 @@
 
     <div class="feed-container">
       <div v-if="isLoading" class="loading-wrapper">
-        <LoadingSpinner text="loading..." />
+        <LoadingSpinner />
       </div>
 
       <template v-else>
-        <GameSection class="fade-in-up" style="animation-delay: 0.1s;" title="熱門推薦" :icon="svgIcons.hot"
+        <GameSection class="fade-in-up" style="animation-delay: 0.1s;" :title="$t('homeView.sections.hot')" :icon="svgIcons.hot"
           categoryId="hot" :games="hotGames.slice(0, 6)" />
 
         <div v-if="adMiddle" class="ad-wrapper fade-in-up" style="animation-delay: 0.2s;">
           <AdBanner :ad="adMiddle" />
         </div>
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" title="動作冒險" :icon="svgIcons.action"
+        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" :title="$t('homeView.sections.action')" :icon="svgIcons.action"
           categoryId="action" :games="actionGames.slice(0, 6)" />
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.4s;" title="休閒益智" :icon="svgIcons.puzzle"
+        <GameSection class="fade-in-up" style="animation-delay: 0.4s;" :title="$t('homeView.sections.puzzle')" :icon="svgIcons.puzzle"
           categoryId="puzzle" :games="puzzleGames.slice(0, 6)" />
 
         <div v-if="adLeft || adRight" class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
@@ -40,10 +40,10 @@
           <AdBanner v-if="adRight" :ad="adRight" />
         </div>
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.6s;" title="角色扮演" :icon="svgIcons.rpg"
+        <GameSection class="fade-in-up" style="animation-delay: 0.6s;" :title="$t('homeView.sections.rpg')" :icon="svgIcons.rpg"
           categoryId="rpg" :games="rpgGames.slice(0, 6)" />
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.7s;" title="香蕉遊戲" :icon="svgIcons.banana"
+        <GameSection class="fade-in-up" style="animation-delay: 0.7s;" :title="$t('homeView.sections.banana')" :icon="svgIcons.banana"
           categoryId="banana" :games="bananaGames.slice(0, 6)" />
       </template>
     </div>

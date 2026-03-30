@@ -5,8 +5,8 @@
         <div class="auth-logo">
           <span class="logo-icon">🎮</span>
         </div>
-        <h2>歡迎回來</h2>
-        <p>請登入您的帳號繼續遊玩</p>
+        <h2>{{ $t('auth.loginTitle') }}</h2>
+        <p>{{ $t('auth.loginSubtitle') }}</p>
       </div>
 
       <form @submit.prevent="handleLogin" class="auth-form">
@@ -15,29 +15,30 @@
         </div>
 
         <div class="form-group">
-          <label for="account">帳號</label>
+          <label for="account">{{ $t('auth.account') }}</label>
           <div class="input-wrapper">
-            <input id="account" type="text" v-model="form.account" required placeholder="請輸入帳號" :disabled="isLoading" />
+            <input id="account" type="text" v-model="form.account" required :placeholder="$t('auth.accountPlaceholder')"
+              :disabled="isLoading" />
           </div>
         </div>
 
         <div class="form-group">
-          <label for="password">密碼</label>
+          <label for="password">{{ $t('auth.password') }}</label>
           <div class="input-wrapper">
-            <input id="password" type="password" v-model="form.password" required placeholder="請輸入密碼"
-              :disabled="isLoading" minlength="6" maxlength="20" />
+            <input id="password" type="password" v-model="form.password" required
+              :placeholder="$t('auth.passwordPlaceholder')" :disabled="isLoading" minlength="6" maxlength="20" />
           </div>
         </div>
 
         <button type="submit" class="submit-btn" :disabled="isLoading">
           <span v-if="isLoading" class="loader"></span>
-          <span v-else>登入</span>
+          <span v-else>{{ $t('auth.loginBtn') }}</span>
         </button>
       </form>
 
       <div class="auth-footer">
-        <span>還沒有帳號嗎？</span>
-        <router-link to="/register" class="auth-link">立即註冊</router-link>
+        <span>{{ $t('auth.noAccount') }}</span>
+        <router-link to="/register" class="auth-link">{{ $t('auth.registerNow') }}</router-link>
       </div>
     </div>
   </div>
@@ -49,7 +50,10 @@ import { reactive, ref } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
-import { showToast, showDialog } from '@/assets/utils/swal'
+import { showToast } from '@/assets/utils/swal'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const userStore = useUserStore()
 
@@ -92,17 +96,17 @@ const handleLogin = async () => {
     if (result.code === 0) {
       userStore.setLoginData(result.Info.Account, result.Info.Token)
       await userStore.getPlayerInfo(userIP)
-      showToast('登入成功！','success')
+      showToast(t('auth.loginSuccess'), 'success')
       const redirectUrl = route.query.redirect || '/'
       router.push(redirectUrl)
     } else {
       switch (result.code) {
-        case 1: throw new Error('參數錯誤')
-        case 2: throw new Error('帳密格式錯誤 (6~20碼，必須包含1英文1數字)')
-        case 3: throw new Error('登入失敗')
-        case 4: throw new Error('該帳號為凍結狀態')
-        case 999: throw new Error('帳號遭封鎖(IP)')
-        default: throw new Error(result.msg || '登入失敗，請重試')
+        case 1: throw new Error(t('auth.errors.params'))
+        case 2: throw new Error(t('auth.errors.format'))
+        case 3: throw new Error(t('auth.errors.failed'))
+        case 4: throw new Error(t('auth.errors.frozen'))
+        case 999: throw new Error(t('auth.errors.blocked'))
+        default: throw new Error(result.msg || t('auth.errors.unknown'))
       }
     }
 

@@ -10,16 +10,38 @@
         </router-link>
 
         <nav class="pc-nav">
-          <router-link to="/" exact-active-class="active">首頁</router-link>
-          <router-link to="/games" active-class="active">遊戲列表</router-link>
+          <router-link to="/" exact-active-class="active">{{ $t('header.home') }}</router-link>
+          <router-link to="/games" active-class="active">{{ $t('header.gameList') }}</router-link>
           <!-- 初版先不做 -->
-          <!-- <router-link to="/news" active-class="active">最新消息</router-link> -->
-          <!-- <router-link to="/leaderboard" active-class="active">排行榜</router-link> -->
+          <!-- <router-link to="/news" active-class="active">{{ $t('header.news') }}</router-link> -->
+          <!-- <router-link to="/leaderboard" active-class="active">{{ $t('header.leaderboard') }}</router-link> -->
         </nav>
       </div>
 
       <div class="header-right">
         <div class="pc-actions">
+          <div class="user-profile-menu lang-menu-wrapper" @mouseenter="isLangMenuOpen = true"
+            @mouseleave="isLangMenuOpen = false">
+
+            <button class="icon-btn lang-btn" title="切換語系">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="globe-icon">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                </path>
+              </svg>
+              <span class="lang-text">{{ currentLangShort }}</span>
+            </button>
+
+            <transition name="fade-slide-down">
+              <div v-if="isLangMenuOpen" class="dropdown-menu lang-dropdown">
+                <button v-for="lang in supportLangs" :key="lang.code" class="dropdown-item"
+                  :class="{ 'active-lang': locale === lang.code }" @click="changeLanguage(lang.code)">
+                  {{ lang.label }}
+                </button>
+              </div>
+            </transition>
+          </div>
           <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
               stroke="currentColor" class="search-icon">
               <circle cx="11" cy="11" r="8"></circle>
@@ -27,8 +49,8 @@
             </svg></button>
 
           <template v-if="!userStore.token">
-            <router-link to="/login" class="text-btn">登入</router-link>
-            <router-link to="/register" class="primary-btn">註冊</router-link>
+            <router-link to="/login" class="text-btn">{{ $t('header.login') }}</router-link>
+            <router-link to="/register" class="primary-btn">{{ $t('header.register') }}</router-link>
           </template>
 
           <template v-else>
@@ -43,20 +65,20 @@
                 <div v-if="isProfileMenuOpen" class="dropdown-menu">
                   <div class="dropdown-balance-section">
                     <div class="balance-item">
-                      <span class="balance-label">儲值代幣</span>
+                      <span class="balance-label">{{ $t('header.chargeCoins') }}</span>
                       <span class="balance-value">{{ userStore.points }}</span>
                     </div>
                     <div class="balance-item">
-                      <span class="balance-label">免費代幣</span>
+                      <span class="balance-label">{{ $t('header.freeCoins') }}</span>
                       <span class="balance-value free-balance">{{ userStore.freePoints }}</span>
                     </div>
                   </div>
                   <div class="dropdown-divider"></div>
-                  <router-link to="/member" class="dropdown-item">會員中心</router-link>
-                  <router-link to="/recharge" class="dropdown-item">儲值中心</router-link>
-                  <router-link to="/support" class="dropdown-item">聯繫客服</router-link>
+                  <router-link to="/member" class="dropdown-item">{{ $t('header.memberCenter') }}</router-link>
+                  <router-link to="/recharge" class="dropdown-item">{{ $t('header.recharge') }}</router-link>
+                  <router-link to="/support" class="dropdown-item">{{ $t('header.support') }}</router-link>
                   <div class="dropdown-divider"></div>
-                  <button class="dropdown-item logout-text" @click="handleLogout">登出</button>
+                  <button class="dropdown-item logout-text" @click="handleLogout">{{ $t('header.logout') }}</button>
                 </div>
               </transition>
             </div>
@@ -64,13 +86,32 @@
         </div>
 
         <div class="mobile-actions">
+          <div class="user-profile-menu lang-menu-wrapper">
+            <button class="icon-btn lang-btn" title="切換語系" @click="isMobileLangMenuOpen = !isMobileLangMenuOpen">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="globe-icon">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="2" y1="12" x2="22" y2="12"></line>
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z">
+                </path>
+              </svg>
+              <span class="lang-text">{{ currentLangShort }}</span>
+            </button>
+            <transition name="fade-slide-down">
+              <div v-if="isMobileLangMenuOpen" class="dropdown-menu lang-dropdown">
+                <button v-for="lang in supportLangs" :key="lang.code" class="dropdown-item"
+                  :class="{ 'active-lang': locale === lang.code }" @click="changeLanguage(lang.code)">
+                  {{ lang.label }}
+                </button>
+              </div>
+            </transition>
+          </div>
           <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
               stroke="currentColor" class="search-icon">
               <circle cx="11" cy="11" r="8"></circle>
               <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
             </svg></button>
           <template v-if="!userStore.token">
-            <router-link to="/login" class="text-btn">登入</router-link>
+            <router-link to="/login" class="text-btn">{{ $t('header.login') }}</router-link>
           </template>
           <template v-else>
             <router-link to="/member" class="profile-btn-mobile">
@@ -90,7 +131,7 @@
     <transition name="slide">
       <nav v-if="isMobileMenuOpen" class="mobile-sidebar">
         <div class="sidebar-header">
-          <span class="logo-text">選單</span>
+          <span class="logo-text">{{ $t('header.menu') }}</span>
           <button class="close-btn" @click="toggleMenu">✕</button>
         </div>
 
@@ -100,37 +141,37 @@
             <span class="sidebar-username">{{ userStore.nickname || userStore.account || 'Player' }}</span>
 
             <div class="balance-item">
-              <span class="balance-label">儲值代幣</span>
+              <span class="balance-label">{{ $t('header.chargeCoins') }}</span>
               <span class="balance-value">{{ userStore.points }}</span>
             </div>
             <div class="balance-item">
-              <span class="balance-label">免費代幣</span>
+              <span class="balance-label">{{ $t('header.freeCoins') }}</span>
               <span class="balance-value free-balance">{{ userStore.freePoints }}</span>
             </div>
           </div>
         </div>
 
         <div class="sidebar-links">
-          <router-link to="/" exact-active-class="active" @click="toggleMenu">首頁</router-link>
-          <router-link to="/games" active-class="active" @click="toggleMenu">遊戲列表</router-link>
-          <router-link to="/leaderboard" active-class="active" @click="toggleMenu">排行榜</router-link>
+          <router-link to="/" exact-active-class="active" @click="toggleMenu">{{ $t('header.home') }}</router-link>
+          <router-link to="/games" active-class="active" @click="toggleMenu">{{ $t('header.gameList') }}</router-link>
+          <!-- <router-link to="/leaderboard" active-class="active" @click="toggleMenu">{{ $t('header.leaderboard') }}</router-link> -->
 
           <template v-if="userStore.token">
             <div class="sidebar-divider"></div>
-            <router-link to="/member" active-class="active" @click="toggleMenu">會員中心</router-link>
-            <router-link to="/recharge" active-class="active" @click="toggleMenu">儲值中心</router-link>
-            <router-link to="/support" active-class="active" @click="toggleMenu">聯絡客服</router-link>
+            <router-link to="/member" active-class="active" @click="toggleMenu">{{ $t('header.memberCenter') }}</router-link>
+            <router-link to="/recharge" active-class="active" @click="toggleMenu">{{ $t('header.recharge') }}</router-link>
+            <router-link to="/support" active-class="active" @click="toggleMenu">{{ $t('header.support') }}</router-link>
           </template>
 
           <div class="sidebar-divider"></div>
 
           <template v-if="!userStore.token">
-            <router-link to="/login" class="sidebar-btn text-btn" @click="toggleMenu">登入</router-link>
+            <router-link to="/login" class="sidebar-btn text-btn" @click="toggleMenu">{{ $t('header.login') }}</router-link>
             <router-link to="/register" class="sidebar-btn primary-btn sidebar-register"
-              @click="toggleMenu">註冊</router-link>
+              @click="toggleMenu">{{ $t('header.register') }}</router-link>
           </template>
           <template v-else>
-            <button class="sidebar-btn text-btn logout-text" @click="handleLogoutAndCloseMenu">登出帳號</button>
+            <button class="sidebar-btn text-btn logout-text" @click="handleLogoutAndCloseMenu">{{ $t('header.logout') }}</button>
           </template>
         </div>
       </nav>
@@ -145,6 +186,7 @@ import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import { showToast } from '@/assets/utils/swal'
+import { useI18n } from 'vue-i18n'
 
 import SearchModal from './SearchModal.vue'
 import logoUrl from '@/assets/images/logo/logo-dark.svg'
@@ -152,8 +194,11 @@ import logoUrl from '@/assets/images/logo/logo-dark.svg'
 
 const userStore = useUserStore()
 const router = useRouter()
+const { locale, t } = useI18n()
+
 const isMobileMenuOpen = ref(false)
 const isProfileMenuOpen = ref(false)
+
 const userAvatar = computed(() => {
   const name = userStore.nickname || userStore.account || 'Player'
   const originalUrl = `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
@@ -168,13 +213,31 @@ const toggleMenu = () => {
 const handleLogout = () => {
   userStore.logout()
   isProfileMenuOpen.value = false
-  showToast('已成功登出！', 'success')
+  showToast(t('header.logoutSuccess'), 'success')
   router.push('/')
 }
 
 const handleLogoutAndCloseMenu = () => {
   handleLogout()
   toggleMenu()
+}
+
+
+const isLangMenuOpen = ref(false)
+const isMobileLangMenuOpen = ref(false)
+const supportLangs = [
+  { code: 'zh-TW', label: '繁體中文', short: '繁' },
+  { code: 'zh-CN', label: '简体中文', short: '简' }
+]
+const currentLangShort = computed(() => {
+  const current = supportLangs.find(lang => lang.code === locale.value)
+  return current ? current.short : '🌐'
+})
+const changeLanguage = (code) => {
+  locale.value = code
+  localStorage.setItem('user_language', code)
+  isLangMenuOpen.value = false // 切換後關閉選單
+  isMobileLangMenuOpen.value = false
 }
 
 onMounted(() => {
@@ -586,6 +649,43 @@ onUnmounted(() => {
   font-size: 1.2rem;
   font-weight: 600;
   color: #f59e0b;
+}
+
+/* 語系按鈕 */
+.lang-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  width: auto;
+}
+
+.globe-icon {
+  width: 18px;
+  height: 18px;
+}
+
+.lang-text {
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.lang-dropdown {
+  width: 120px;
+  text-align: center;
+}
+
+.lang-dropdown .dropdown-item {
+  text-align: center;
+  font-weight: 500;
+}
+
+/* 當前選擇高亮 */
+.active-lang {
+  color: var(--color-primary);
+  background-color: var(--color-primary-light);
+  font-weight: 700 !important;
 }
 
 .free-balance,

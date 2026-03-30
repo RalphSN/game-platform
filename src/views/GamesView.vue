@@ -2,13 +2,13 @@
   <div class="games-view">
     <section class="filter-section">
       <div class="filter-header">
-        <h2 class="section-title">篩選條件</h2>
+        <h2>{{ $t('gamesView.filterTitle') }}</h2>
 
         <div class="mode-switch-container" @click="toggleMatchMode">
           <div class="mode-track">
             <div class="mode-thumb" :class="{ 'move-right': isFullyMatch }"></div>
 
-            <div class="mode-item" :class="{ active: !isFullyMatch }" title="寬鬆匹配">
+            <div class="mode-item" :class="{ active: !isFullyMatch }" :title="$t('gamesView.looseMatch')">
               <svg xmlns="http://www.w3.org/2000/svg" class="mode-icon" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <line x1="4" y1="21" x2="4" y2="14"></line>
@@ -23,26 +23,26 @@
               </svg>
             </div>
 
-            <div class="mode-item" :class="{ active: isFullyMatch }" title="精準匹配">
+            <div class="mode-item" :class="{ active: isFullyMatch }" :title="$t('gamesView.exactMatch')">
               <svg xmlns="http://www.w3.org/2000/svg" class="mode-icon" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"></polygon>
               </svg>
             </div>
           </div>
-          <span class="mode-desc">{{ isFullyMatch ? '(符合所有條件)' : '(符合任一條件)' }}</span>
+          <span class="mode-desc">{{ isFullyMatch ? $t('gamesView.matchAll') : $t('gamesView.matchAny') }}</span>
         </div>
       </div>
 
       <div v-for="(category, cIndex) in categoryList" :key="cIndex" class="category-row">
-        <h3 class="category-title">{{ category.title }}</h3>
+        <h3 class="category-title">{{ $t(category.titleKey) }}</h3>
 
         <div class="options-container">
           <button v-for="(opt, oIndex) in category.list" :key="opt.id" class="option-btn"
             :class="{ 'active': Array.isArray(selectedIds[category.key]) ? selectedIds[category.key].includes(opt.id) : selectedIds[category.key] === opt.id }"
             :style="{ animationDelay: `${(cIndex * 0.1) + (oIndex * 0.03)}s` }"
             @click="updateSelection(category.key, opt.id)">
-            {{ opt.name }}
+            {{ $t(opt.nameKey) }}
           </button>
         </div>
       </div>
@@ -50,7 +50,7 @@
 
     <section class="result-section">
       <div class="result-header">
-        <h3>篩選結果 <span class="result-count">({{ filteredGames.length }})</span></h3>
+        <h3>{{ $t('gamesView.filterResult') }} <span class="result-count">({{ filteredGames.length }})</span></h3>
       </div>
 
       <div class="game-grid" :key="refreshKey">
@@ -67,7 +67,7 @@
 
       <div v-if="filteredGames.length === 0" class="empty-state">
         <div class="empty-icon">📂</div>
-        <p>找不到符合條件的遊戲，請嘗試放寬篩選條件。</p>
+        <p>{{ $t('gamesView.noResult') }}</p>
       </div>
     </section>
   </div>
@@ -82,28 +82,54 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const userStore = useUserStore()
 
+// const categoryList = ref([
+//   {
+//     title: '遊戲類別',
+//     key: 'genre',
+//     list: [
+//       { id: 0, name: '全部' },
+//       { id: 1, name: '休閒益智' },
+//       { id: 2, name: '動作闖關' },
+//       { id: 3, name: '策略塔防' },
+//       { id: 4, name: '模擬經營' },
+//       { id: 5, name: '競技對戰' },
+//       { id: 6, name: '角色冒險' },
+//       { id: 7, name: '精選合集' }
+//     ]
+//   },
+//   {
+//     title: '遊戲狀態',
+//     key: 'mode',
+//     list: [
+//       { id: 0, name: '全部' },
+//       { id: 1, name: '已解鎖' },
+//       { id: 2, name: '未解鎖' }
+//     ]
+//   }
+// ])
+
 const categoryList = ref([
   {
-    title: '遊戲類別',
+    titleKey: 'gamesView.genre',
     key: 'genre',
     list: [
-      { id: 0, name: '全部' },
-      { id: 1, name: '休閒益智' },
-      { id: 2, name: '動作闖關' },
-      { id: 3, name: '策略塔防' },
-      { id: 4, name: '模擬經營' },
-      { id: 5, name: '競技對戰' },
-      { id: 6, name: '角色冒險' },
-      { id: 7, name: '精選合集' }
+      { id: 0, nameKey: 'gamesView.all' },
+      { id: 1, nameKey: 'category.1' },
+      { id: 2, nameKey: 'category.2' },
+      { id: 3, nameKey: 'category.3' },
+      { id: 4, nameKey: 'category.4' },
+      { id: 5, nameKey: 'category.5' },
+      { id: 6, nameKey: 'category.6' },
+      { id: 7, nameKey: 'category.7' }
     ]
   },
   {
-    title: '遊戲狀態',
+    titleKey: 'gamesView.status',
     key: 'mode',
     list: [
-      { id: 0, name: '全部' },
-      { id: 1, name: '已解鎖' },
-      { id: 2, name: '未解鎖' }
+      { id: 0, nameKey: 'gamesView.all' },
+      { id: 1, nameKey: 'gamesView.unlocked' },
+      { id: 2, nameKey: 'gamesView.locked' }
     ]
   }
 ])
@@ -429,11 +455,13 @@ onMounted(() => {
 }
 
 .loading-wrapper {
-  grid-column: 1 / -1; /* 讓載入動畫橫跨所有的 grid 欄位 */
+  grid-column: 1 / -1;
+  /* 讓載入動畫橫跨所有的 grid 欄位 */
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 200px; /* 給予最小高度避免畫面跳動過大 */
+  min-height: 200px;
+  /* 給予最小高度避免畫面跳動過大 */
 }
 
 @media (max-width: 1024px) {

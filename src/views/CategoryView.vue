@@ -2,11 +2,11 @@
   <div class="category-view">
     <div class="category-header fade-in-up">
       <button class="back-btn" @click="router.back()">
-        <span class="arrow">‹</span> 返回
+        <span class="arrow">‹</span> {{ $t('categoryView.back') }}
       </button>
       <h1 class="page-title">
         <span v-if="isLoading" class="skeleton skeleton-title-text"></span>
-        <span v-else>{{ categoryTitle }}</span>
+        <span v-else>{{ $t(categoryTitleKey) }}</span>
       </h1>
     </div>
 
@@ -39,15 +39,15 @@ const router = useRouter()
 const userStore = useUserStore()
 
 const isLoading = ref(true)
-const categoryTitle = ref('')
+const categoryTitleKey = ref('categoryView.allGames')
 const games = ref([])
 
 const categoryMapping = {
-  'hot': { id: '7', title: '熱門推薦' },
-  'banana': { id: '0', title: '香蕉遊戲' },
-  'action': { id: '2', title: '動作冒險' },
-  'puzzle': { id: '1', title: '休閒益智' },
-  'rpg': { id: '6', title: '角色扮演' }
+  'hot': { id: '7', titleKey: 'categoryView.categories.hot' },
+  'banana': { id: '0', titleKey: 'categoryView.categories.banana' },
+  'action': { id: '2', titleKey: 'categoryView.categories.action' },
+  'puzzle': { id: '1', titleKey: 'categoryView.categories.puzzle' },
+  'rpg': { id: '6', titleKey: 'categoryView.categories.rpg' }
 }
 
 const loadCategoryData = async (categoryId) => {
@@ -57,9 +57,9 @@ const loadCategoryData = async (categoryId) => {
   try {
     const config = categoryMapping[categoryId]
     if (!config) {
-      categoryTitle.value = '全部遊戲'
+      categoryTitleKey.value = 'categoryView.allGames'
     } else {
-      categoryTitle.value = config.title
+      categoryTitleKey.value = config.titleKey
     }
 
     const result = await fetchGameListAllApi(userStore.account, userStore.token)

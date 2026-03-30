@@ -3,7 +3,7 @@
     <svg class="spinner" :width="size" :height="size" viewBox="0 0 50 50">
       <circle class="path" cx="25" cy="25" r="20" fill="none" :stroke="color" stroke-width="5"></circle>
     </svg>
-    <p v-if="text" class="loading-text" :style="{ color: color }">{{ text }}</p>
+    <p v-if="text" class="loading-text" :style="{ color: color }">{{ text ?? $t('common.loading') }}</p>
   </div>
 </template>
 
@@ -19,7 +19,7 @@ defineProps({
   },
   text: {
     type: String,
-    default: '載入中...' // 預設顯示文字，傳入空字串則不顯示
+    default: undefined
   }
 })
 </script>

@@ -8,14 +8,14 @@
             <circle cx="11" cy="11" r="8"></circle>
             <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
           </svg>
-          <input ref="searchInput" v-model="keyword" type="text" placeholder="搜尋遊戲名稱或類型..." @input="handleInput"
+          <input ref="searchInput" v-model="keyword" type="text" :placeholder="$t('searchModal.placeholder')" @input="handleInput"
             @keyup.enter="handleEnterKey" />
           <button v-if="keyword" class="clear-btn" @click="clearKeyword">✕</button>
-          <button class="close-modal-btn" @click="closeModal">關閉</button>
+          <button class="close-modal-btn" @click="closeModal">{{ $t('searchModal.close') }}</button>
         </div>
 
         <div class="search-results-area" v-if="keyword">
-          <div v-if="isSearching" class="loading-state">搜尋中...</div>
+          <div v-if="isSearching" class="loading-state">{{ $t('searchModal.searching') }}</div>
           <div v-else-if="searchResults.length > 0" class="result-list">
             <div v-for="game in searchResults" :key="game.id" class="result-item" @click="goToGame(game.id)">
               <img :src="game.thumb" :alt="game.title" class="result-thumb" />
@@ -25,13 +25,13 @@
               </div>
             </div>
           </div>
-          <div v-else class="empty-state">找不到符合「{{ keyword }}」的遊戲</div>
+          <div v-else class="empty-state">{{ $t('searchModal.noResultFound', { keyword: keyword }) }}</div>
         </div>
 
         <div class="search-default-area" v-else>
           <div class="section-block" v-if="userStore.token && recentSearches.length > 0">
             <div class="section-header">
-              <h3>最近搜尋</h3>
+              <h3>{{ $t('searchModal.recentSearches') }}</h3>
             </div>
             <div class="tag-list">
               <span v-for="item in recentSearches" :key="item" class="tag" @click="applyKeyword(item)">
@@ -42,7 +42,7 @@
 
           <div class="section-block" v-if="hotSearches.length > 0">
             <div class="section-header">
-              <h3>熱門搜尋</h3>
+              <h3>{{ $t('searchModal.hotSearches') }}</h3>
             </div>
             <div class="tag-list">
               <span v-for="item in hotSearches" :key="item" class="tag hot-tag" @click="applyKeyword(item)">
@@ -64,6 +64,9 @@ import { getRecentSearchApi, getHotSearchApi, fetchFilteredGamesApi } from '@/as
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import { useUserStore } from '@/stores/user'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const props = defineProps({
   isOpen: Boolean
 })
@@ -83,14 +86,14 @@ const hotSearches = ref([])
 let debounceTimer = null
 
 // 分類名稱轉換
-const categoryMap = {
-  '1': '休閒益智', '2': '動作闖關', '3': '策略塔防', '4': '模擬經營',
-  '5': '競技對戰', '6': '角色冒險', '7': '精選合集'
-}
 const getCategoryName = (labelStr) => {
-  if (!labelStr) return '未分類'
+  if (!labelStr) return t('gameCard.uncategorized')
   const firstCode = labelStr.split(',')[0]
-  return categoryMap[firstCode] || '未分類'
+
+  if (['1', '2', '3', '4', '5', '6', '7'].includes(firstCode)) {
+    return t(`category.${firstCode}`)
+  }
+  return t('gameCard.uncategorized')
 }
 
 const closeModal = () => {
@@ -143,7 +146,7 @@ const handleInput = () => {
     } finally {
       isSearching.value = false
     }
-  }, 400) // 玩家停下打字 400 毫秒後才發 API
+  }, 400) // 停下打字 400 毫秒後才發 API
 }
 
 const handleEnterKey = () => {

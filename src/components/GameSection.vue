@@ -3,11 +3,11 @@
     <div class="section-header">
       <h3 class="section-title">
         <span class="title-icon" v-if="icon" v-html="icon"></span>
-        {{ title }}
+        {{ title || $t('gameSection.featuredGames') }}
       </h3>
 
       <button class="more-btn" @click="goToCategory" v-if="showMore">
-        查看更多 <span class="arrow">›</span>
+        {{ $t('gameSection.viewMore') }} <span class="arrow">›</span>
       </button>
     </div>
 
@@ -15,7 +15,7 @@
       <div class="game-grid">
         <GameCard v-for="(game, index) in games" :key="game.GameAutoNo || index" :game="game"
           :hideFavorite="categoryId === 'banana' || categoryId === '0' || categoryId === 0"
-          :isBanana="categoryId === 'banana' || categoryId === '0' || categoryId === 0"/>
+          :isBanana="categoryId === 'banana' || categoryId === '0' || categoryId === 0" />
       </div>
     </div>
   </section>
@@ -29,7 +29,7 @@ const props = defineProps({
   title: {
     type: String,
     required: true,
-    default: '精選遊戲'
+    default: ''
   },
   icon: {
     type: String,
