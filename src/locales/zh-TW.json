@@ -137,6 +137,21 @@
       "frozen": "該帳號為凍結狀態",
       "blocked": "帳號遭封鎖(IP)",
       "unknown": "登入失敗，請重試"
+    },
+    "registerTitle": "建立新帳號",
+    "registerSubtitle": "加入我們，開始遊戲旅程",
+    "regAccountPlaceholder": "請設定登入帳號 (6~20碼)",
+    "regPasswordPlaceholder": "請設定密碼 (包含英文數字, 6~20碼)",
+    "registerBtn": "立即註冊",
+    "hasAccount": "已經有帳號了？",
+    "loginNow": "立即登入",
+    "registerSuccess": "註冊成功！請使用新帳號登入！",
+    "regErrors": {
+      "params": "參數錯誤，請檢查填寫內容",
+      "format": "帳號密碼格式錯誤 (6~20碼，必須包含1英文1數字)",
+      "duplicate": "此玩家帳號已存在，請換一個",
+      "specialChars": "包含特殊符號，請重新嘗試",
+      "failed": "註冊失敗，請稍後再試"
     }
   },
   "member": {
@@ -178,7 +193,109 @@
       "loginExpired": "登入已過期，請重新登入",
       "userNotFound": "玩家帳號不存在",
       "passwordSame": "與原密碼相同，無法變更",
-      "passwordFormat": "密碼格式錯誤 (6~20碼，必須包含1英文1數字)"
+      "passwordFormat": "密碼格式錯誤 (6~20碼，必須包含1英文1數字)",
+      "changeFailed": "修改失敗，請稍後再試"
+    }
+  },
+  "playView": {
+    "exitGame": "退出遊戲",
+    "loadingGame": "遊戲載入中，請稍候...",
+    "exitModal": {
+      "title": "確定要退出遊戲嗎？",
+      "desc": "未儲存的進度可能會遺失，請確認是否離開。",
+      "continue": "繼續遊玩",
+      "confirm": "確認退出"
+    },
+    "errors": {
+      "noFullscreen": "您的瀏覽器不支援全螢幕功能",
+      "timeout": "遊戲伺服器連線超時，請檢查網路或稍後再試",
+      "guestNoPlay": "訪客模式無法遊玩此遊戲，請先登入",
+      "notUnlocked": "您尚未解鎖此遊戲，請先進行解鎖",
+      "accountBlocked": "帳號遭封鎖",
+      "fetchUrlFailed": "無法取得遊戲網址，請稍後再試",
+      "systemError": "系統連線錯誤，請稍後再試"
+    }
+  },
+  "recharge": {
+    "title": "儲值中心",
+    "step1": "選擇支付方式",
+    "step2": "選擇儲值面額",
+    "points": "點",
+    "totalAmount": "總計結帳金額：",
+    "goToPay": "前往付款",
+    "currency": {
+      "CNY": "人民幣 (CNY)",
+      "TWD": "新台幣 (TWD)"
+    },
+    "errors": {
+      "fetchMethodsFailed": "獲取支付方式失敗",
+      "systemErrorTitle": "系統連線錯誤",
+      "systemErrorDesc": "請稍後再試",
+      "formInvalid": "表單失效，請聯繫客服",
+      "createOrderFailed": "建立訂單失敗"
+    }
+  },
+  "searchView": {
+    "title": "搜尋結果",
+    "searchingFor": "搜尋關於「{query}」的遊戲",
+    "resultCount": "( 共找到 {count} 種結果 )",
+    "enterKeyword": "請輸入關鍵字進行搜尋",
+    "noResultTitle": "找不到符合條件的遊戲",
+    "noResultDesc": "試著換個關鍵字再試一次吧！",
+    "backToHome": "回首頁探索"
+  },
+  "support": {
+    "tabs": {
+      "newIssue": "新增問題",
+      "history": "客服紀錄"
+    },
+    "newIssue": {
+      "title": "聯絡客服",
+      "subtitle": "遇到問題了嗎？請填寫下方表單，我們將盡快為您處理。",
+      "successTitle": "回報已成功送出！",
+      "ticketId": "您的問題已記錄 (單號：{id})",
+      "successDesc": "客服人員將於 1-2 個工作天內透過 Email 與您聯繫。",
+      "backToNew": "返回填寫新單"
+    },
+    "form": {
+      "issueType": "問題類型",
+      "selectType": "請選擇類型",
+      "description": "詳細說明",
+      "descPlaceholder": "請詳細描述您遇到的狀況、發生時間及操作步驟...",
+      "uploadImage": "上傳截圖",
+      "optional3": "(選填，最多 3 張)",
+      "dragHint": "點擊或將圖片拖曳至此處",
+      "supportFormat": "支援 JPG, PNG 格式",
+      "submit": "送出回報"
+    },
+    "issueTypes": {
+      "account": "帳號與登入問題",
+      "payment": "儲值與購買異常",
+      "bug": "遊戲 Bug 回報",
+      "suggestion": "功能建議",
+      "other": "其他"
+    },
+    "history": {
+      "title": "客服紀錄",
+      "ticketNo": "單號 ＃{id}",
+      "empty": "目前沒有客服紀錄"
+    },
+    "detail": {
+      "back": "返回列表",
+      "attachments": "夾帶圖片：",
+      "replyPlaceholder": "請輸入您的回覆...",
+      "submitReply": "送出回覆"
+    },
+    "status": {
+      "pending": "未處理",
+      "processing": "處理中",
+      "resolved": "處理完成",
+      "unknown": "未知"
+    },
+    "errors": {
+      "formatOnly": "僅支援 JPG 與 PNG 圖片格式",
+      "submitFailed": "送出失敗",
+      "replyFailed": "回覆失敗"
     }
   }
 }

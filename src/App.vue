@@ -20,12 +20,30 @@ import AppFooter from './components/AppFooter.vue'
 import MobileTabBar from './components/MobileTabBar.vue'
 import GoTopButton from './components/GoTopButton.vue'
 
-import { onMounted } from 'vue'
+import { onMounted, watch } from 'vue'
 import { useUserStore } from '@/stores/user'
+import { useI18n } from 'vue-i18n'
 
 const userStore = useUserStore()
+const { locale } = useI18n()
+
+// 負責更新 <body> class 的函式
+const updateBodyLangClass = (lang) => {
+  // 先移除所有可能的語系 class
+  document.body.classList.remove('lang-zh-TW', 'lang-zh-CN', 'lang-en-US')
+  // 加上當前的語系 class
+  document.body.classList.add(`lang-${lang}`)
+}
+
+// 右上角按鈕改了 locale 觸發
+watch(locale, (newLang) => {
+  updateBodyLangClass(newLang)
+})
 
 onMounted(async () => {
+  // 網頁初次載入時，先設定一次目前的語系 class
+  updateBodyLangClass(locale.value)
+
   if (userStore.token) {
     await userStore.getPlayerInfo()
   }
@@ -33,6 +51,26 @@ onMounted(async () => {
 </script>
 
 <style>
+@import '@/assets/fonts/fonts.css';
+
+:root {
+  --font-en: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+
+body,
+body.lang-zh-TW {
+  font-family: var(--font-en), 'Noto Sans TC', sans-serif;
+}
+
+body.lang-zh-CN {
+  font-family: var(--font-en), 'Noto Sans SC', sans-serif;
+}
+
+body.lang-en-US {
+  font-family: var(--font-en);
+  letter-spacing: 0.3px;
+}
+
 * {
   margin: 0;
   padding: 0;

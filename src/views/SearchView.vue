@@ -1,14 +1,15 @@
 <template>
   <div class="search-view">
     <div class="search-header fade-in-up">
-      <h1 class="page-title">搜尋結果</h1>
+      <h1 class="page-title">{{ $t('searchView.title') }}</h1>
       <p class="search-meta" v-if="searchQuery">
-        搜尋關於「<span class="highlight-query">{{ searchQuery }}</span>」的遊戲
+        <span
+          v-html="$t('searchView.searchingFor', { query: `<span class='highlight-query'>${searchQuery}</span>` })"></span>
         <span v-if="!isLoading && searchResults.length > 0" class="result-count">
-          ( 共找到 {{ searchResults.length }} 種結果 )
+          {{ $t('searchView.resultCount', { count: searchResults.length }) }}
         </span>
       </p>
-      <p class="search-meta" v-else>請輸入關鍵字進行搜尋</p>
+      <p class="search-meta" v-else>{{ $t('searchView.enterKeyword') }}</p>
     </div>
 
     <div v-if="isLoading" class="games-grid">
@@ -40,9 +41,9 @@
 
     <div v-else-if="searchQuery && !isLoading" class="empty-state fade-in-up" style="animation-delay: 0.1s;">
       <div class="empty-icon">🛸</div>
-      <h3>找不到符合條件的遊戲</h3>
-      <p>試著換個關鍵字再試一次吧！</p>
-      <button class="back-btn" @click="goToHome">回首頁探索</button>
+      <h3>{{ $t('searchView.noResultTitle') }}</h3>
+      <p>{{ $t('searchView.noResultDesc') }}</p>
+      <button class="back-btn" @click="goToHome">{{ $t('searchView.backToHome') }}</button>
     </div>
   </div>
 </template>
@@ -54,6 +55,9 @@ import { fetchFilteredGamesApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import { useUserStore } from '@/stores/user'
 
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const route = useRoute()
 const router = useRouter()
 const userStore = useUserStore()
@@ -62,15 +66,13 @@ const searchQuery = computed(() => route.query.q || '')
 const isLoading = ref(false)
 const searchResults = ref([])
 
-const categoryMap = {
-  '1': '休閒益智', '2': '動作闖關', '3': '策略塔防', '4': '模擬經營',
-  '5': '競技對戰', '6': '角色冒險', '7': '精選合集'
-}
-
 const getCategoryName = (labelStr) => {
-  if (!labelStr) return '未分類'
+  if (!labelStr) return t('gameCard.uncategorized')
   const firstCode = labelStr.split(',')[0]
-  return categoryMap[firstCode] || '未分類'
+  if (['1', '2', '3', '4', '5', '6', '7'].includes(firstCode)) {
+    return t(`category.${firstCode}`)
+  }
+  return t('gameCard.uncategorized')
 }
 
 const performSearch = async (keyword) => {

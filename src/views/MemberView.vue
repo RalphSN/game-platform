@@ -15,7 +15,7 @@
             <div class="balance-info primary-balance">
               <span class="coin-icon">💎</span>
               <div class="balance-details">
-                <span class="balance-label">儲值代幣</span>
+                <span class="balance-label">{{ $t('member.sidebar.depositCoins') }}</span>
                 <span class="balance-amount">{{ userStore.points }}</span>
               </div>
             </div>
@@ -23,7 +23,7 @@
             <div class="balance-info secondary-balance">
               <span class="coin-icon">🪙</span>
               <div class="balance-details">
-                <span class="balance-label">免費代幣</span>
+                <span class="balance-label">{{ $t('member.sidebar.freeCoins') }}</span>
                 <span class="balance-amount">{{ userStore.freePoints }}</span>
               </div>
             </div>
@@ -34,7 +34,7 @@
           <button v-for="tab in tabs" :key="tab.id" class="nav-btn" :class="{ active: activeTab === tab.id }"
             @click="activeTab = tab.id">
             <span class="nav-icon" v-html="tab.icon"></span>
-            {{ tab.name }}
+            {{ $t(tab.nameKey) }}
           </button>
         </nav>
       </aside>
@@ -43,21 +43,17 @@
         <transition name="fade-slide" mode="out-in">
 
           <section v-if="activeTab === 'profile'" key="profile" class="content-section">
-            <h3 class="section-title">個人資料</h3>
+            <h3 class="section-title">{{ $t('member.profile.title') }}</h3>
             <form @submit.prevent="updateProfile" class="profile-form">
-              <div v-if="updateMessage" class="alert-message success">
-                {{ updateMessage }}
-              </div>
-
               <div class="form-group">
-                <label>帳號</label>
+                <label>{{ $t('member.profile.account') }}</label>
                 <div class="input-wrapper">
                   <input type="text" :value="userStore.account" disabled />
                 </div>
               </div>
 
               <div class="form-group">
-                <label>暱稱</label>
+                <label>{{ $t('member.profile.nickname') }}</label>
                 <div class="input-wrapper">
                   <input type="text" v-model="editForm.nickname" required :disabled="isUpdating" />
                 </div>
@@ -65,18 +61,14 @@
 
               <button type="submit" class="submit-btn" :disabled="isUpdating">
                 <span v-if="isUpdating" class="loader"></span>
-                <span v-else>儲存修改</span>
+                <span v-else>{{ $t('member.profile.saveBtn') }}</span>
               </button>
             </form>
 
             <hr class="section-divider" />
 
-            <h4 class="sub-section-title">修改密碼</h4>
+            <h4 class="sub-section-title">{{ $t('member.profile.changePassword') }}</h4>
             <form @submit.prevent="updatePassword" class="profile-form">
-              <div v-if="passwordMessage" class="alert-message" :class="passwordMessageType">
-                {{ passwordMessage }}
-              </div>
-
               <!-- <div class="form-group">
                 <label>原密碼</label>
                 <div class="input-wrapper">
@@ -86,24 +78,24 @@
               </div> -->
 
               <div class="form-group">
-                <label>新密碼</label>
+                <label>{{ $t('member.profile.newPassword') }}</label>
                 <div class="input-wrapper">
                   <input type="password" v-model="passwordForm.newPassword" required :disabled="isUpdatingPassword"
-                    placeholder="請輸入新密碼" />
+                    :placeholder="$t('member.profile.newPasswordPlaceholder')" />
                 </div>
               </div>
 
               <div class="form-group">
-                <label>確認新密碼</label>
+                <label>{{ $t('member.profile.confirmPassword') }}</label>
                 <div class="input-wrapper">
                   <input type="password" v-model="passwordForm.confirmPassword" required :disabled="isUpdatingPassword"
-                    placeholder="請再次輸入新密碼" />
+                    :placeholder="$t('member.profile.confirmPasswordPlaceholder')" />
                 </div>
               </div>
 
               <button type="submit" class="submit-btn" :disabled="isUpdatingPassword">
                 <span v-if="isUpdatingPassword" class="loader"></span>
-                <span v-else>更新密碼</span>
+                <span v-else>{{ $t('member.profile.updatePasswordBtn') }}</span>
               </button>
             </form>
           </section>
@@ -124,12 +116,12 @@
           </section>
 
           <section v-else-if="activeTab === 'favorites'" key="favorites" class="content-section">
-            <h3 class="section-title">收藏清單</h3>
+            <h3 class="section-title">{{ $t('member.favorites.title') }}</h3>
 
             <div v-if="isLoadingFavorites" class="loading-state" style="text-align: center; padding: 40px;">
               <span class="loader"
                 style="border-color: var(--color-primary) transparent var(--color-primary) transparent;"></span>
-              <p>載入中...</p>
+              <p>{{ $t('common.loading') }}</p>
             </div>
 
             <template v-else>
@@ -138,18 +130,18 @@
               </div>
               <div v-if="favoriteGames.length === 0" class="empty-state"
                 style="text-align: center; padding: 40px; color: var(--color-text-muted);">
-                <p>目前沒有收藏的遊戲喔！</p>
+                <p>{{ $t('member.favorites.empty') }}</p>
               </div>
             </template>
           </section>
 
           <section v-else-if="activeTab === 'transactions'" key="transactions" class="content-section">
-            <h3 class="section-title">儲值紀錄</h3>
+            <h3 class="section-title">{{ $t('member.transactions.title') }}</h3>
 
             <div v-if="isLoadingTransactions" class="loading-state" style="text-align: center; padding: 40px;">
               <span class="loader"
                 style="border-color: var(--color-primary) transparent var(--color-primary) transparent;"></span>
-              <p>載入中...</p>
+              <p>{{ $t('common.loading') }}</p>
             </div>
 
             <template v-else>
@@ -157,10 +149,10 @@
                 <table class="transaction-table">
                   <thead>
                     <tr>
-                      <th>訂單編號</th>
-                      <th>日期</th>
-                      <th>金額</th>
-                      <th>獲得代幣</th>
+                      <th>{{ $t('member.transactions.orderId') }}</th>
+                      <th>{{ $t('member.transactions.date') }}</th>
+                      <th>{{ $t('member.transactions.amount') }}</th>
+                      <th>{{ $t('member.transactions.gotCoins') }}</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -178,7 +170,7 @@
 
               <div v-else class="empty-state"
                 style="text-align: center; padding: 40px; color: var(--color-text-muted);">
-                <p>目前沒有儲值紀錄</p>
+                <p>{{ $t('member.transactions.empty') }}</p>
               </div>
             </template>
           </section>
@@ -213,15 +205,15 @@ const getClientIP = async () => {
     const res = await fetch('https://api.ipify.org?format=json')
     const data = await res.json()
     return data.ip
-  } catch (e) {
+  } catch {
     return '127.0.0.1'
   }
 }
 
 const tabs = [
-  { id: 'profile', name: '個人資料', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' },
-  { id: 'favorites', name: '收藏清單', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' },
-  { id: 'transactions', name: '儲值紀錄', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>' }
+  { id: 'profile', nameKey: 'member.sidebar.profile', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>' },
+  { id: 'favorites', nameKey: 'member.sidebar.favorites', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>' },
+  { id: 'transactions', nameKey: 'member.sidebar.transactions', icon: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2" ry="2"></rect><line x1="2" y1="10" x2="22" y2="10"></line></svg>' }
 ]
 
 const userAvatar = computed(() => {
@@ -242,12 +234,9 @@ watch(
 )
 
 const isUpdating = ref(false)
-const updateMessage = ref('')
-const updateMessageType = ref('success')
 
 const updateProfile = async () => {
   isUpdating.value = true
-  updateMessage.value = ''
 
   try {
     const userIP = await getClientIP()
@@ -260,30 +249,28 @@ const updateProfile = async () => {
     )
 
     if (result.code === 0) {
-      updateMessageType.value = 'success'
-      updateMessage.value = '暱稱已成功更新！'
+      showToast(t('member.profile.updateSuccess'), 'success')
       userStore.nickname = editForm.nickname
     } else {
-      updateMessageType.value = 'error'
+      let errorMsg = ''
       switch (result.code) {
-        case 1: updateMessage.value = '參數錯誤'; break;
-        case 2: updateMessage.value = '玩家帳號不存在'; break;
+        case 1: errorMsg = t('auth.errors.params'); break;
+        case 2: errorMsg = t('member.errors.userNotFound'); break;
         case 3:
-          updateMessage.value = '登入已過期，請重新登入'
+          errorMsg = t('member.errors.loginExpired')
           setTimeout(() => userStore.logout(), 2000)
           break;
-        case 4: updateMessage.value = '該帳號為凍結狀態'; break;
-        case 999: updateMessage.value = '帳號遭封鎖(IP)'; break;
-        default: updateMessage.value = result.msg || '更新失敗，請稍後再試'
+        case 4: errorMsg = t('auth.errors.frozen'); break;
+        case 999: errorMsg = t('auth.errors.blocked'); break;
+        default: errorMsg = result.msg || t('auth.errors.unknown')
       }
+      showToast(errorMsg, 'warning')
     }
   } catch (error) {
     console.error('更新暱稱發生錯誤:', error)
-    updateMessageType.value = 'error'
-    updateMessage.value = '系統發生錯誤，請稍後再試'
+    showToast(t('gameDetail.messages.systemError'), 'warning')
   } finally {
     isUpdating.value = false
-    setTimeout(() => { updateMessage.value = '' }, 3000)
   }
 }
 const passwordForm = reactive({
@@ -293,18 +280,14 @@ const passwordForm = reactive({
 })
 
 const isUpdatingPassword = ref(false)
-const passwordMessage = ref('')
-const passwordMessageType = ref('success')
 
 const updatePassword = async () => {
   if (passwordForm.newPassword !== passwordForm.confirmPassword) {
-    passwordMessageType.value = 'error'
-    passwordMessage.value = '兩次輸入的新密碼不一致！'
+    showToast(t('member.profile.passwordMismatch'), 'warning')
     return
   }
 
   isUpdatingPassword.value = true
-  passwordMessage.value = ''
 
   try {
     const userIP = await getClientIP()
@@ -317,33 +300,31 @@ const updatePassword = async () => {
     )
 
     if (result.code === 0) {
-      passwordMessageType.value = 'success'
-      passwordMessage.value = '密碼已成功更新！'
+      showToast(t('member.profile.passwordSuccess'), 'success')
       passwordForm.newPassword = ''
       passwordForm.confirmPassword = ''
     } else {
-      passwordMessageType.value = 'error'
+      let errorMsg = ''
       switch (result.code) {
-        case 1: passwordMessage.value = '參數錯誤'; break;
-        case 2: passwordMessage.value = '密碼格式錯誤 (6~20碼，必須包含1英文1數字)'; break;
-        case 3: passwordMessage.value = '玩家帳號不存在'; break;
+        case 1: errorMsg = t('auth.errors.params'); break;
+        case 2: errorMsg = t('member.errors.passwordFormat'); break;
+        case 3: errorMsg = t('member.errors.userNotFound'); break;
         case 4:
-          passwordMessage.value = '登入已過期，請重新登入'
+          errorMsg = t('member.errors.loginExpired')
           setTimeout(() => userStore.logout(), 2000)
           break;
-        case 5: passwordMessage.value = '該帳號為凍結狀態'; break;
-        case 6: passwordMessage.value = '與原密碼相同，無法變更'; break;
-        case 999: passwordMessage.value = '帳號遭封鎖(IP)'; break;
-        default: passwordMessage.value = result.msg || '修改失敗，請稍後再試'
+        case 5: errorMsg = t('auth.errors.frozen'); break;
+        case 6: errorMsg = t('member.errors.passwordSame'); break;
+        case 999: errorMsg = t('auth.errors.blocked'); break;
+        default: errorMsg = result.msg || t('member.errors.changeFailed')
       }
+      showToast(errorMsg, 'warning')
     }
   } catch (error) {
     console.error('修改密碼發生錯誤:', error)
-    passwordMessageType.value = 'error'
-    passwordMessage.value = '系統發生錯誤，請稍後再試'
+    showToast(t('gameDetail.messages.systemError'), 'warning')
   } finally {
     isUpdatingPassword.value = false
-    setTimeout(() => { passwordMessage.value = '' }, 3000)
   }
 }
 
@@ -410,7 +391,7 @@ watch(activeTab, async (newTab) => {
 
 onMounted(() => {
   if (!userStore.token) {
-    showToast('請先登入會員','warning')
+    showToast(t('gameDetail.messages.loginFirst'), 'warning')
 
     router.replace({
       path: '/login',
@@ -735,25 +716,6 @@ onMounted(() => {
   border-radius: 50%;
   border-top-color: #fff;
   animation: spin 1s ease-in-out infinite;
-}
-
-.alert-message {
-  padding: 12px 16px;
-  border-radius: 8px;
-  font-size: 0.95rem;
-  border: 1px solid transparent;
-}
-
-.alert-message.success {
-  background-color: #e8f5e9;
-  color: #2e7d32;
-  border-color: #c8e6c9;
-}
-
-.alert-message.error {
-  background-color: #ffebee;
-  color: #d32f2f;
-  border-color: #ffcdd2;
 }
 
 .history-list {

@@ -7,7 +7,7 @@
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        <span>退出遊戲</span>
+        <span>{{ $t('playView.exitGame') }}</span>
       </button>
 
       <button class="toolbar-btn fullscreen-btn" @click="toggleFullscreen">
@@ -32,11 +32,11 @@
       <div v-if="showExitWarning" class="modal-overlay">
         <div class="modal-content">
           <div class="modal-icon">⚠️</div>
-          <h3 class="modal-title">確定要退出遊戲嗎？</h3>
-          <p class="modal-desc">未儲存的進度可能會遺失，請確認是否離開。</p>
+          <h3 class="modal-title">{{ $t('playView.exitModal.title') }}</h3>
+          <p class="modal-desc">{{ $t('playView.exitModal.desc') }}</p>
           <div class="modal-actions">
-            <button class="btn-cancel" @click="showExitWarning = false">繼續遊玩</button>
-            <button class="btn-confirm" @click="goBack">確認退出</button>
+            <button class="btn-cancel" @click="showExitWarning = false">{{ $t('playView.exitModal.continue') }}</button>
+            <button class="btn-confirm" @click="goBack">{{ $t('playView.exitModal.confirm') }}</button>
           </div>
         </div>
       </div>
@@ -45,7 +45,7 @@
     <div v-if="isLoading" class="loading-overlay">
       <div class="loader-container">
         <div class="spinner"></div>
-        <p>遊戲載入中，請稍候...</p>
+        <p>{{ $t('playView.loadingGame') }}</p>
       </div>
     </div>
 
@@ -61,8 +61,10 @@ import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { fetchGamePlayUrlApi } from '@/assets/utils/api'
-import { showToast, showDialog } from '@/assets/utils/swal'
-import { showConfirm } from '@/assets/utils/swal'
+import { showToast } from '@/assets/utils/swal'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const userStore = useUserStore()
 const router = useRouter()
@@ -108,7 +110,7 @@ const toggleFullscreen = async () => {
     }
   } catch (err) {
     console.error('全螢幕切換失敗:', err)
-    showToast('您的瀏覽器不支援全螢幕功能','warning')
+    showToast(t('playView.errors.noFullscreen'), 'warning')
   }
 }
 
@@ -159,26 +161,26 @@ onMounted(async () => {
 
       loadingTimeout = setTimeout(() => {
         if (isLoading.value) {
-          showToast('遊戲伺服器連線超時，請檢查網路或稍後再試','warning')
+          showToast(t('playView.errors.timeout'), 'warning')
           router.replace(`/game/${gameId}`)
         }
       }, 15000)
 
     } else {
       if (result.code === 3) {
-        showToast('訪客模式無法遊玩此遊戲，請先登入','warning')
+        showToast(t('playView.errors.guestNoPlay'), 'warning')
       } else if (result.code === 4) {
-        showToast('您尚未解鎖此遊戲，請先進行解鎖','warning')
+        showToast(t('playView.errors.notUnlocked'), 'warning')
       } else if (result.code === 999) {
-        showToast('帳號遭封鎖','warning')
+        showToast(t('playView.errors.accountBlocked'), 'warning')
       } else {
-        showToast(result.msg || '無法取得遊戲網址，請稍後再試','warning')
+        showToast(result.msg || t('playView.errors.fetchUrlFailed'), 'warning')
       }
       router.replace(`/game/${gameId}`)
     }
   } catch (error) {
     console.error('取得遊戲網址發生錯誤:', error)
-    showToast('系統連線錯誤，請稍後再試','warning')
+    showToast(t('playView.errors.systemError'), 'warning')
     router.replace(`/game/${gameId}`)
   }
 })

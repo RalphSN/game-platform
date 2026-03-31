@@ -1,0 +1,301 @@
+{
+  "common": {
+    "loading": "Loading..."
+  },
+  "header": {
+    "home": "Home",
+    "gameList": "Games",
+    "leaderboard": "Leaderboard",
+    "login": "Log In",
+    "register": "Sign Up",
+    "memberCenter": "Profile",
+    "recharge": "Top Up",
+    "support": "Support",
+    "logout": "Log Out",
+    "menu": "Menu",
+    "chargeCoins": "Buy Coins",
+    "freeCoins": "Free Coins",
+    "logoutSuccess": "Successfully logged out!"
+  },
+  "footer": {
+    "termsOfService": "Terms of Service",
+    "privacyPolicy": "Privacy Policy",
+    "contactSupport": "Contact Support",
+    "businessCooperation": "Business Inquiries"
+  },
+  "homeView": {
+    "eventBanner": "Event Banner",
+    "sections": {
+      "hot": "Trending",
+      "action": "Action",
+      "puzzle": "Puzzle",
+      "rpg": "RPG",
+      "banana": "Banana Games"
+    }
+  },
+  "gameCard": {
+    "viewUnlock": "How to Unlock",
+    "playNow": "▶ Play Now",
+    "toggleFavorite": "Favorite/Unfavorite",
+    "loading": "Loading...",
+    "uncategorized": "Uncategorized",
+    "mobileGame": "Mobile Game"
+  },
+  "category": {
+    "1": "Casual",
+    "2": "Action",
+    "3": "Strategy",
+    "4": "Simulation",
+    "5": "Competitive",
+    "6": "Adventure",
+    "7": "Featured"
+  },
+  "gameSection": {
+    "viewMore": "View More",
+    "featuredGames": "Featured Games"
+  },
+  "tabBar": {
+    "games": "Games",
+    "recharge": "Top Up",
+    "member": "Account",
+    "support": "Support"
+  },
+  "searchModal": {
+    "placeholder": "Search games or genres...",
+    "close": "Close",
+    "searching": "Searching...",
+    "noResultFound": "No games found for \"{keyword}\"",
+    "recentSearches": "Recent",
+    "hotSearches": "Trending"
+  },
+  "categoryView": {
+    "back": "Back",
+    "allGames": "All Games",
+    "categories": {
+      "hot": "Trending",
+      "banana": "Banana Games",
+      "action": "Action",
+      "puzzle": "Puzzle",
+      "rpg": "RPG"
+    }
+  },
+  "gameDetail": {
+    "playingCount": "🔥 {count} playing",
+    "removeFavorite": "Unfavorite",
+    "addFavorite": "Favorite",
+    "startGame": "Start Game",
+    "unlockConditions": "Unlock Requirements",
+    "loginRequired": "Please log in to play this game",
+    "goToLogin": "Login / Sign Up",
+    "unlockCostPrefix": "Spend ",
+    "unlockCostSuffix": " coins to unlock",
+    "unlockNow": "Unlock Now",
+    "gameIntro": "About",
+    "noIntro": "No description available",
+    "othersAlsoPlay": "Recommended for You",
+    "messages": {
+      "loginFirst": "Please log in first",
+      "insufficientCoinsTitle": "Insufficient Coins",
+      "goToRecharge": "Go to Top Up center?",
+      "confirmUnlock": "Unlock this game for {coins} coins?",
+      "unlockSuccess": "Unlocked! Enjoy your game!",
+      "cannotBuy": "Purchase failed",
+      "accountBlocked": "Account blocked (IP)",
+      "unlockFailed": "Unlock failed, please try again",
+      "systemError": "System error, please try again"
+    }
+  },
+  "gamesView": {
+    "filterTitle": "Filters",
+    "looseMatch": "Broad Match",
+    "exactMatch": "Exact Match",
+    "matchAll": "(All conditions)",
+    "matchAny": "(Any condition)",
+    "genre": "Genre",
+    "status": "Status",
+    "all": "All",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "filterResult": "Results",
+    "noResult": "No games found. Try adjusting your filters."
+  },
+  "auth": {
+    "loginTitle": "Welcome Back",
+    "loginSubtitle": "Log in to continue playing",
+    "account": "Username",
+    "password": "Password",
+    "accountPlaceholder": "Enter username",
+    "passwordPlaceholder": "Enter password",
+    "loginBtn": "Log In",
+    "noAccount": "New here?",
+    "registerNow": "Sign Up",
+    "loginSuccess": "Logged in!",
+    "errors": {
+      "params": "Invalid parameters",
+      "format": "Invalid format (6-20 chars, must include 1 letter and 1 number)",
+      "failed": "Login failed",
+      "frozen": "Account frozen",
+      "blocked": "Account blocked (IP)",
+      "unknown": "Login failed, please try again"
+    },
+    "registerTitle": "Create Account",
+    "registerSubtitle": "Join us and start your journey",
+    "regAccountPlaceholder": "Username (6-20 chars)",
+    "regPasswordPlaceholder": "Password (6-20 chars, alphanumeric)",
+    "registerBtn": "Sign Up",
+    "hasAccount": "Already have an account?",
+    "loginNow": "Log In",
+    "registerSuccess": "Account created! Please log in.",
+    "regErrors": {
+      "params": "Invalid input, please check",
+      "format": "Invalid format (6-20 chars, must include 1 letter and 1 number)",
+      "duplicate": "Username taken, please try another",
+      "specialChars": "Special characters not allowed",
+      "failed": "Sign up failed, try again"
+    }
+  },
+  "member": {
+    "sidebar": {
+      "depositCoins": "Top Up",
+      "freeCoins": "Free Coins",
+      "profile": "Profile",
+      "favorites": "Favorites",
+      "transactions": "History"
+    },
+    "profile": {
+      "title": "Profile",
+      "account": "Username",
+      "nickname": "Nickname",
+      "saveBtn": "Save Changes",
+      "updateSuccess": "Nickname updated!",
+      "changePassword": "Change Password",
+      "newPassword": "New Password",
+      "confirmPassword": "Confirm Password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "updatePasswordBtn": "Update Password",
+      "passwordSuccess": "Password updated!",
+      "passwordMismatch": "Passwords do not match!"
+    },
+    "favorites": {
+      "title": "Favorites",
+      "empty": "No favorites yet!"
+    },
+    "transactions": {
+      "title": "Transaction History",
+      "orderId": "Order ID",
+      "date": "Date",
+      "amount": "Amount",
+      "gotCoins": "Coins",
+      "empty": "No transaction history"
+    },
+    "errors": {
+      "loginExpired": "Session expired, please log in",
+      "userNotFound": "User not found",
+      "passwordSame": "Cannot be the same as old password",
+      "passwordFormat": "Invalid format (6-20 chars, must include 1 letter and 1 number)",
+      "changeFailed": "Update failed, please try again"
+    }
+  },
+  "playView": {
+    "exitGame": "Quit",
+    "loadingGame": "Loading game, please wait...",
+    "exitModal": {
+      "title": "Quit game?",
+      "desc": "Unsaved progress may be lost. Are you sure?",
+      "continue": "Keep Playing",
+      "confirm": "Quit"
+    },
+    "errors": {
+      "noFullscreen": "Fullscreen not supported on this browser",
+      "timeout": "Connection timeout, please check your network",
+      "guestNoPlay": "Guests cannot play, please log in",
+      "notUnlocked": "Game locked, please unlock to play",
+      "accountBlocked": "Account blocked",
+      "fetchUrlFailed": "Failed to load game URL",
+      "systemError": "System error, please try again"
+    }
+  },
+  "recharge": {
+    "title": "Top Up Center",
+    "step1": "Select Payment",
+    "step2": "Select Amount",
+    "points": "Pts",
+    "totalAmount": "Total Due: ",
+    "goToPay": "Checkout",
+    "currency": {
+      "CNY": "CNY",
+      "TWD": "TWD"
+    },
+    "errors": {
+      "fetchMethodsFailed": "Failed to load payment methods",
+      "systemErrorTitle": "System Error",
+      "systemErrorDesc": "Please try again later",
+      "formInvalid": "Invalid form, contact support",
+      "createOrderFailed": "Failed to create order"
+    }
+  },
+  "searchView": {
+    "title": "Search Results",
+    "searchingFor": "Searching for \"{query}\"",
+    "resultCount": "({count} results found)",
+    "enterKeyword": "Enter keywords to search",
+    "noResultTitle": "No games found",
+    "noResultDesc": "Try different keywords!",
+    "backToHome": "Back to Home"
+  },
+  "support": {
+    "tabs": {
+      "newIssue": "New Ticket",
+      "history": "History"
+    },
+    "newIssue": {
+      "title": "Contact Support",
+      "subtitle": "Need help? Fill out the form below and we'll be in touch.",
+      "successTitle": "Ticket submitted!",
+      "ticketId": "Ticket ID: {id}",
+      "successDesc": "Support will contact you via email in 1-2 business days.",
+      "backToNew": "Submit another"
+    },
+    "form": {
+      "issueType": "Issue Type",
+      "selectType": "Select type",
+      "description": "Description",
+      "descPlaceholder": "Please describe the issue, time, and steps taken...",
+      "uploadImage": "Screenshots",
+      "optional3": "(Optional, max 3)",
+      "dragHint": "Click or drag images here",
+      "supportFormat": "Supports JPG, PNG",
+      "submit": "Submit"
+    },
+    "issueTypes": {
+      "account": "Account & Login",
+      "payment": "Payment & Billing",
+      "bug": "Bug Report",
+      "suggestion": "Suggestions",
+      "other": "Other"
+    },
+    "history": {
+      "title": "Support History",
+      "ticketNo": "Ticket #{id}",
+      "empty": "No support records found"
+    },
+    "detail": {
+      "back": "Back to List",
+      "attachments": "Attachments:",
+      "replyPlaceholder": "Enter your reply...",
+      "submitReply": "Send Reply"
+    },
+    "status": {
+      "pending": "Pending",
+      "processing": "Processing",
+      "resolved": "Resolved",
+      "unknown": "Unknown"
+    },
+    "errors": {
+      "formatOnly": "Only JPG and PNG formats are supported",
+      "submitFailed": "Submission failed",
+      "replyFailed": "Reply failed"
+    }
+  }
+}

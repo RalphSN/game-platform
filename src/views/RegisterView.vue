@@ -5,40 +5,36 @@
         <div class="auth-logo">
           <span class="logo-icon">✨</span>
         </div>
-        <h2>建立新帳號</h2>
-        <p>加入我們，開始遊戲旅程</p>
+        <h2>{{ $t('auth.registerTitle') }}</h2>
+        <p>{{ $t('auth.registerSubtitle') }}</p>
       </div>
 
       <form @submit.prevent="handleRegister" class="auth-form">
-        <div v-if="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
-
         <div class="form-group">
-          <label for="reg-account">帳號</label>
+          <label for="reg-account">{{ $t('auth.account') }}</label>
           <div class="input-wrapper">
-            <input id="reg-account" type="text" v-model="form.account" required placeholder="請設定登入帳號 (6~20碼)"
-              :disabled="isLoading" minlength="6" maxlength="20" />
+            <input id="reg-account" type="text" v-model="form.account" required
+              :placeholder="$t('auth.regAccountPlaceholder')" :disabled="isLoading" minlength="6" maxlength="20" />
           </div>
         </div>
 
         <div class="form-group">
-          <label for="reg-password">密碼</label>
+          <label for="reg-password">{{ $t('auth.password') }}</label>
           <div class="input-wrapper">
             <input id="reg-password" type="password" v-model="form.password" required
-              placeholder="請設定密碼 (包含英文數字, 6~20碼)" :disabled="isLoading" minlength="6" maxlength="20" />
+              :placeholder="$t('auth.regPasswordPlaceholder')" :disabled="isLoading" minlength="6" maxlength="20" />
           </div>
         </div>
 
         <button type="submit" class="submit-btn" :disabled="isLoading">
           <span v-if="isLoading" class="loader"></span>
-          <span v-else>立即註冊</span>
+          <span v-else>{{ $t('auth.registerBtn') }}</span>
         </button>
       </form>
 
       <div class="auth-footer">
-        <span>已經有帳號了？</span>
-        <router-link to="/login" class="auth-link">立即登入</router-link>
+        <span>{{ $t('auth.hasAccount') }}</span>
+        <router-link to="/login" class="auth-link">{{ $t('auth.loginNow') }}</router-link>
       </div>
     </div>
   </div>
@@ -48,7 +44,10 @@
 import { reactive, ref } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
-import { showToast, showDialog } from '@/assets/utils/swal'
+import { showToast } from '@/assets/utils/swal'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const router = useRouter()
 
@@ -58,7 +57,6 @@ const form = reactive({
 })
 
 const isLoading = ref(false)
-const errorMessage = ref('')
 
 const detectDevice = () => {
   const userAgent = navigator.userAgent || navigator.vendor || window.opera;
@@ -76,14 +74,13 @@ const getClientIP = async () => {
     const res = await fetch('https://api.ipify.org?format=json')
     const data = await res.json()
     return data.ip
-  } catch (e) {
+  } catch {
     return '127.0.0.1'
   }
 }
 
 const handleRegister = async () => {
   isLoading.value = true
-  errorMessage.value = ''
 
   try {
     const deviceType = detectDevice()
@@ -101,22 +98,22 @@ const handleRegister = async () => {
 
 
     if (result.code === 0) {
-      showToast('註冊成功！請使用新帳號登入！','success')
+      showToast(t('auth.registerSuccess'), 'success')
       router.push({ name: 'login', query: { account: form.account } })
     } else {
       switch (result.code) {
-        case 1: throw new Error('參數錯誤，請檢查填寫內容')
-        case 2: throw new Error('帳號密碼格式錯誤 (6~20碼，必須包含1英文1數字)')
-        case 3: throw new Error('此玩家帳號已存在，請換一個')
-        case 4: throw new Error('包含特殊符號，請重新嘗試')
-        case 999: throw new Error('帳號遭封鎖(IP)')
-        default: throw new Error(result.msg || '註冊失敗，請稍後再試')
+        case 1: throw new Error(t('auth.regErrors.params'))
+        case 2: throw new Error(t('auth.regErrors.format'))
+        case 3: throw new Error(t('auth.regErrors.duplicate'))
+        case 4: throw new Error(t('auth.regErrors.specialChars'))
+        case 999: throw new Error(t('auth.errors.blocked'))
+        default: throw new Error(result.msg || t('auth.regErrors.failed'))
       }
     }
 
   } catch (error) {
     console.error('[註冊失敗]', error)
-    errorMessage.value = error.message
+    showToast(error.message, 'warning')
   } finally {
     isLoading.value = false
   }
@@ -211,15 +208,6 @@ const handleRegister = async () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-}
-
-.error-message {
-  padding: 10px 14px;
-  background-color: #ffebee;
-  color: #d32f2f;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  border: 1px solid #ffcdd2;
 }
 
 .form-group {

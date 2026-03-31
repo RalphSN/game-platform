@@ -11,7 +11,7 @@
             <circle cx="13" cy="15" r="1"></circle>
           </svg>
         </div> -->
-        <h2>儲值中心</h2>
+        <h2>{{ $t('recharge.title') }}</h2>
         <!-- <p>請選擇您要使用的幣別與支付方式</p> -->
       </div>
 
@@ -27,7 +27,7 @@
 
           <div class="section-title">
             <span class="step-number">1</span>
-            <h3>選擇支付方式</h3>
+            <h3>{{ $t('recharge.step1') }}</h3>
           </div>
 
           <div class="methods-grid">
@@ -50,7 +50,7 @@
             <div v-if="currentMethod" class="options-section">
               <div class="section-title">
                 <span class="step-number">2</span>
-                <h3>選擇儲值面額</h3>
+                <h3>{{ $t('recharge.step2') }}</h3>
               </div>
 
               <div class="options-grid">
@@ -64,7 +64,7 @@
                       </polygon>
                     </svg>
                     <span class="points-val">{{ option.points }}</span>
-                    <span class="points-text">點</span>
+                    <span class="points-text">{{ $t('recharge.points') }}</span>
                   </div>
                   <div class="price-area">
                     {{ currentCurrency === 'CNY' ? '¥' : 'NT$' }} {{ option.amount }}
@@ -79,14 +79,14 @@
 
       <div class="checkout-footer">
         <div class="summary">
-          <span class="summary-label">總計結帳金額：</span>
+          <span class="summary-label">{{ $t('recharge.totalAmount') }}</span>
           <span class="summary-price">
             {{ currentCurrency === 'CNY' ? '¥' : 'NT$' }} {{ selectedOption ? selectedOption.amount : '0' }}
           </span>
         </div>
         <button class="submit-btn" :disabled="!selectedOption || isSubmitting" @click="handlePayment">
           <span v-if="isSubmitting" class="loader"></span>
-          <span v-else>前往付款</span>
+          <span v-else>{{ $t('recharge.goToPay') }}</span>
         </button>
       </div>
 
@@ -114,6 +114,9 @@ import iconCreditcard from '@/assets/images/recharge/creditcard.png'
 // import iconJkopay from '@/assets/images/recharge/jkopay.svg'
 // import iconLinepay from '@/assets/images/recharge/linepay.png'
 // import iconApplepay from '@/assets/images/recharge/applepay.png'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const router = useRouter()
 // const route = useRoute()
@@ -162,7 +165,7 @@ const getPayIcon = (title) => {
 // 載入支付方式資料
 const loadPayTypes = async () => {
   if (!userStore.token) {
-    showToast('請先登入會員','warning')
+    showToast(t('gameDetail.messages.loginFirst'), 'warning')
     router.push('/login')
     return
   }
@@ -196,7 +199,7 @@ const loadPayTypes = async () => {
         })
 
         parsedData[currencyKey] = {
-          label: currencyKey === 'CNY' ? '人民幣 (CNY)' : (currencyKey === 'TWD' ? '新台幣 (TWD)' : currencyKey),
+          label: currencyKey === 'CNY' ? t('recharge.currency.CNY') : (currencyKey === 'TWD' ? t('recharge.currency.TWD') : currencyKey),
           methods: parsedMethods
         }
       }
@@ -211,11 +214,11 @@ const loadPayTypes = async () => {
       }
 
     } else {
-      showToast(result.msg || '獲取支付方式失敗','warning')
+      showToast(result.msg || t('recharge.errors.fetchMethodsFailed'), 'warning')
     }
   } catch (error) {
     console.error('取得支付方式發生錯誤:', error)
-    showDialog('系統連線錯誤', '請稍後再試', 'error')
+    showDialog(t('recharge.errors.systemErrorTitle'), t('recharge.errors.systemErrorDesc'), 'error')
   } finally {
     isLoading.value = false
   }
@@ -250,7 +253,7 @@ const handlePayment = async () => {
         if (formElement) {
           formElement.submit()
         } else {
-          showToast('表單失效，請聯繫客服','warning')
+          showToast(t('recharge.errors.formInvalid'), 'warning')
           isSubmitting.value = false
         }
       }
@@ -259,12 +262,12 @@ const handlePayment = async () => {
         window.location.href = data.OpenURL
       }
     } else {
-      showDialog('建立訂單失敗', result.msg, 'error')
+      showDialog(t('recharge.errors.createOrderFailed'), result.msg, 'error')
       isSubmitting.value = false
     }
   } catch (error) {
     console.error('建立訂單發生錯誤:', error)
-    showDialog('系統連線錯誤，請稍後再試','error')
+    showDialog(t('recharge.errors.systemErrorTitle'), t('recharge.errors.systemErrorDesc'), 'error')
     isSubmitting.value = false
   }
 }

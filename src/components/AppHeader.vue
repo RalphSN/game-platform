@@ -158,20 +158,25 @@
 
           <template v-if="userStore.token">
             <div class="sidebar-divider"></div>
-            <router-link to="/member" active-class="active" @click="toggleMenu">{{ $t('header.memberCenter') }}</router-link>
-            <router-link to="/recharge" active-class="active" @click="toggleMenu">{{ $t('header.recharge') }}</router-link>
-            <router-link to="/support" active-class="active" @click="toggleMenu">{{ $t('header.support') }}</router-link>
+            <router-link to="/member" active-class="active" @click="toggleMenu">{{ $t('header.memberCenter')
+              }}</router-link>
+            <router-link to="/recharge" active-class="active" @click="toggleMenu">{{ $t('header.recharge')
+              }}</router-link>
+            <router-link to="/support" active-class="active" @click="toggleMenu">{{ $t('header.support')
+              }}</router-link>
           </template>
 
           <div class="sidebar-divider"></div>
 
           <template v-if="!userStore.token">
-            <router-link to="/login" class="sidebar-btn text-btn" @click="toggleMenu">{{ $t('header.login') }}</router-link>
-            <router-link to="/register" class="sidebar-btn primary-btn sidebar-register"
-              @click="toggleMenu">{{ $t('header.register') }}</router-link>
+            <router-link to="/login" class="sidebar-btn text-btn" @click="toggleMenu">{{ $t('header.login')
+              }}</router-link>
+            <router-link to="/register" class="sidebar-btn primary-btn sidebar-register" @click="toggleMenu">{{
+              $t('header.register') }}</router-link>
           </template>
           <template v-else>
-            <button class="sidebar-btn text-btn logout-text" @click="handleLogoutAndCloseMenu">{{ $t('header.logout') }}</button>
+            <button class="sidebar-btn text-btn logout-text" @click="handleLogoutAndCloseMenu">{{ $t('header.logout')
+              }}</button>
           </template>
         </div>
       </nav>
@@ -227,7 +232,8 @@ const isLangMenuOpen = ref(false)
 const isMobileLangMenuOpen = ref(false)
 const supportLangs = [
   { code: 'zh-TW', label: '繁體中文', short: '繁' },
-  { code: 'zh-CN', label: '简体中文', short: '简' }
+  { code: 'zh-CN', label: '简体中文', short: '简' },
+  { code: 'en-US', label: 'English', short: 'EN' }
 ]
 const currentLangShort = computed(() => {
   const current = supportLangs.find(lang => lang.code === locale.value)

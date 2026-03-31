@@ -11,7 +11,7 @@
                 <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
               </svg>
             </span>
-            新增問題
+            {{ $t('support.tabs.newIssue') }}
           </button>
           <button class="menu-item" :class="{ active: currentTab === 'list' || currentTab === 'detail' }"
             @click="switchTab('list')">
@@ -25,7 +25,7 @@
                 <line x1="9" y1="10" x2="15" y2="10"></line>
               </svg>
             </span>
-            客服紀錄
+            {{ $t('support.tabs.history') }}
           </button>
         </div>
       </aside>
@@ -34,8 +34,8 @@
         <transition name="fade-slide" mode="out-in">
           <div v-if="currentTab === 'new'" key="new" class="support-container">
             <div class="support-header">
-              <h2>聯絡客服</h2>
-              <p>遇到問題了嗎？請填寫下方表單，我們將盡快為您處理。</p>
+              <h2>{{ $t('support.newIssue.title') }}</h2>
+              <p>{{ $t('support.newIssue.subtitle') }}</p>
             </div>
 
             <div v-if="isSuccess" class="success-message fade-in-up">
@@ -46,39 +46,40 @@
                   <polyline points="22 4 12 14.01 9 11.01"></polyline>
                 </svg>
               </div>
-              <h3>回報已成功送出！</h3>
-              <p>您的問題已記錄 (單號：<span class="ticket-id">＃{{ ticketId }}</span>)</p>
-              <p class="sub-text">客服人員將於 1-2 個工作天內透過 Email 與您聯繫。</p>
-              <button @click="resetForm" class="primary-btn">返回填寫新單</button>
+              <h3>{{ $t('support.newIssue.successTitle') }}</h3>
+              <p v-html="$t('support.newIssue.ticketId', { id: `<span class='ticket-id'>＃${ticketId}</span>` })"></p>
+              <p class="sub-text">{{ $t('support.newIssue.successDesc') }}</p>
+              <button @click="resetForm" class="primary-btn">{{ $t('support.newIssue.backToNew') }}</button>
             </div>
 
             <form v-else @submit.prevent="handleSubmit" class="support-form">
               <div class="form-row">
                 <div class="form-group half-width">
-                  <label for="issueType">問題類型</label>
+                  <label for="issueType">{{ $t('support.form.issueType') }}</label>
                   <div class="input-wrapper">
                     <select id="issueType" v-model="form.type" required :disabled="isLoading">
-                      <option value="" disabled>請選擇類型</option>
-                      <option value="account">帳號與登入問題</option>
-                      <option value="payment">儲值與購買異常</option>
-                      <option value="bug">遊戲 Bug 回報</option>
-                      <option value="suggestion">功能建議</option>
-                      <option value="other">其他</option>
+                      <option value="" disabled>{{ $t('support.form.selectType') }}</option>
+                      <option value="account">{{ $t('support.issueTypes.account') }}</option>
+                      <option value="payment">{{ $t('support.issueTypes.payment') }}</option>
+                      <option value="bug">{{ $t('support.issueTypes.bug') }}</option>
+                      <option value="suggestion">{{ $t('support.issueTypes.suggestion') }}</option>
+                      <option value="other">{{ $t('support.issueTypes.other') }}</option>
                     </select>
                   </div>
                 </div>
               </div>
 
               <div class="form-group">
-                <label for="description">詳細說明</label>
+                <label for="description">{{ $t('support.form.description') }}</label>
                 <div class="input-wrapper">
                   <textarea id="description" v-model="form.description" required rows="5"
-                    placeholder="請詳細描述您遇到的狀況、發生時間及操作步驟..." :disabled="isLoading"></textarea>
+                    :placeholder="$t('support.form.descPlaceholder')" :disabled="isLoading"></textarea>
                 </div>
               </div>
 
               <div class="form-group">
-                <label>上傳截圖 <span class="optional-tag">(選填，最多 3 張)</span></label>
+                <label>{{ $t('support.form.uploadImage') }} <span class="optional-tag">{{ $t('support.form.optional3')
+                }}</span></label>
                 <div class="upload-zone"
                   :class="{ 'is-dragging': isDragging, 'is-disabled': isLoading || previewImages.length >= 3 }"
                   @dragover.prevent="isDragging = true" @dragleave.prevent="isDragging = false"
@@ -93,8 +94,8 @@
                       <polyline points="17 8 12 3 7 8"></polyline>
                       <line x1="12" y1="3" x2="12" y2="15"></line>
                     </svg>
-                    <span>點擊或將圖片拖曳至此處</span>
-                    <span class="upload-hint">支援 JPG, PNG 格式</span>
+                    <span>{{ $t('support.form.dragHint') }}</span>
+                    <span class="upload-hint">{{ $t('support.form.supportFormat') }}</span>
                   </div>
                 </div>
 
@@ -115,14 +116,14 @@
 
               <button type="submit" class="submit-btn" :disabled="isLoading">
                 <span v-if="isLoading" class="loader"></span>
-                <span v-else>送出回報</span>
+                <span v-else>{{ $t('support.form.submit') }}</span>
               </button>
             </form>
           </div>
 
           <div v-else-if="currentTab === 'list'" key="list" class="support-container list-container">
             <div class="support-header">
-              <h2>客服紀錄</h2>
+              <h2>{{ $t('support.history.title') }}</h2>
             </div>
             <div class="ticket-list">
               <div v-for="ticket in ticketList" :key="ticket.AutoNo" class="ticket-card" @click="viewTicket(ticket)">
@@ -135,7 +136,7 @@
                 <p class="ticket-info">{{ ticket.Info }}</p>
                 <div class="ticket-bottom">
                   <span class="ticket-date">{{ ticket.CreateTime }}</span>
-                  <span class="ticket-no">單號 ＃{{ ticket.AutoNo }}</span>
+                  <span class="ticket-no">{{ $t('support.history.ticketNo', { id: ticket.AutoNo }) }}</span>
                 </div>
               </div>
               <div v-if="ticketList.length === 0" class="empty-state">
@@ -146,7 +147,7 @@
                     <line x1="9" y1="3" x2="9" y2="21"></line>
                   </svg>
                 </div>
-                <p>目前沒有客服紀錄</p>
+                <p>{{ $t('support.history.empty') }}</p>
               </div>
             </div>
           </div>
@@ -159,7 +160,7 @@
                   <line x1="19" y1="12" x2="5" y2="12"></line>
                   <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
-                返回列表
+                {{ $t('support.detail.back') }}
               </button>
               <span class="ticket-status" :class="getStatusClass(selectedTicket.Status)">
                 {{ getStatusName(selectedTicket.Status) }}
@@ -190,7 +191,7 @@
               </div>
 
               <div v-if="ticketDetail.filePath && ticketDetail.filePath.length > 0" class="attachment-area">
-                <h4>夾帶圖片：</h4>
+                <h4>{{ $t('support.detail.attachments') }}</h4>
                 <div class="image-preview-area">
                   <div v-for="(path, index) in ticketDetail.filePath" :key="index" class="preview-item">
                     <img :src="path" alt="attachment" />
@@ -202,12 +203,13 @@
             <div v-if="selectedTicket.Status !== 2" class="reply-section">
               <div class="form-group">
                 <div class="input-wrapper">
-                  <textarea v-model="replyText" rows="3" placeholder="請輸入您的回覆..." :disabled="isLoading"></textarea>
+                  <textarea v-model="replyText" rows="3" :placeholder="$t('support.detail.replyPlaceholder')"
+                    :disabled="isLoading"></textarea>
                 </div>
               </div>
               <button class="submit-btn" @click="submitReply" :disabled="isLoading || !replyText.trim()">
                 <span v-if="isLoading" class="loader"></span>
-                <span v-else>送出回覆</span>
+                <span v-else>{{ $t('support.detail.submitReply') }}</span>
               </button>
             </div>
           </div>
@@ -227,6 +229,10 @@ import {
   replyTicketApi
 } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
+import { showToast } from '@/assets/utils/swal'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
 
 const userStore = useUserStore()
 
@@ -350,25 +356,34 @@ const submitReply = async () => {
     if (response.code === 0) {
       await viewTicket(selectedTicket.value)
     } else {
-      alert(response.msg || '回覆失敗')
+      showToast(response.msg || t('support.errors.replyFailed'), 'warning')
     }
   } catch (error) {
-    alert('連線失敗，請稍後再試。')
+    showToast(t('gameDetail.messages.systemError'), 'warning')
   } finally {
     isLoading.value = false
   }
 }
 
 const getTicketTypeName = (type) => {
-  const types = { 1: '帳號與登入問題', 2: '儲值與購買異常', 3: '遊戲Bug回報', 4: '功能建議', 5: '其他' }
-  return types[type] || '其他'
+  const types = {
+    1: t('support.issueTypes.account'),
+    2: t('support.issueTypes.payment'),
+    3: t('support.issueTypes.bug'),
+    4: t('support.issueTypes.suggestion'),
+    5: t('support.issueTypes.other')
+  }
+  return types[type] || t('support.issueTypes.other')
 }
 
 const getStatusName = (status) => {
-  const statuses = { 0: '未處理', 1: '處理中', 2: '處理完成' }
-  return statuses[status] || '未知'
+  const statuses = {
+    0: t('support.status.pending'),
+    1: t('support.status.processing'),
+    2: t('support.status.resolved')
+  }
+  return statuses[status] || t('support.status.unknown')
 }
-
 const getStatusClass = (status) => {
   const classes = { 0: 'status-pending', 1: 'status-processing', 2: 'status-resolved' }
   return classes[status] || ''
@@ -380,7 +395,7 @@ const handleFileProcessing = (newFiles) => {
   Array.from(newFiles).forEach(file => {
     if (previewImages.value.length >= 3) return
     if (!allowedTypes.includes(file.type)) {
-      alert('僅支援 JPG 與 PNG 圖片格式')
+      showToast(t('support.errors.formatOnly'), 'warning')
       return
     }
 
@@ -415,7 +430,7 @@ const removeImage = (index) => {
 }
 
 const handleSubmit = async () => {
-  if (!userStore.account) return alert('請先登入！')
+  if (!userStore.account) return showToast(t('gameDetail.messages.loginFirst'), 'warning')
   isLoading.value = true
 
   try {
@@ -435,10 +450,10 @@ const handleSubmit = async () => {
       ticketId.value = response.LastAutoNo || ''
       isSuccess.value = true
     } else {
-      alert(response.msg || '送出失敗')
+      showToast(response.msg || t('support.errors.submitFailed'), 'warning')
     }
   } catch (error) {
-    alert('連線失敗，請稍後再試。')
+    showToast(t('gameDetail.messages.systemError'), 'warning')
   } finally {
     isLoading.value = false
   }

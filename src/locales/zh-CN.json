@@ -1,17 +1,301 @@
 {
+  "common": {
+    "loading": "加载中..."
+  },
   "header": {
     "home": "首页",
     "gameList": "游戏列表",
     "leaderboard": "排行榜",
     "login": "登录",
     "register": "注册",
-    "memberCenter": "会员中心",
+    "memberCenter": "个人中心",
     "recharge": "充值中心",
     "support": "联系客服",
-    "logout": "退出账号",
+    "logout": "退出登录",
     "menu": "菜单",
     "chargeCoins": "充值代币",
     "freeCoins": "免费代币",
-    "logoutSuccess": "已成功退出！"
+    "logoutSuccess": "已成功退出登录！"
+  },
+  "footer": {
+    "termsOfService": "服务协议",
+    "privacyPolicy": "隐私政策",
+    "contactSupport": "联系客服",
+    "businessCooperation": "商务合作"
+  },
+  "homeView": {
+    "eventBanner": "活动横幅",
+    "sections": {
+      "hot": "热门推荐",
+      "action": "动作冒险",
+      "puzzle": "休闲益智",
+      "rpg": "角色扮演",
+      "banana": "香蕉游戏"
+    }
+  },
+  "gameCard": {
+    "viewUnlock": "查看解锁条件",
+    "playNow": "▶ 立即游玩",
+    "toggleFavorite": "收藏/取消收藏",
+    "loading": "加载中...",
+    "uncategorized": "未分类",
+    "mobileGame": "手游"
+  },
+  "category": {
+    "1": "休闲益智",
+    "2": "动作闯关",
+    "3": "策略塔防",
+    "4": "模拟经营",
+    "5": "竞技对战",
+    "6": "角色冒险",
+    "7": "精选合集"
+  },
+  "gameSection": {
+    "viewMore": "查看更多",
+    "featuredGames": "精选游戏"
+  },
+  "tabBar": {
+    "games": "游戏",
+    "recharge": "充值",
+    "member": "会员",
+    "support": "客服"
+  },
+  "searchModal": {
+    "placeholder": "搜索游戏名称或类型...",
+    "close": "关闭",
+    "searching": "搜索中...",
+    "noResultFound": "未找到符合“{keyword}”的游戏",
+    "recentSearches": "最近搜索",
+    "hotSearches": "热门搜索"
+  },
+  "categoryView": {
+    "back": "返回",
+    "allGames": "全部游戏",
+    "categories": {
+      "hot": "热门推荐",
+      "banana": "香蕉游戏",
+      "action": "动作冒险",
+      "puzzle": "休闲益智",
+      "rpg": "角色扮演"
+    }
+  },
+  "gameDetail": {
+    "playingCount": "🔥 {count} 人在玩",
+    "removeFavorite": "取消收藏",
+    "addFavorite": "加入收藏",
+    "startGame": "开始游戏",
+    "unlockConditions": "解锁条件",
+    "loginRequired": "该游戏需要登录会员后才能游玩",
+    "goToLogin": "前往登录 / 注册",
+    "unlockCostPrefix": "需要花费 ",
+    "unlockCostSuffix": " 代币以解锁该游戏",
+    "unlockNow": "立即解锁",
+    "gameIntro": "游戏简介",
+    "noIntro": "暂无介绍",
+    "othersAlsoPlay": "大家都在玩",
+    "messages": {
+      "loginFirst": "请先登录",
+      "insufficientCoinsTitle": "代币余额不足",
+      "goToRecharge": "是否前往充值中心？",
+      "confirmUnlock": "确定要花费 {coins} 代币解锁该游戏吗？",
+      "unlockSuccess": "解锁成功！马上开始游玩吧！",
+      "cannotBuy": "无法购买",
+      "accountBlocked": "账号已被封禁(IP)",
+      "unlockFailed": "解锁失败，请稍后再试",
+      "systemError": "系统连接错误，请稍后再试"
+    }
+  },
+  "gamesView": {
+    "filterTitle": "筛选条件",
+    "looseMatch": "模糊匹配",
+    "exactMatch": "精准匹配",
+    "matchAll": "(符合所有条件)",
+    "matchAny": "(符合任一条件)",
+    "genre": "游戏类别",
+    "status": "游戏状态",
+    "all": "全部",
+    "unlocked": "已解锁",
+    "locked": "未解锁",
+    "filterResult": "筛选结果",
+    "noResult": "未找到符合条件的游戏，请尝试放宽筛选条件。"
+  },
+  "auth": {
+    "loginTitle": "欢迎回来",
+    "loginSubtitle": "请登录您的账号继续游玩",
+    "account": "账号",
+    "password": "密码",
+    "accountPlaceholder": "请输入账号",
+    "passwordPlaceholder": "请输入密码",
+    "loginBtn": "登录",
+    "noAccount": "还没有账号？",
+    "registerNow": "立即注册",
+    "loginSuccess": "登录成功！",
+    "errors": {
+      "params": "参数错误",
+      "format": "账号密码格式错误 (6~20位，必须包含1个字母和1个数字)",
+      "failed": "登录失败",
+      "frozen": "该账号已被冻结",
+      "blocked": "账号已被封禁(IP)",
+      "unknown": "登录失败，请重试"
+    },
+    "registerTitle": "创建新账号",
+    "registerSubtitle": "加入我们，开启游戏旅程",
+    "regAccountPlaceholder": "请设置登录账号 (6~20位)",
+    "regPasswordPlaceholder": "请设置密码 (包含字母数字, 6~20位)",
+    "registerBtn": "立即注册",
+    "hasAccount": "已有账号？",
+    "loginNow": "立即登录",
+    "registerSuccess": "注册成功！请使用新账号登录！",
+    "regErrors": {
+      "params": "参数错误，请检查填写内容",
+      "format": "账号密码格式错误 (6~20位，必须包含1个字母和1个数字)",
+      "duplicate": "该玩家账号已存在，请更换",
+      "specialChars": "包含特殊符号，请重新尝试",
+      "failed": "注册失败，请稍后再试"
+    }
+  },
+  "member": {
+    "sidebar": {
+      "depositCoins": "充值代币",
+      "freeCoins": "免费代币",
+      "profile": "个人资料",
+      "favorites": "收藏列表",
+      "transactions": "充值记录"
+    },
+    "profile": {
+      "title": "个人资料",
+      "account": "账号",
+      "nickname": "昵称",
+      "saveBtn": "保存修改",
+      "updateSuccess": "昵称已成功更新！",
+      "changePassword": "修改密码",
+      "newPassword": "新密码",
+      "confirmPassword": "确认新密码",
+      "newPasswordPlaceholder": "请输入新密码",
+      "confirmPasswordPlaceholder": "请再次输入新密码",
+      "updatePasswordBtn": "更新密码",
+      "passwordSuccess": "密码已成功更新！",
+      "passwordMismatch": "两次输入的新密码不一致！"
+    },
+    "favorites": {
+      "title": "收藏列表",
+      "empty": "目前没有收藏的游戏哦！"
+    },
+    "transactions": {
+      "title": "充值记录",
+      "orderId": "订单编号",
+      "date": "日期",
+      "amount": "金额",
+      "gotCoins": "获得代币",
+      "empty": "目前没有充值记录"
+    },
+    "errors": {
+      "loginExpired": "登录已过期，请重新登录",
+      "userNotFound": "玩家账号不存在",
+      "passwordSame": "与原密码相同，无法变更",
+      "passwordFormat": "密码格式错误 (6~20位，必须包含1个字母和1个数字)",
+      "changeFailed": "修改失败，请稍后再试"
+    }
+  },
+  "playView": {
+    "exitGame": "退出游戏",
+    "loadingGame": "游戏加载中，请稍候...",
+    "exitModal": {
+      "title": "确定要退出游戏吗？",
+      "desc": "未保存的进度可能会丢失，请确认是否离开。",
+      "continue": "继续游玩",
+      "confirm": "确认退出"
+    },
+    "errors": {
+      "noFullscreen": "您的浏览器不支持全屏功能",
+      "timeout": "游戏服务器连接超时，请检查网络或稍后再试",
+      "guestNoPlay": "游客模式无法游玩该游戏，请先登录",
+      "notUnlocked": "您尚未解锁该游戏，请先进行解锁",
+      "accountBlocked": "账号已被封禁",
+      "fetchUrlFailed": "无法获取游戏地址，请稍后再试",
+      "systemError": "系统连接错误，请稍后再试"
+    }
+  },
+  "recharge": {
+    "title": "充值中心",
+    "step1": "选择支付方式",
+    "step2": "选择充值面额",
+    "points": "点",
+    "totalAmount": "合计结算金额：",
+    "goToPay": "前往付款",
+    "currency": {
+      "CNY": "人民币 (CNY)",
+      "TWD": "新台币 (TWD)"
+    },
+    "errors": {
+      "fetchMethodsFailed": "获取支付方式失败",
+      "systemErrorTitle": "系统连接错误",
+      "systemErrorDesc": "请稍后再试",
+      "formInvalid": "表单失效，请联系客服",
+      "createOrderFailed": "创建订单失败"
+    }
+  },
+  "searchView": {
+    "title": "搜索结果",
+    "searchingFor": "搜索关于“{query}”的游戏",
+    "resultCount": "( 共找到 {count} 个结果 )",
+    "enterKeyword": "请输入关键字进行搜索",
+    "noResultTitle": "未找到符合条件的游戏",
+    "noResultDesc": "试着换个关键字再试一次吧！",
+    "backToHome": "返回首页探索"
+  },
+  "support": {
+    "tabs": {
+      "newIssue": "提交问题",
+      "history": "客服记录"
+    },
+    "newIssue": {
+      "title": "联系客服",
+      "subtitle": "遇到问题了吗？请填写下方表单，我们将尽快为您处理。",
+      "successTitle": "反馈已成功提交！",
+      "ticketId": "您的问题已记录 (工单号：{id})",
+      "successDesc": "客服人员将于 1-2 个工作日内通过电子邮箱与您联系。",
+      "backToNew": "返回填写新单"
+    },
+    "form": {
+      "issueType": "问题类型",
+      "selectType": "请选择类型",
+      "description": "详细说明",
+      "descPlaceholder": "请详细描述您遇到的状况、发生时间及操作步骤...",
+      "uploadImage": "上传截图",
+      "optional3": "(选填，最多 3 张)",
+      "dragHint": "点击或将图片拖拽至此处",
+      "supportFormat": "支持 JPG, PNG 格式",
+      "submit": "提交反馈"
+    },
+    "issueTypes": {
+      "account": "账号与登录问题",
+      "payment": "充值与购买异常",
+      "bug": "游戏 Bug 反馈",
+      "suggestion": "功能建议",
+      "other": "其他"
+    },
+    "history": {
+      "title": "客服记录",
+      "ticketNo": "工单号 ＃{id}",
+      "empty": "目前没有客服记录"
+    },
+    "detail": {
+      "back": "返回列表",
+      "attachments": "随带图片：",
+      "replyPlaceholder": "请输入您的回复...",
+      "submitReply": "提交回复"
+    },
+    "status": {
+      "pending": "未处理",
+      "processing": "处理中",
+      "resolved": "已解决",
+      "unknown": "未知"
+    },
+    "errors": {
+      "formatOnly": "仅支持 JPG 与 PNG 图片格式",
+      "submitFailed": "提交失败",
+      "replyFailed": "回复失败"
+    }
   }
 }

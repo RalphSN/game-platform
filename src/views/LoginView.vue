@@ -10,10 +10,6 @@
       </div>
 
       <form @submit.prevent="handleLogin" class="auth-form">
-        <div v-if="errorMessage" class="error-message">
-          {{ errorMessage }}
-        </div>
-
         <div class="form-group">
           <label for="account">{{ $t('auth.account') }}</label>
           <div class="input-wrapper">
@@ -66,21 +62,19 @@ const form = reactive({
 })
 
 const isLoading = ref(false)
-const errorMessage = ref('')
 
 const getClientIP = async () => {
   try {
     const res = await fetch('https://api.ipify.org?format=json')
     const data = await res.json()
     return data.ip
-  } catch (e) {
+  } catch {
     return '127.0.0.1'
   }
 }
 
 const handleLogin = async () => {
   isLoading.value = true
-  errorMessage.value = ''
 
   try {
     const userIP = await getClientIP()
@@ -112,7 +106,7 @@ const handleLogin = async () => {
 
   } catch (error) {
     console.error('[登入失敗]', error)
-    errorMessage.value = error.message
+    showToast(error.message, 'warning')
   } finally {
     isLoading.value = false
   }
@@ -207,15 +201,6 @@ const handleLogin = async () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-}
-
-.error-message {
-  padding: 10px 14px;
-  background-color: #ffebee;
-  color: #d32f2f;
-  border-radius: 8px;
-  font-size: 0.9rem;
-  border: 1px solid #ffcdd2;
 }
 
 .form-group {
