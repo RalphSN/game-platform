@@ -30,7 +30,7 @@
       "action": "動作冒險",
       "puzzle": "休閒益智",
       "rpg": "角色扮演",
-      "banana": "香蕉遊戲"
+      "banana": "手機遊戲"
     }
   },
   "gameCard": {
@@ -73,7 +73,7 @@
     "allGames": "全部遊戲",
     "categories": {
       "hot": "熱門推薦",
-      "banana": "香蕉遊戲",
+      "banana": "手機遊戲",
       "action": "動作冒險",
       "puzzle": "休閒益智",
       "rpg": "角色扮演"
@@ -296,6 +296,33 @@
       "formatOnly": "僅支援 JPG 與 PNG 圖片格式",
       "submitFailed": "送出失敗",
       "replyFailed": "回覆失敗"
+    }
+  },
+  "task": {
+    "title": "福利中心",
+    "checkInSubtitle": "本週簽到進度",
+    "rewardSubtitle": "領取專屬獎勵",
+    "dailyLogin": {
+      "name": "每日登入獎勵",
+      "desc": "每天登入即可領取"
+    },
+    "accumulate3": {
+      "name": "連續 3 天簽到",
+      "desc": "本週連續簽到滿 3 天"
+    },
+    "accumulate5": {
+      "name": "連續 5 天簽到",
+      "desc": "本週連續簽到滿 5 天"
+    },
+    "status": {
+      "canClaim": "領取獎勵",
+      "claimed": "已領取",
+      "locked": "未達成"
+    },
+    "messages": {
+      "claimSuccess": "領取成功！💎",
+      "claimFailed": "領取失敗",
+      "systemError": "系統錯誤"
     }
   }
 }

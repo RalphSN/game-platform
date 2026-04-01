@@ -288,6 +288,33 @@ export const buyGameApi = async (account, token, gameId) => {
   return await sendRequest('/game/gameBuy', requestData)
 }
 
+// --- 簽到與任務系統 API ---
+
+/**
+ * 取得玩家任務與簽到清單
+ * 回傳包含 tasklist (任務狀態) 與 calendar (簽到日曆)
+ */
+export const fetchPlayerTaskListApi = async (account, token) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+  }
+  return await sendRequest('/member/playerTaskList', requestData)
+}
+
+/**
+ * 執行領取任務獎勵
+ * @param {number} type - 任務類型 (1:每日登入, 2:週累積3天, 3:週累積5天)
+ */
+export const claimPlayerTaskApi = async (account, token, type) => {
+  const requestData = {
+    Account: account,
+    Token: token,
+    Type: parseInt(type),
+  }
+  return await sendRequest('/member/playerTask', requestData)
+}
+
 // 模擬熱門關鍵字 API
 export const fetchHotKeywords = async () => {
   return new Promise((resolve) => {

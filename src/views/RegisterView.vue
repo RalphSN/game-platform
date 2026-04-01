@@ -99,7 +99,9 @@ const handleRegister = async () => {
 
     if (result.code === 0) {
       showToast(t('auth.registerSuccess'), 'success')
-      router.push({ name: 'login', query: { account: form.account } })
+      setTimeout(() => {
+        router.push({ path: '/login', query: { account: form.account } })
+      }, 1500)
     } else {
       switch (result.code) {
         case 1: throw new Error(t('auth.regErrors.params'))

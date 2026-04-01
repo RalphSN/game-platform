@@ -97,6 +97,20 @@ body.lang-en-US {
   margin: 0;
 }
 
+/* 客製化showToast */
+div.swal2-container.swal2-top-end,
+div.swal2-container.swal2-top-right {
+  top: 75px !important;
+}
+
+@media (max-width: 768px) {
+
+  div.swal2-container.swal2-top-end,
+  div.swal2-container.swal2-top-right {
+    top: 65px !important;
+  }
+}
+
 @media (max-width: 768px) {
   .app-wrapper {
     padding-bottom: calc(64px + env(safe-area-inset-bottom));

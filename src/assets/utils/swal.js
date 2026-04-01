@@ -39,7 +39,8 @@ export const showConfirm = async (title, text = '') => {
     cancelButtonText: '取消',
     reverseButtons: true, // 取消在左，確定在右
     customClass: {
-      popup: 'ddfun-swal-popup', // 預留class可以客製化 CSS
+      popup: 'ddfun-swal-popup', // 客製化 CSS
+      container: 'ddfun-swal-container'
     },
   })
 }

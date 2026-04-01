@@ -20,6 +20,24 @@
 
       <div class="header-right">
         <div class="pc-actions">
+
+          <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" class="search-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg></button>
+
+          <button class="icon-btn gift-btn" :title="$t('header.taskCenter')" @click="isTaskModalOpen = true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="gift-icon">
+              <polyline points="20 12 20 22 4 22 4 12"></polyline>
+              <rect x="2" y="7" width="20" height="5"></rect>
+              <line x1="12" y1="22" x2="12" y2="7"></line>
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+            </svg>
+            <span v-if="hasUnclaimedTask" class="red-dot"></span>
+          </button>
+
           <div class="user-profile-menu lang-menu-wrapper" @mouseenter="isLangMenuOpen = true"
             @mouseleave="isLangMenuOpen = false">
 
@@ -42,11 +60,6 @@
               </div>
             </transition>
           </div>
-          <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" class="search-icon">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg></button>
 
           <template v-if="!userStore.token">
             <router-link to="/login" class="text-btn">{{ $t('header.login') }}</router-link>
@@ -54,6 +67,7 @@
           </template>
 
           <template v-else>
+
             <div class="user-profile-menu" @mouseenter="isProfileMenuOpen = true"
               @mouseleave="isProfileMenuOpen = false">
               <button class="profile-btn">
@@ -86,6 +100,21 @@
         </div>
 
         <div class="mobile-actions">
+          <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" class="search-icon">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg></button>
+          <button class="icon-btn gift-btn" @click="isTaskModalOpen = true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="gift-icon">
+              <polyline points="20 12 20 22 4 22 4 12"></polyline>
+              <rect x="2" y="7" width="20" height="5"></rect>
+              <line x1="12" y1="22" x2="12" y2="7"></line>
+              <path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"></path>
+              <path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"></path>
+            </svg>
+            <span v-if="hasUnclaimedTask" class="red-dot"></span>
+          </button>
           <div class="user-profile-menu lang-menu-wrapper">
             <button class="icon-btn lang-btn" title="切換語系" @click="isMobileLangMenuOpen = !isMobileLangMenuOpen">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="globe-icon">
@@ -105,11 +134,6 @@
               </div>
             </transition>
           </div>
-          <button class="icon-btn" title="搜尋" @click="isSearchOpen = true"><svg viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" class="search-icon">
-              <circle cx="11" cy="11" r="8"></circle>
-              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-            </svg></button>
           <template v-if="!userStore.token">
             <router-link to="/login" class="text-btn">{{ $t('header.login') }}</router-link>
           </template>
@@ -182,16 +206,19 @@
       </nav>
     </transition>
     <SearchModal v-model:isOpen="isSearchOpen" />
+    <TaskModal v-model:isOpen="isTaskModalOpen" @task-claimed="checkTaskBadge" />
   </header>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted, computed } from 'vue'
+import { ref, onMounted, onUnmounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import { showToast } from '@/assets/utils/swal'
 import { useI18n } from 'vue-i18n'
+import { fetchPlayerTaskListApi } from '@/assets/utils/api'
+import TaskModal from './TaskModal.vue'
 
 import SearchModal from './SearchModal.vue'
 import logoUrl from '@/assets/images/logo/logo-dark.svg'
@@ -203,6 +230,9 @@ const { locale, t } = useI18n()
 
 const isMobileMenuOpen = ref(false)
 const isProfileMenuOpen = ref(false)
+
+const isTaskModalOpen = ref(false) // TaskModal.vue 的顯示/隱藏
+const hasUnclaimedTask = ref(false) // 小紅點(Badge)是否顯示
 
 const userAvatar = computed(() => {
   const name = userStore.nickname || userStore.account || 'Player'
@@ -246,9 +276,35 @@ const changeLanguage = (code) => {
   isMobileLangMenuOpen.value = false
 }
 
+const checkTaskBadge = async () => {
+  if (!userStore.token) return
+
+  try {
+    const result = await fetchPlayerTaskListApi(userStore.account, userStore.token)
+
+    if (result.code === 0 && result.tasklist) {
+      // 只要包含 1 (可領取)，紅點 = true
+      hasUnclaimedTask.value = Object.values(result.tasklist).includes(1)
+    }
+  } catch (error) {
+    console.error('檢查任務狀態失敗:', error)
+  }
+}
+
+watch(() => userStore.token, async (newToken, oldToken) => {
+  if (newToken && !oldToken) {
+    await checkTaskBadge()
+  }
+
+  if (!newToken) {
+    hasUnclaimedTask.value = false
+  }
+})
+
 onMounted(() => {
   if (userStore.token) {
     userStore.getPlayerInfo()
+    checkTaskBadge()
   }
 })
 
@@ -355,14 +411,6 @@ onUnmounted(() => {
   width: 40px;
 }
 
-.search-icon {
-  width: 24px;
-  height: 24px;
-  stroke-width: 2;
-  color: var(--color-text-muted);
-}
-
-
 .icon-btn:hover {
   background-color: var(--color-bg-page);
   color: var(--color-primary);
@@ -371,7 +419,7 @@ onUnmounted(() => {
 .text-btn {
   background: none;
   border: none;
-  color: var(--color-text-main);
+  color: var(--color-text-sub);
   font-weight: 600;
   cursor: pointer;
   padding: 8px 16px;
@@ -409,7 +457,6 @@ onUnmounted(() => {
   height: 100%;
   display: flex;
   align-items: center;
-  margin-left: 12px;
 }
 
 .profile-btn {
@@ -658,23 +705,31 @@ onUnmounted(() => {
 }
 
 /* 語系按鈕 */
-.lang-btn {
+.icon-btn.lang-btn {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 4px 12px;
-  border-radius: 20px;
+  gap: 6px;
   width: auto;
+
+  padding: 4px 6px;
+  border-radius: 12px;
+  border: 2px solid var(--color-text-sub);
 }
 
-.globe-icon {
-  width: 18px;
-  height: 18px;
+.icon-btn.lang-btn:hover .globe-icon {
+  color: var(--color-primary);
+  transform: scale(1.1) rotate(-8deg);
 }
+
+/* .icon-btn.lang-btn:hover {
+  color: white;
+  background-color: var(--color-text-sub);
+} */
 
 .lang-text {
-  font-size: 0.95rem;
+  font-size: 0.9rem;
   font-weight: 600;
+  line-height: 1;
 }
 
 .lang-dropdown {
@@ -692,6 +747,64 @@ onUnmounted(() => {
   color: var(--color-primary);
   background-color: var(--color-primary-light);
   font-weight: 700 !important;
+}
+
+/* 簽到任務/紅點 */
+.gift-btn {
+  position: relative;
+}
+
+.gift-btn:hover .gift-icon {
+  color: var(--color-primary);
+  transform: scale(1.1) rotate(-8deg);
+}
+
+/* 呼吸紅點動畫 */
+.red-dot {
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 10px;
+  height: 10px;
+  background-color: #ff4d4f;
+  border-radius: 50%;
+  border: 2px solid var(--color-bg-content);
+  box-shadow: 0 0 8px rgba(255, 77, 79, 0.6);
+  animation: badge-pulse 2s infinite;
+}
+
+.search-icon,
+.gift-icon,
+.globe-icon {
+  width: 22px;
+  height: 22px;
+  color: var(--color-text-sub);
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.search-icon:hover {
+  color: var(--color-primary);
+  transform: scale(1.1) rotate(-8deg);
+}
+
+@keyframes badge-pulse {
+  0% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0.7);
+  }
+
+  70% {
+    transform: scale(1.2);
+    box-shadow: 0 0 0 6px rgba(255, 77, 79, 0);
+  }
+
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 77, 79, 0);
+  }
 }
 
 .free-balance,

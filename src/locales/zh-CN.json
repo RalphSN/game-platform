@@ -30,7 +30,7 @@
       "action": "动作冒险",
       "puzzle": "休闲益智",
       "rpg": "角色扮演",
-      "banana": "香蕉游戏"
+      "banana": "手机游戏"
     }
   },
   "gameCard": {
@@ -73,7 +73,7 @@
     "allGames": "全部游戏",
     "categories": {
       "hot": "热门推荐",
-      "banana": "香蕉游戏",
+      "banana": "手机游戏",
       "action": "动作冒险",
       "puzzle": "休闲益智",
       "rpg": "角色扮演"
@@ -296,6 +296,33 @@
       "formatOnly": "仅支持 JPG 与 PNG 图片格式",
       "submitFailed": "提交失败",
       "replyFailed": "回复失败"
+    }
+  },
+  "task": {
+    "title": "福利中心",
+    "checkInSubtitle": "本周签到进度",
+    "rewardSubtitle": "领取专属奖励",
+    "dailyLogin": {
+      "name": "每日登录奖励",
+      "desc": "每天登录即可领取"
+    },
+    "accumulate3": {
+      "name": "连续签到3天",
+      "desc": "本周累计签到满3天"
+    },
+    "accumulate5": {
+      "name": "连续签到5天",
+      "desc": "本周累计签到满5天"
+    },
+    "status": {
+      "canClaim": "立即领取",
+      "claimed": "已领取",
+      "locked": "未达成"
+    },
+    "messages": {
+      "claimSuccess": "领取成功！💎",
+      "claimFailed": "领取失败",
+      "systemError": "系统异常"
     }
   }
 }

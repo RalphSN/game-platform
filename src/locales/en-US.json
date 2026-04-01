@@ -30,7 +30,7 @@
       "action": "Action",
       "puzzle": "Puzzle",
       "rpg": "RPG",
-      "banana": "Banana Games"
+      "banana": "Mobile Game"
     }
   },
   "gameCard": {
@@ -73,7 +73,7 @@
     "allGames": "All Games",
     "categories": {
       "hot": "Trending",
-      "banana": "Banana Games",
+      "banana": "Mobile Game",
       "action": "Action",
       "puzzle": "Puzzle",
       "rpg": "RPG"
@@ -296,6 +296,33 @@
       "formatOnly": "Only JPG and PNG formats are supported",
       "submitFailed": "Submission failed",
       "replyFailed": "Reply failed"
+    }
+  },
+  "task": {
+    "title": "Rewards Center",
+    "checkInSubtitle": "Weekly Check-in Progress",
+    "rewardSubtitle": "Claim Your Rewards",
+    "dailyLogin": {
+      "name": "Daily Login Bonus",
+      "desc": "Log in daily to claim rewards"
+    },
+    "accumulate3": {
+      "name": "3-Day Streak",
+      "desc": "Check in for 3 days this week"
+    },
+    "accumulate5": {
+      "name": "5-Day Streak",
+      "desc": "Check in for 5 days this week"
+    },
+    "status": {
+      "canClaim": "Claim",
+      "claimed": "Claimed",
+      "locked": "Locked"
+    },
+    "messages": {
+      "claimSuccess": "Reward claimed! 💎",
+      "claimFailed": "Claim failed",
+      "systemError": "Something went wrong"
     }
   }
 }
