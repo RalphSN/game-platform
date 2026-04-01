@@ -58,7 +58,7 @@
 </template>
 
 <script setup>
-import { ref, watch, nextTick } from 'vue'
+import { ref, watch, nextTick, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { getRecentSearchApi, getHotSearchApi, fetchFilteredGamesApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
@@ -194,18 +194,36 @@ const fetchKeywords = async () => {
   }
 }
 
+const lockScroll = () => {
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+  document.body.style.paddingRight = `${scrollbarWidth}px`
+  document.body.style.overflow = 'hidden'
+}
+
+const unlockScroll = () => {
+  document.body.style.paddingRight = ''
+  document.body.style.overflow = ''
+}
+
 // 每次打開彈窗時執行
 watch(() => props.isOpen, async (newVal) => {
   if (newVal) {
+    lockScroll()
     await fetchKeywords()
     nextTick(() => {
       searchInput.value?.focus()
     })
   } else {
+    unlockScroll()
     keyword.value = ''
     searchResults.value = []
   }
 })
+
+onUnmounted(() => {
+  unlockScroll()
+})
+
 </script>
 
 <style scoped>
@@ -215,8 +233,7 @@ watch(() => props.isOpen, async (newVal) => {
   left: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
+  background: rgba(0, 0, 0, 0.8);
   z-index: 9999;
   display: flex;
   justify-content: center;
@@ -232,6 +249,7 @@ watch(() => props.isOpen, async (newVal) => {
   box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4);
   overflow: hidden;
   margin: 0 16px;
+  will-change: transform, opacity;
 }
 
 .search-input-area {

@@ -1,6 +1,6 @@
 <template>
   <transition name="fade-scale">
-    <div v-if="isOpen" class="task-modal-overlay" @click.self="close">
+    <div v-show="isOpen" class="task-modal-overlay" @click.self="close">
       <div class="task-modal-card">
         <div class="modal-header">
           <div class="header-title">
@@ -20,7 +20,7 @@
                 <span class="day-label">{{ formatShortDate(date) }}</span>
                 <span class="status-icon">
                   <img v-if="signed" :src="isToday(date) ? yellowCheck : greenCheck" alt="check"
-                    :class="{ 'stamp-animation': isToday(date) }" />
+                    :class="{ 'stamp-animation': isToday(date) && showStampAnimation }" />
                 </span>
               </div>
             </div>
@@ -84,6 +84,7 @@ import { ref, watch, computed } from 'vue'
 import { useUserStore } from '@/stores/user'
 import { fetchPlayerTaskListApi, claimPlayerTaskApi } from '@/assets/utils/api'
 import { showToast } from '@/assets/utils/swal'
+import { onUnmounted } from 'vue'
 import confetti from 'canvas-confetti'
 import greenCheck from '@/assets/images/icon/greenCheck.png'
 import yellowCheck from '@/assets/images/icon/yellowCheck.png'
@@ -103,6 +104,8 @@ const userStore = useUserStore()
 const loading = ref(true)
 const calendarData = ref({})
 const tasklist = ref({ "1": 0, "2": 0, "3": 0 })
+
+const showStampAnimation = ref(false)
 
 const currentProgress = computed(() => {
   if (!calendarData.value) return 0;
@@ -149,6 +152,15 @@ const handleClaim = async (type) => {
     if (res.code === 0) {
       fireConfetti()
       showToast(t('task.messages.claimSuccess'), 'success')
+
+      if (type === 1) {
+        showStampAnimation.value = true;
+        setTimeout(() => {
+          showStampAnimation.value = false;
+        }, 500);
+      }
+
+
       await fetchData()
       emit('task-claimed')
       userStore.getPlayerInfo()
@@ -195,6 +207,17 @@ const getBtnText = (status, taskId) => {
   return t('task.status.locked') // 防呆
 }
 
+const lockScroll = () => {
+  const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth
+  document.body.style.paddingRight = `${scrollbarWidth}px`
+  document.body.style.overflow = 'hidden'
+}
+
+const unlockScroll = () => {
+  document.body.style.paddingRight = ''
+  document.body.style.overflow = ''
+}
+
 const fireConfetti = () => {
   const count = 200
   const defaults = {
@@ -219,8 +242,19 @@ const fireConfetti = () => {
 }
 
 watch(() => props.isOpen, (newVal) => {
-  if (newVal) fetchData()
+  if (newVal) {
+    lockScroll()
+    fetchData()
+  } else {
+    unlockScroll()
+  }
 })
+
+
+onUnmounted(() => {
+  unlockScroll()
+})
+
 </script>
 
 <style scoped>
@@ -230,8 +264,7 @@ watch(() => props.isOpen, (newVal) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: rgba(15, 23, 42, 0.6);
-  backdrop-filter: blur(12px);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;

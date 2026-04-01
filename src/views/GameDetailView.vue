@@ -544,7 +544,7 @@ watch(() => route.params.id, (newId) => {
   bottom: -20px;
   background-size: cover;
   background-position: center;
-  filter: blur(15px);
+  /* filter: blur(5px); */
   z-index: 1;
   transition: background-image 0.5s ease;
 }
@@ -555,7 +555,7 @@ watch(() => route.params.id, (newId) => {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(to top, rgba(16, 23, 38, 0.95) 0%, rgba(16, 23, 38, 0.4) 50%, rgba(16, 23, 38, 0.2) 100%);
+  background: linear-gradient(to top, rgba(16, 23, 38, 0.75) 0%, rgba(16, 23, 38, 0.2) 50%, rgba(16, 23, 38, 0.05) 100%);
   z-index: 2;
 }
 
