@@ -52,9 +52,7 @@ const { t } = useI18n()
 const isImageLoaded = ref(false)
 
 const onImageLoad = () => {
-  setTimeout(()=>{
-    isImageLoaded.value = true
-  },10000)
+  isImageLoaded.value = true
 }
 
 const props = defineProps({
