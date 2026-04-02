@@ -1,8 +1,8 @@
 <template>
-  <div class="game-card" :class="{ 'is-locked': game.Lock }" @click="goToGame">
+  <div class="game-card" :class="{ 'is-locked': game.Lock, 'is-loading': !isImageLoaded }" @click="goToGame">
     <div class="thumb-wrapper">
       <img :src="getImageUrlWithCacheBuster(game.IconURL) || defaultThumb" :alt="game.GameName" class="game-thumb"
-        loading="lazy" />
+        :class="{ 'is-loaded': isImageLoaded }" @load="onImageLoad" loading="lazy" />
 
       <div v-if="game.Lock" class="lock-indicator">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
@@ -33,7 +33,6 @@
       <h4 class="game-title">{{ game.GameName || $t('gameCard.loading') }}</h4>
       <div class="game-meta">
         <span class="game-tag">{{ finalCategory }}</span>
-        <!-- <span class="game-players">🔥 {{ formatPlayers(game.PlayerNum) }}</span> -->
         <span class="game-players" v-if="!isBanana">🔥 {{ game.PlayerNum }}</span>
       </div>
     </div>
@@ -47,7 +46,16 @@ import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import defaultThumb from '@/assets/images/default-img.jpg'
 import { useI18n } from 'vue-i18n'
+
 const { t } = useI18n()
+
+const isImageLoaded = ref(false)
+
+const onImageLoad = () => {
+  setTimeout(()=>{
+    isImageLoaded.value = true
+  },10000)
+}
 
 const props = defineProps({
   game: {
@@ -93,7 +101,7 @@ const toggleFavorite = async (event) => {
     await userStore.toggleFavorite(props.game.GameAutoNo)
   } catch (error) {
     localFavorite.value = currentStatus
-    console.error('收藏狀態切換失敗:', error)
+    console.error(error)
   }
 }
 
@@ -108,31 +116,12 @@ const goToGame = () => {
   router.push(`/game/${props.game.GameAutoNo}`)
 }
 
-// const formatPlayers = (num) => {
-//   if (!num) return 0
-//   if (num >= 10000) return (num / 10000).toFixed(1) + 'w'
-//   if (num >= 1000) return (num / 1000).toFixed(1) + 'k'
-//   return num
-// }
-
-// const categoryMap = {
-//   '1': t('category.1'),
-//   '2': t('category.2'),
-//   '3': t('category.3'),
-//   '4': t('category.4'),
-//   '5': t('category.5'),
-//   '6': t('category.6'),
-//   '7': t('category.7')
-// }
-
 const parsedCategory = computed(() => {
   const labels = props.game.LabelType
   if (!labels) return t('gameCard.uncategorized')
 
   const firstLabelCode = labels.split(',')[0]
 
-  // 如果 firstLabelCode 是 '1'，就會去查 'category.1'
-  // 檢查 1~7 的範圍，在範圍內就查字典，否則回傳未分類
   if (['1', '2', '3', '4', '5', '6', '7'].includes(firstLabelCode)) {
     return t(`category.${firstLabelCode}`)
   }
@@ -151,7 +140,6 @@ watch(
     localFavorite.value = newVal
   }
 )
-
 </script>
 
 <style scoped>
@@ -177,11 +165,42 @@ watch(
   overflow: hidden;
 }
 
+.game-card.is-loading .thumb-wrapper {
+  background-color: var(--color-border-light, #cbd5e1);
+}
+
+.game-card.is-loading .thumb-wrapper::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
+  animation: shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  z-index: 1;
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
+}
+
 .game-thumb {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  transition: transform 0.5s ease;
+  opacity: 0;
+  transition: transform 0.5s ease, opacity 0.5s ease;
+}
+
+.game-card:not(.is-loading) .game-thumb {
+  opacity: 1;
 }
 
 .game-card:hover .game-thumb {
@@ -220,6 +239,10 @@ watch(
   opacity: 0.9;
 }
 
+.game-card.is-loading .lock-indicator {
+  opacity: 0;
+}
+
 .is-locked:hover .lock-indicator {
   opacity: 0;
   transition: opacity 0.3s ease;
@@ -238,10 +261,13 @@ watch(
   opacity: 0;
   transition: opacity 0.3s ease;
   z-index: 3;
+  pointer-events: none;
 }
 
-.game-card:hover .hover-overlay {
-  opacity: 1;
+@media (hover: hover) {
+  .game-card:not(.is-loading):hover .hover-overlay {
+    opacity: 1;
+  }
 }
 
 .play-btn {
@@ -252,11 +278,13 @@ watch(
   font-weight: bold;
   font-size: 0.9rem;
   transform: translateY(20px);
-  transition: transform 0.3s ease;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.game-card:hover .play-btn {
-  transform: translateY(0);
+@media (hover: hover) {
+  .game-card:not(.is-loading):hover .play-btn {
+    transform: translateY(0);
+  }
 }
 
 .unlock-btn {
@@ -323,17 +351,27 @@ watch(
 }
 
 .game-info {
-  padding: 12px;
+  padding: 14px 12px;
 }
 
 .game-title {
   color: var(--color-text-main);
-  font-size: 1rem;
-  font-weight: 600;
-  margin-bottom: 8px;
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  letter-spacing: 0.3px;
+}
+
+.game-card.is-loading .game-title {
+  color: transparent;
+  background-color: var(--color-border-light, #cbd5e1);
+  border-radius: 4px;
+  width: 80%;
+  height: 1.2rem;
+  animation: pulse 1.5s infinite;
 }
 
 .game-meta {
@@ -346,17 +384,28 @@ watch(
   background-color: var(--color-primary-light);
   color: var(--color-primary);
   font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 4px;
-  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-weight: 600;
 }
 
 .game-players {
   color: var(--color-text-sub);
   font-size: 0.8rem;
-
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
+}
+
+@keyframes pulse {
+
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.4;
+  }
 }
 </style>

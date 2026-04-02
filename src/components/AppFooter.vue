@@ -27,6 +27,7 @@
 <script setup>
 import { computed } from 'vue'
 import { showToast } from '@/assets/utils/swal'
+import Swal from 'sweetalert2'
 import logoUrl from '@/assets/images/logo/logo-light.svg'
 
 import { useI18n } from 'vue-i18n'
@@ -40,7 +41,15 @@ const copyEmail = async () => {
     showToast(t('terms.copied'), 'success')
   } catch (err) {
     console.error('複製失敗:', err)
-    showToast(`${t('terms.failed')} ${email}`, 'warning')
+    Swal.fire({
+      icon: 'warning',
+      title: t('terms.failed') || '自動複製失敗',
+      html: `<div style="padding: 10px; background: #f1f5f9; border-radius: 8px; font-weight: bold; user-select: all; cursor: text;">
+               ${email}
+             </div>`,
+      confirmButtonText: t('searchModal.close'),
+      confirmButtonColor: 'var(--color-primary)'
+    })
   }
 }
 

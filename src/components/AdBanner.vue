@@ -1,15 +1,15 @@
 <template>
-  <div class="ad-banner" @click="handleAdClick" style="cursor: pointer;">
+  <div class="ad-banner" :class="{ 'is-loading': !isImageLoaded }" @click="handleAdClick" style="cursor: pointer;">
     <picture>
       <source v-if="ad.PicURL2" media="(max-width: 768px)" :srcset="getImageUrlWithCacheBuster(ad.PicURL2)"
         referrerpolicy="no-referrer" />
 
-      <img :src="getImageUrlWithCacheBuster(ad.PicURL)" alt="廣告" class="ad-img" loading="lazy"
+      <img :src="getImageUrlWithCacheBuster(ad.PicURL)" @load="onImageLoad" alt="廣告" class="ad-img" loading="lazy"
         referrerpolicy="no-referrer" />
     </picture>
 
-    <div class="ad-badge">AD</div>
-    <div class="shine-effect"></div>
+    <div v-show="isImageLoaded" class="ad-badge">AD</div>
+    <div v-show="isImageLoaded" class="shine-effect"></div>
   </div>
 </template>
 
@@ -17,8 +17,18 @@
 import { useRouter } from 'vue-router'
 import { trackBannerClickApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
+import { ref } from 'vue'
 
 const router = useRouter()
+
+const isImageLoaded = ref(false)
+
+const onImageLoad = () => {
+  isImageLoaded.value = true
+  // setTimeout(() => {
+  //   isImageLoaded.value = true
+  // }, 10000)
+}
 
 const props = defineProps({
   ad: {
@@ -60,6 +70,7 @@ const handleAdClick = () => {
   transition: transform 0.2s ease;
   aspect-ratio: 1440 / 300;
   background-color: var(--color-border-light);
+  cursor: pointer;
 }
 
 .ad-banner:hover {
@@ -70,6 +81,12 @@ const handleAdClick = () => {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+.ad-banner:not(.is-loading) .ad-img {
+  opacity: 1;
 }
 
 .ad-badge {
@@ -100,6 +117,32 @@ const handleAdClick = () => {
 
 .ad-banner:hover .shine-effect {
   animation: shine 0.7s ease-in-out;
+}
+
+.ad-banner.is-loading {
+  background-color: #cbd5e1;
+}
+
+.is-loading::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+  animation: loadingShimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+  z-index: 1;
+}
+
+@keyframes loadingShimmer {
+  0% {
+    left: -100%;
+  }
+
+  100% {
+    left: 100%;
+  }
 }
 
 @keyframes shine {
