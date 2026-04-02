@@ -493,6 +493,11 @@ onMounted(() => {
   .mode-switch-container {
     align-items: flex-start;
   }
+
+  .options-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
 @media (max-width: 480px) {

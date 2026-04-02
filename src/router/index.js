@@ -70,6 +70,14 @@ const router = createRouter({
       name: 'recharge',
       component: () => import('../views/RechargeView.vue'),
     },
+    {
+      path: '/info/:id',
+      name: 'info',
+      component: () => import('@/views/InfoView.vue'), 
+      meta: {
+        title: '資訊頁面',
+      },
+    },
     // ==========================================
     // 預留路由，目前註解
     // ==========================================

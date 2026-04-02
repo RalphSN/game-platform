@@ -324,5 +324,23 @@
       "claimFailed": "Claim failed",
       "systemError": "Something went wrong"
     }
+  },
+  "terms": {
+    "copied": "Business email copied to clipboard",
+    "failed": "Please copy the email address manually:"
+  },
+  "info": {
+    "terms": {
+      "title": "Terms of Service",
+      "content": "<h3>1. Acceptance of Terms</h3><p>Welcome to DDFun Planet (\"the Platform\"). By registering or using our services, you acknowledge that you have read, understood, and agreed to all terms outlined herein.</p><h3>2. Account & Security</h3><p>You are responsible for maintaining the confidentiality of your account credentials. All activities conducted under your account are your responsibility. If you suspect unauthorized access, please contact customer support immediately.</p><h3>3. Service Termination</h3><p>The Platform reserves the right to modify, suspend, or terminate services at any time. Accounts that violate these terms may be suspended or removed without prior notice.</p><h3>4. Disclaimer</h3><p>The Platform does not guarantee uninterrupted, secure, or error-free service. We are not liable for any data loss caused by system maintenance, upgrades, or force majeure events.</p>"
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "content": "<h3>1. Data Collection</h3><p>When you register, we may collect your account information, IP address, device data, and gameplay history to enhance your experience and ensure platform security.</p><h3>2. Use of Data</h3><p>Your personal data is used solely for internal purposes such as user behavior analysis, customer support, and reward distribution. We will not sell or share your data with third parties without your consent.</p><h3>3. Cookies</h3><p>We use cookies to provide a more personalized experience and track user activity. You may disable or restrict cookies through your browser settings.</p><h3>4. Data Security</h3><p>We implement industry-standard encryption and security measures to protect your personal data from unauthorized access or disclosure.</p>"
+    },
+    "business": {
+      "title": "Business Cooperation",
+      "content": "<h3>Partnership Opportunities</h3><p>DDFun Planet is committed to building a high-quality gaming ecosystem. We welcome game developers, publishers, brands, and marketing partners to collaborate with us.</p><h3>Cooperation Scope</h3><ul><li>Game publishing and distribution</li><li>Cross-brand marketing campaigns</li><li>Platform advertising and resource exchange</li><li>API integration and technical collaboration</li></ul><br><p>If you are interested in partnering with us, please send your proposal or contact details to:<br><strong>Contact Email:</strong> <a href=\"mailto:hentai.bd2@gmail.com\" style=\"color: var(--color-primary);\">hentai.bd2@gmail.com</a></p><p>Our business team will get back to you within 3 business days.</p>"
+    }
   }
 }

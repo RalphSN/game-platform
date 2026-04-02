@@ -217,8 +217,9 @@ const tabs = [
 ]
 
 const userAvatar = computed(() => {
-  const name = userStore.account || 'User'
-  return `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
+  const name = userStore.nickname || userStore.account || 'Player'
+  const originalUrl = `https://ui-avatars.com/api/?name=${name}&background=5E60CE&color=fff`
+  return getImageUrlWithCacheBuster(originalUrl)
 })
 
 const editForm = reactive({
@@ -797,6 +798,7 @@ onMounted(() => {
 .transaction-table {
   width: 100%;
   border-collapse: collapse;
+  white-space: nowrap;
 }
 
 .transaction-table th,

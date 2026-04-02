@@ -7,16 +7,18 @@
       </div>
 
       <div class="footer-links">
-        <a href="#">{{ $t('footer.termsOfService') }}</a>
-        <a href="#">{{ $t('footer.privacyPolicy') }}</a>
-        <a href="#">{{ $t('footer.contactSupport') }}</a>
-        <a href="#">{{ $t('footer.businessCooperation') }}</a>
+        <router-link to="/info/terms">{{ $t('footer.termsOfService') }}</router-link>
+        <router-link to="/info/privacy">{{ $t('footer.privacyPolicy') }}</router-link>
+        <router-link to="/support">{{ $t('footer.contactSupport') }}</router-link>
+        <a class="business-link" @click.prevent="copyEmail" href="#">{{ $t('footer.businessCooperation') }}
+          <span class="email-tooltip">hentai.bd2@gmail.com</span>
+        </a>
       </div>
 
       <div class="footer-divider"></div>
 
       <div class="copyright">
-        &copy; {{ currentYear }} GamePlay. All rights reserved.
+        &copy; {{ currentYear }} DDFun. All rights reserved.
       </div>
     </div>
   </footer>
@@ -24,8 +26,24 @@
 
 <script setup>
 import { computed } from 'vue'
+import { showToast } from '@/assets/utils/swal'
 import logoUrl from '@/assets/images/logo/logo-light.svg'
+
+import { useI18n } from 'vue-i18n'
+const { t } = useI18n()
+
 const currentYear = computed(() => new Date().getFullYear())
+const copyEmail = async () => {
+  const email = 'hentai.bd2@gmail.com'
+  try {
+    await navigator.clipboard.writeText(email)
+    showToast(t('terms.copied'), 'success')
+  } catch (err) {
+    console.error('複製失敗:', err)
+    showToast(`${t('terms.failed')} ${email}`, 'warning')
+  }
+}
+
 </script>
 
 <style scoped>
@@ -90,5 +108,70 @@ const currentYear = computed(() => new Date().getFullYear())
 .copyright {
   font-size: 0.85rem;
   color: var(--color-footer-text);
+}
+
+.business-link {
+  position: relative;
+  display: inline-block;
+}
+
+.email-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%) translateY(0px);
+
+  background-color: var(--color-bg-content);
+  color: var(--color-text-main);
+  border: 1px solid var(--color-border-light);
+  box-shadow: 0 10px 25px -5px var(--color-shadow-main);
+
+  padding: 8px 14px;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  white-space: nowrap;
+  letter-spacing: 0.5px;
+
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  z-index: 10;
+}
+
+.email-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: var(--color-bg-content) transparent transparent transparent;
+}
+
+.business-link:hover .email-tooltip {
+  opacity: 1;
+  visibility: visible;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+@media (max-width: 768px) {
+  .email-tooltip {
+    left: auto;
+    right: 0;
+    transform: translateY(0px);
+  }
+
+  .business-link:hover .email-tooltip {
+    transform: translateY(-10px);
+  }
+
+  .email-tooltip::after {
+    left: auto;
+    right: 24px;
+    transform: none;
+  }
 }
 </style>
