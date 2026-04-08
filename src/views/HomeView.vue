@@ -40,6 +40,9 @@
           <AdBanner v-if="adRight" :ad="adRight" />
         </div>
 
+        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" :title="$t('homeView.sections.featured')"
+          :icon="svgIcons.action" categoryId="featured" :games="featuredGames.slice(0, 6)" />
+
         <GameSection class="fade-in-up" style="animation-delay: 0.6s;" :title="$t('homeView.sections.rpg')"
           :icon="svgIcons.rpg" categoryId="rpg" :games="rpgGames.slice(0, 6)" />
 
@@ -65,6 +68,7 @@ const userStore = useUserStore()
 const router = useRouter()
 
 // 儲存各分類遊戲
+const featuredGames = ref([])
 const hotGames = ref([])     // 對應分類 7 (精選合集/熱門)
 const bananaGames = ref([])  // 對應分類 0 (香蕉遊戲)
 const actionGames = ref([])  // 對應分類 2 (動作闖關)
@@ -102,7 +106,8 @@ const loadGames = async () => {
     const result = await fetchGameListAllApi(userStore.account, userStore.token)
 
     if (result.code === 0 || result.code === 888) {
-      hotGames.value = result['7'] || []
+      hotGames.value = result['999'] || []
+      featuredGames.value = result['7'] || []
       bananaGames.value = result['0'] || []
       actionGames.value = result['2'] || []
       puzzleGames.value = result['1'] || []

@@ -43,7 +43,9 @@ const categoryTitleKey = ref('categoryView.allGames')
 const games = ref([])
 
 const categoryMapping = {
-  'hot': { id: '7', titleKey: 'categoryView.categories.hot' },
+  'hot': { id: '999', titleKey: 'categoryView.categories.hot' },
+  'featured': { id: '7', titleKey: 'categoryView.categories.featured' },
+
   'banana': { id: '0', titleKey: 'categoryView.categories.banana' },
   'action': { id: '2', titleKey: 'categoryView.categories.action' },
   'puzzle': { id: '1', titleKey: 'categoryView.categories.puzzle' },
@@ -64,7 +66,7 @@ const loadCategoryData = async (categoryId) => {
 
     const result = await fetchGameListAllApi(userStore.account, userStore.token)
 
-    if (result.code === 0) {
+    if (result.code === 0 || result.code === 888) {
       if (config && result[config.id]) {
         games.value = result[config.id]
       } else {

@@ -27,6 +27,7 @@
     "eventBanner": "活動 Banner",
     "sections": {
       "hot": "熱門推薦",
+      "featured": "精選合集",
       "action": "動作冒險",
       "puzzle": "休閒益智",
       "rpg": "角色扮演",
@@ -48,7 +49,8 @@
     "4": "模擬經營",
     "5": "競技對戰",
     "6": "角色冒險",
-    "7": "精選合集"
+    "7": "精選合集",
+    "hot": "熱門推薦"
   },
   "gameSection": {
     "viewMore": "查看更多",
@@ -74,6 +76,7 @@
     "categories": {
       "hot": "熱門推薦",
       "banana": "手機遊戲",
+      "featured": "精選合集",
       "action": "動作冒險",
       "puzzle": "休閒益智",
       "rpg": "角色扮演"

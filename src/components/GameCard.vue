@@ -118,8 +118,13 @@ const parsedCategory = computed(() => {
   const labels = props.game.LabelType
   if (!labels) return t('gameCard.uncategorized')
 
-  const firstLabelCode = labels.split(',')[0]
+  const labelArray = labels.split(',')
 
+  if (labelArray.includes('999')) {
+    return t('category.hot')
+  }
+
+  const firstLabelCode = labelArray[0]
   if (['1', '2', '3', '4', '5', '6', '7'].includes(firstLabelCode)) {
     return t(`category.${firstLabelCode}`)
   }

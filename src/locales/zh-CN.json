@@ -8,17 +8,17 @@
     "leaderboard": "排行榜",
     "login": "登录",
     "register": "注册",
-    "memberCenter": "个人中心",
+    "memberCenter": "会员中心",
     "recharge": "充值中心",
     "support": "联系客服",
-    "logout": "退出登录",
+    "logout": "登出",
     "menu": "菜单",
     "chargeCoins": "充值代币",
     "freeCoins": "免费代币",
-    "logoutSuccess": "已成功退出登录！"
+    "logoutSuccess": "已成功登出！"
   },
   "footer": {
-    "termsOfService": "服务协议",
+    "termsOfService": "服务条款",
     "privacyPolicy": "隐私政策",
     "contactSupport": "联系客服",
     "businessCooperation": "商务合作"
@@ -27,6 +27,7 @@
     "eventBanner": "活动横幅",
     "sections": {
       "hot": "热门推荐",
+      "featured": "精选合集",
       "action": "动作冒险",
       "puzzle": "休闲益智",
       "rpg": "角色扮演",
@@ -36,19 +37,20 @@
   "gameCard": {
     "viewUnlock": "查看解锁条件",
     "playNow": "▶ 立即游玩",
-    "toggleFavorite": "收藏/取消收藏",
+    "toggleFavorite": "收藏/取消",
     "loading": "加载中...",
     "uncategorized": "未分类",
-    "mobileGame": "手游"
+    "mobileGame": "手机游戏"
   },
   "category": {
     "1": "休闲益智",
     "2": "动作闯关",
     "3": "策略塔防",
     "4": "模拟经营",
-    "5": "竞技对战",
+    "5": "竞技对抗",
     "6": "角色冒险",
-    "7": "精选合集"
+    "7": "精选合集",
+    "hot": "热门推荐"
   },
   "gameSection": {
     "viewMore": "查看更多",
@@ -61,10 +63,10 @@
     "support": "客服"
   },
   "searchModal": {
-    "placeholder": "搜索游戏名称或类型...",
+    "placeholder": "搜索游戏或类型...",
     "close": "关闭",
     "searching": "搜索中...",
-    "noResultFound": "未找到符合“{keyword}”的游戏",
+    "noResultFound": "未找到“{keyword}”相关结果",
     "recentSearches": "最近搜索",
     "hotSearches": "热门搜索"
   },
@@ -74,21 +76,22 @@
     "categories": {
       "hot": "热门推荐",
       "banana": "手机游戏",
+      "featured": "精选合集",
       "action": "动作冒险",
       "puzzle": "休闲益智",
       "rpg": "角色扮演"
     }
   },
   "gameDetail": {
-    "playingCount": "🔥 {count} 人在玩",
+    "playingCount": "🔥 {count} 人正在玩",
     "removeFavorite": "取消收藏",
     "addFavorite": "加入收藏",
     "startGame": "开始游戏",
     "unlockConditions": "解锁条件",
-    "loginRequired": "该游戏需要登录会员后才能游玩",
+    "loginRequired": "此游戏需登录会员方可游玩",
     "goToLogin": "前往登录 / 注册",
-    "unlockCostPrefix": "需要花费 ",
-    "unlockCostSuffix": " 代币以解锁该游戏",
+    "unlockCostPrefix": "需消耗 ",
+    "unlockCostSuffix": " 代币解锁此游戏",
     "unlockNow": "立即解锁",
     "gameIntro": "游戏简介",
     "noIntro": "暂无介绍",
@@ -97,27 +100,27 @@
       "loginFirst": "请先登录",
       "insufficientCoinsTitle": "代币余额不足",
       "goToRecharge": "是否前往充值中心？",
-      "confirmUnlock": "确定要花费 {coins} 代币解锁该游戏吗？",
-      "unlockSuccess": "解锁成功！马上开始游玩吧！",
+      "confirmUnlock": "确定花费 {coins} 代币解锁吗？",
+      "unlockSuccess": "解锁成功！开始游玩吧！",
       "cannotBuy": "无法购买",
-      "accountBlocked": "账号已被封禁(IP)",
+      "accountBlocked": "账号遭封锁(IP)",
       "unlockFailed": "解锁失败，请稍后再试",
-      "systemError": "系统连接错误，请稍后再试"
+      "systemError": "系统连线错误"
     }
   },
   "gamesView": {
     "filterTitle": "筛选条件",
     "looseMatch": "模糊匹配",
     "exactMatch": "精准匹配",
-    "matchAll": "(符合所有条件)",
-    "matchAny": "(符合任一条件)",
+    "matchAll": "(符合所有)",
+    "matchAny": "(符合任一)",
     "genre": "游戏类别",
     "status": "游戏状态",
     "all": "全部",
     "unlocked": "已解锁",
     "locked": "未解锁",
     "filterResult": "筛选结果",
-    "noResult": "未找到符合条件的游戏，请尝试放宽筛选条件。"
+    "noResult": "无匹配游戏，请尝试放宽筛选。"
   },
   "auth": {
     "loginTitle": "欢迎回来",
@@ -132,25 +135,25 @@
     "loginSuccess": "登录成功！",
     "errors": {
       "params": "参数错误",
-      "format": "账号密码格式错误 (6~20位，必须包含1个字母和1个数字)",
+      "format": "格式错误 (6~20位，含字母和数字)",
       "failed": "登录失败",
-      "frozen": "该账号已被冻结",
-      "blocked": "账号已被封禁(IP)",
+      "frozen": "账号已冻结",
+      "blocked": "账号遭封锁(IP)",
       "unknown": "登录失败，请重试"
     },
     "registerTitle": "创建新账号",
     "registerSubtitle": "加入我们，开启游戏旅程",
-    "regAccountPlaceholder": "请设置登录账号 (6~20位)",
-    "regPasswordPlaceholder": "请设置密码 (包含字母数字, 6~20位)",
+    "regAccountPlaceholder": "设置登录账号 (6~20位)",
+    "regPasswordPlaceholder": "设置密码 (含字母数字, 6~20位)",
     "registerBtn": "立即注册",
     "hasAccount": "已有账号？",
     "loginNow": "立即登录",
-    "registerSuccess": "注册成功！请使用新账号登录！",
+    "registerSuccess": "注册成功！请登录！",
     "regErrors": {
-      "params": "参数错误，请检查填写内容",
-      "format": "账号密码格式错误 (6~20位，必须包含1个字母和1个数字)",
-      "duplicate": "该玩家账号已存在，请更换",
-      "specialChars": "包含特殊符号，请重新尝试",
+      "params": "参数填写错误",
+      "format": "格式错误 (6~20位，含字母和数字)",
+      "duplicate": "账号已存在",
+      "specialChars": "包含非法字符",
       "failed": "注册失败，请稍后再试"
     }
   },
@@ -159,7 +162,7 @@
       "depositCoins": "充值代币",
       "freeCoins": "免费代币",
       "profile": "个人资料",
-      "favorites": "收藏列表",
+      "favorites": "收藏清单",
       "transactions": "充值记录"
     },
     "profile": {
@@ -167,18 +170,18 @@
       "account": "账号",
       "nickname": "昵称",
       "saveBtn": "保存修改",
-      "updateSuccess": "昵称已成功更新！",
+      "updateSuccess": "昵称更新成功！",
       "changePassword": "修改密码",
       "newPassword": "新密码",
       "confirmPassword": "确认新密码",
       "newPasswordPlaceholder": "请输入新密码",
-      "confirmPasswordPlaceholder": "请再次输入新密码",
+      "confirmPasswordPlaceholder": "请再次输入",
       "updatePasswordBtn": "更新密码",
-      "passwordSuccess": "密码已成功更新！",
-      "passwordMismatch": "两次输入的新密码不一致！"
+      "passwordSuccess": "密码更新成功！",
+      "passwordMismatch": "两次输入密码不一致！"
     },
     "favorites": {
-      "title": "收藏列表",
+      "title": "收藏清单",
       "empty": "目前没有收藏的游戏哦！"
     },
     "transactions": {
@@ -186,34 +189,34 @@
       "orderId": "订单编号",
       "date": "日期",
       "amount": "金额",
-      "gotCoins": "获得代币",
-      "empty": "目前没有充值记录"
+      "gotCoins": "获得代幣",
+      "empty": "暂无充值记录"
     },
     "errors": {
       "loginExpired": "登录已过期，请重新登录",
-      "userNotFound": "玩家账号不存在",
-      "passwordSame": "与原密码相同，无法变更",
-      "passwordFormat": "密码格式错误 (6~20位，必须包含1个字母和1个数字)",
+      "userNotFound": "账号不存在",
+      "passwordSame": "不能与原密码相同",
+      "passwordFormat": "格式错误 (6~20位，含字母和数字)",
       "changeFailed": "修改失败，请稍后再试"
     }
   },
   "playView": {
     "exitGame": "退出游戏",
-    "loadingGame": "游戏加载中，请稍候...",
+    "loadingGame": "游戏载入中...",
     "exitModal": {
-      "title": "确定要退出游戏吗？",
-      "desc": "未保存的进度可能会丢失，请确认是否离开。",
+      "title": "确定退出游戏吗？",
+      "desc": "未保存的进度可能会丢失。",
       "continue": "继续游玩",
-      "confirm": "确认退出"
+      "confirm": "确定退出"
     },
     "errors": {
-      "noFullscreen": "您的浏览器不支持全屏功能",
-      "timeout": "游戏服务器连接超时，请检查网络或稍后再试",
-      "guestNoPlay": "游客模式无法游玩该游戏，请先登录",
-      "notUnlocked": "您尚未解锁该游戏，请先进行解锁",
-      "accountBlocked": "账号已被封禁",
-      "fetchUrlFailed": "无法获取游戏地址，请稍后再试",
-      "systemError": "系统连接错误，请稍后再试"
+      "noFullscreen": "浏览器不支持全屏",
+      "timeout": "连接超时，请检查网络",
+      "guestNoPlay": "访客无法游玩，请登录",
+      "notUnlocked": "尚未解锁此游戏",
+      "accountBlocked": "账号遭封锁",
+      "fetchUrlFailed": "获取游戏失败",
+      "systemError": "系统连线错误"
     }
   },
   "recharge": {
@@ -221,7 +224,7 @@
     "step1": "选择支付方式",
     "step2": "选择充值面额",
     "points": "点",
-    "totalAmount": "合计结算金额：",
+    "totalAmount": "合计总金额：",
     "goToPay": "前往付款",
     "currency": {
       "CNY": "人民币 (CNY)",
@@ -229,7 +232,7 @@
     },
     "errors": {
       "fetchMethodsFailed": "获取支付方式失败",
-      "systemErrorTitle": "系统连接错误",
+      "systemErrorTitle": "系统连线错误",
       "systemErrorDesc": "请稍后再试",
       "formInvalid": "表单失效，请联系客服",
       "createOrderFailed": "创建订单失败"
@@ -237,12 +240,12 @@
   },
   "searchView": {
     "title": "搜索结果",
-    "searchingFor": "搜索关于“{query}”的游戏",
+    "searchingFor": "搜索“{query}”相关游戏",
     "resultCount": "( 共找到 {count} 个结果 )",
-    "enterKeyword": "请输入关键字进行搜索",
-    "noResultTitle": "未找到符合条件的游戏",
-    "noResultDesc": "试着换个关键字再试一次吧！",
-    "backToHome": "返回首页探索"
+    "enterKeyword": "请输入关键字搜索",
+    "noResultTitle": "未找到相关游戏",
+    "noResultDesc": "试着换个词试试吧！",
+    "backToHome": "回首页探索"
   },
   "support": {
     "tabs": {
@@ -251,49 +254,49 @@
     },
     "newIssue": {
       "title": "联系客服",
-      "subtitle": "遇到问题了吗？请填写下方表单，我们将尽快为您处理。",
-      "successTitle": "反馈已成功提交！",
-      "ticketId": "您的问题已记录 (工单号：{id})",
-      "successDesc": "客服人员将于 1-2 个工作日内通过电子邮箱与您联系。",
-      "backToNew": "返回填写新单"
+      "subtitle": "遇到问题了？请填写表单，我们将尽快为您处理。",
+      "successTitle": "提交成功！",
+      "ticketId": "问题已记录 (单号：{id})",
+      "successDesc": "客服将在 1-2 个工作日内回复您的 Email。",
+      "backToNew": "再次提交"
     },
     "form": {
       "issueType": "问题类型",
       "selectType": "请选择类型",
       "description": "详细说明",
-      "descPlaceholder": "请详细描述您遇到的状况、发生时间及操作步骤...",
+      "descPlaceholder": "请描述遇到的状况、时间及操作步骤...",
       "uploadImage": "上传截图",
       "optional3": "(选填，最多 3 张)",
-      "dragHint": "点击或将图片拖拽至此处",
+      "dragHint": "点击或拖拽图片至此",
       "supportFormat": "支持 JPG, PNG 格式",
       "submit": "提交反馈"
     },
     "issueTypes": {
-      "account": "账号与登录问题",
-      "payment": "充值与购买异常",
-      "bug": "游戏 Bug 反馈",
+      "account": "账号与登录",
+      "payment": "充值与购买",
+      "bug": "游戏 Bug",
       "suggestion": "功能建议",
       "other": "其他"
     },
     "history": {
       "title": "客服记录",
-      "ticketNo": "工单号 ＃{id}",
-      "empty": "目前没有客服记录"
+      "ticketNo": "单号 ＃{id}",
+      "empty": "暂无记录"
     },
     "detail": {
       "back": "返回列表",
-      "attachments": "随带图片：",
+      "attachments": "附件图片：",
       "replyPlaceholder": "请输入您的回复...",
       "submitReply": "提交回复"
     },
     "status": {
-      "pending": "未处理",
+      "pending": "待处理",
       "processing": "处理中",
-      "resolved": "已解决",
+      "resolved": "已完成",
       "unknown": "未知"
     },
     "errors": {
-      "formatOnly": "仅支持 JPG 与 PNG 图片格式",
+      "formatOnly": "仅支持 JPG 与 PNG",
       "submitFailed": "提交失败",
       "replyFailed": "回复失败"
     }
@@ -307,40 +310,40 @@
       "desc": "每天登录即可领取"
     },
     "accumulate3": {
-      "name": "连续签到3天",
-      "desc": "本周累计签到满3天"
+      "name": "连签 3 天",
+      "desc": "本周累计签到满 3 天"
     },
     "accumulate5": {
-      "name": "连续签到5天",
-      "desc": "本周累计签到满5天"
+      "name": "连签 5 天",
+      "desc": "本周累计签到满 5 天"
     },
     "status": {
-      "canClaim": "立即领取",
+      "canClaim": "领取奖励",
       "claimed": "已领取",
       "locked": "未达成"
     },
     "messages": {
       "claimSuccess": "领取成功！💎",
       "claimFailed": "领取失败",
-      "systemError": "系统异常"
+      "systemError": "系统错误"
     }
   },
   "terms": {
-    "copied": "商务邮箱已复制到剪贴板",
-    "failed": "请手动复制邮箱："
+    "copied": "商务邮箱已复制",
+    "failed": "请手动复制："
   },
   "info": {
     "terms": {
       "title": "服务条款 (Terms of Service)",
-      "content": "<h3>1. 条款的认知与接受</h3><p>欢迎使用 DDFun 点点趣星球（以下简称“本平台”）。当您注册或使用本平台服务时，即表示您已阅读、理解并同意接受本服务条款的全部内容。</p><h3>2. 用户账号与安全</h3><p>您需妥善保管账号及密码的安全与保密。通过您的账号进行的所有操作均由您本人承担全部责任。如发现账号被盗用，请立即联系客服。</p><h3>3. 服务的终止</h3><p>本平台保留随时修改、暂停或终止服务的权利。如用户违反本条款，本平台有权在不另行通知的情况下暂停或删除相关账号。</p><h3>4. 免责声明</h3><p>本平台不保证服务的稳定性、安全性、准确性及持续性。因系统维护、升级或不可抗力因素导致的数据丢失，本平台不承担任何赔偿责任。</p>"
+      "content": "<h3>1. 认知与接受条款</h3><p>欢迎使用 DDFun 点点趣星球（以下简称「本平台」）。当您注册或使用本平台服务时，即表示您已阅读、了解并同意接受本服务条款之所有内容。</p><h3>2. 用户账号与安全</h3><p>您必须确保账号密码的安全。任何使用您账号进行的行动，您将负完全责任。如发现账号遭盗用，请立即通知客服。</p><h3>3. 服务终止</h3><p>本平台保留修改或终止服务的权利。若违反条款，本平台有权停权或删除账号。</p><h3>4. 免责声明</h3><p>本平台不保证服务永不中断。因维护或不可抗力导致的资料丢失，本平台不负赔偿责任。</p>"
     },
     "privacy": {
       "title": "隐私政策 (Privacy Policy)",
-      "content": "<h3>1. 信息收集</h3><p>当您注册本平台时，我们会收集您的账号信息、IP 地址、设备信息及游戏记录，以便提供更完善的服务体验及安全保障。</p><h3>2. 信息使用</h3><p>本平台收集的个人信息仅用于内部用户行为分析、客服支持及奖励发放，不会在未经您同意的情况下向第三方出售或共享。</p><h3>3. Cookies 的使用</h3><p>为提供更优质的个性化服务，本平台会使用 Cookies 技术存储并跟踪您的使用状态。您可通过浏览器设置关闭或限制该功能。</p><h3>4. 信息安全</h3><p>我们采用行业标准的加密传输与安全措施，尽力保护您的个人信息免受未经授权的访问或泄露。</p>"
+      "content": "<h3>1. 资料采集</h3><p>当您注册时，我们会采集账号、IP、设备信息及游戏历程，以提供更完善的服务与安全防护。</p><h3>2. 资料使用</h3><p>采集的个人资料仅供内部行为分析、客服及奖励发放使用，绝不会未经同意出售给第三方。</p><h3>3. Cookies 使用</h3><p>为提供个性化服务，本平台使用 Cookies 追踪状态。您可通过浏览器设置限制此功能。</p><h3>4. 资料安全</h3><p>我们采用加密传输与防护机制，尽力保护您的资料免于未经授权的访问。</p>"
     },
     "business": {
       "title": "商务合作 (Business Cooperation)",
-      "content": "<h3>合作伙伴招募</h3><p>DDFun 点点趣星球致力于打造优质的游戏生态体系。我们诚邀游戏开发商、发行商、品牌方及市场推广等各领域合作伙伴加入。</p><h3>合作内容</h3><ul><li>游戏接入与联合发行</li><li>跨界品牌营销活动</li><li>平台广告投放与资源置换</li><li>API 对接与技术合作</li></ul><br><p>如有合作意向，请将您的方案或联系方式发送至：<br><strong>联系邮箱：</strong> <a href=\"mailto:hentai.bd2@gmail.com\" style=\"color: var(--color-primary);\">hentai.bd2@gmail.com</a></p><p>我们的商务团队将在 3 个工作日内与您联系！</p>"
+      "content": "<h3>寻找合作伙伴</h3><p>DDFun 致力打造优质游戏生态。欢迎开发商、品牌赞助或营销推广等伙伴与我们合作。</p><h3>合作项目</h3><ul><li>游戏上架与发行</li><li>跨界品牌营销</li><li>平台广告资源</li><li>API 技术合作</li></ul><br><p>如有意向请寄信至：<br><strong>邮箱：</strong> <a href=\"mailto:hentai.bd2@gmail.com\" style=\"color: var(--color-primary);\">hentai.bd2@gmail.com</a></p><p>商务团队将在 3 个工作日内联系您！</p>"
     }
   }
 }

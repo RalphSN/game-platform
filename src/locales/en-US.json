@@ -5,66 +5,68 @@
   "header": {
     "home": "Home",
     "gameList": "Games",
-    "leaderboard": "Leaderboard",
-    "login": "Log In",
+    "leaderboard": "Rankings",
+    "login": "Login",
     "register": "Sign Up",
-    "memberCenter": "Profile",
-    "recharge": "Top Up",
+    "memberCenter": "Member",
+    "recharge": "Recharge",
     "support": "Support",
-    "logout": "Log Out",
+    "logout": "Logout",
     "menu": "Menu",
     "chargeCoins": "Buy Coins",
     "freeCoins": "Free Coins",
-    "logoutSuccess": "Successfully logged out!"
+    "logoutSuccess": "Logged out!"
   },
   "footer": {
-    "termsOfService": "Terms of Service",
-    "privacyPolicy": "Privacy Policy",
-    "contactSupport": "Contact Support",
-    "businessCooperation": "Business Inquiries"
+    "termsOfService": "Terms",
+    "privacyPolicy": "Privacy",
+    "contactSupport": "Support",
+    "businessCooperation": "Business"
   },
   "homeView": {
-    "eventBanner": "Event Banner",
+    "eventBanner": "Events",
     "sections": {
-      "hot": "Trending",
+      "hot": "Hot",
+      "featured": "Featured",
       "action": "Action",
       "puzzle": "Puzzle",
       "rpg": "RPG",
-      "banana": "Mobile Game"
+      "banana": "Mobile"
     }
   },
   "gameCard": {
-    "viewUnlock": "How to Unlock",
+    "viewUnlock": "Unlock Info",
     "playNow": "▶ Play Now",
-    "toggleFavorite": "Favorite/Unfavorite",
+    "toggleFavorite": "Fav/Unfav",
     "loading": "Loading...",
-    "uncategorized": "Uncategorized",
-    "mobileGame": "Mobile Game"
+    "uncategorized": "Other",
+    "mobileGame": "Mobile"
   },
   "category": {
-    "1": "Casual",
+    "1": "Puzzle",
     "2": "Action",
     "3": "Strategy",
-    "4": "Simulation",
-    "5": "Competitive",
+    "4": "Sim",
+    "5": "PvP",
     "6": "Adventure",
-    "7": "Featured"
+    "7": "Featured",
+    "hot": "Hot"
   },
   "gameSection": {
-    "viewMore": "View More",
-    "featuredGames": "Featured Games"
+    "viewMore": "More",
+    "featuredGames": "Featured"
   },
   "tabBar": {
     "games": "Games",
-    "recharge": "Top Up",
-    "member": "Account",
-    "support": "Support"
+    "recharge": "Store",
+    "member": "User",
+    "support": "Help"
   },
   "searchModal": {
-    "placeholder": "Search games or genres...",
+    "placeholder": "Search games...",
     "close": "Close",
     "searching": "Searching...",
-    "noResultFound": "No games found for \"{keyword}\"",
+    "noResultFound": "No results for \"{keyword}\"",
     "recentSearches": "Recent",
     "hotSearches": "Trending"
   },
@@ -72,86 +74,87 @@
     "back": "Back",
     "allGames": "All Games",
     "categories": {
-      "hot": "Trending",
-      "banana": "Mobile Game",
+      "hot": "Hot",
+      "banana": "Mobile",
+      "featured": "Featured",
       "action": "Action",
       "puzzle": "Puzzle",
       "rpg": "RPG"
     }
   },
   "gameDetail": {
-    "playingCount": "🔥 {count} playing",
+    "playingCount": "🔥 {count} Playing",
     "removeFavorite": "Unfavorite",
     "addFavorite": "Favorite",
     "startGame": "Start Game",
-    "unlockConditions": "Unlock Requirements",
-    "loginRequired": "Please log in to play this game",
-    "goToLogin": "Login / Sign Up",
-    "unlockCostPrefix": "Spend ",
+    "unlockConditions": "Requirements",
+    "loginRequired": "Login to play this game",
+    "goToLogin": "Login / Register",
+    "unlockCostPrefix": "Cost: ",
     "unlockCostSuffix": " coins to unlock",
     "unlockNow": "Unlock Now",
     "gameIntro": "About",
-    "noIntro": "No description available",
-    "othersAlsoPlay": "Recommended for You",
+    "noIntro": "No description",
+    "othersAlsoPlay": "Recommended",
     "messages": {
-      "loginFirst": "Please log in first",
-      "insufficientCoinsTitle": "Insufficient Coins",
-      "goToRecharge": "Go to Top Up center?",
-      "confirmUnlock": "Unlock this game for {coins} coins?",
-      "unlockSuccess": "Unlocked! Enjoy your game!",
-      "cannotBuy": "Purchase failed",
-      "accountBlocked": "Account blocked (IP)",
-      "unlockFailed": "Unlock failed, please try again",
-      "systemError": "System error, please try again"
+      "loginFirst": "Please login first",
+      "insufficientCoinsTitle": "Low Balance",
+      "goToRecharge": "Go to recharge center?",
+      "confirmUnlock": "Unlock for {coins} coins?",
+      "unlockSuccess": "Unlocked! Let's play!",
+      "cannotBuy": "Purchase Failed",
+      "accountBlocked": "Account Blocked (IP)",
+      "unlockFailed": "Failed, try later",
+      "systemError": "Connection Error"
     }
   },
   "gamesView": {
     "filterTitle": "Filters",
-    "looseMatch": "Broad Match",
-    "exactMatch": "Exact Match",
-    "matchAll": "(All conditions)",
-    "matchAny": "(Any condition)",
-    "genre": "Genre",
+    "looseMatch": "Loose",
+    "exactMatch": "Exact",
+    "matchAll": "(All)",
+    "matchAny": "(Any)",
+    "genre": "Category",
     "status": "Status",
     "all": "All",
     "unlocked": "Unlocked",
     "locked": "Locked",
     "filterResult": "Results",
-    "noResult": "No games found. Try adjusting your filters."
+    "noResult": "No games found. Try less filters."
   },
   "auth": {
     "loginTitle": "Welcome Back",
-    "loginSubtitle": "Log in to continue playing",
-    "account": "Username",
+    "loginSubtitle": "Login to your account",
+    "account": "ID",
     "password": "Password",
-    "accountPlaceholder": "Enter username",
-    "passwordPlaceholder": "Enter password",
-    "loginBtn": "Log In",
-    "noAccount": "New here?",
-    "registerNow": "Sign Up",
-    "loginSuccess": "Logged in!",
+    "accountPlaceholder": "Enter ID",
+    "passwordPlaceholder": "Enter Password",
+    "loginBtn": "Login",
+    "noAccount": "No account?",
+    "registerNow": "Register",
+    "loginSuccess": "Welcome!",
     "errors": {
-      "params": "Invalid parameters",
-      "format": "Invalid format (6-20 chars, must include 1 letter and 1 number)",
+      "params": "Input error",
+      "format": "6-20 chars, Alphanumeric",
       "failed": "Login failed",
       "frozen": "Account frozen",
-      "blocked": "Account blocked (IP)",
-      "unknown": "Login failed, please try again"
+      "blocked": "IP Blocked",
+      "unknown": "Error, try again"
     },
-    "registerTitle": "Create Account",
-    "registerSubtitle": "Join us and start your journey",
-    "regAccountPlaceholder": "Username (6-20 chars)",
-    "regPasswordPlaceholder": "Password (6-20 chars, alphanumeric)",
+    "registerTitle": "Sign Up",
+    "registerSubtitle": "Start your journey today",
+    "regAccountPlaceholder": "ID (6-20 chars)",
+    "regPasswordPlaceholder": "Password (Alphanumeric, 6-20)",
     "registerBtn": "Sign Up",
-    "hasAccount": "Already have an account?",
-    "loginNow": "Log In",
-    "registerSuccess": "Account created! Please log in.",
+    "hasAccount": "Have account?",
+    "loginNow": "Login Now",
+    "registerSuccess": "Success! Please login.",
     "regErrors": {
-      "params": "Invalid input, please check",
-      "format": "Invalid format (6-20 chars, must include 1 letter and 1 number)",
-      "duplicate": "Username taken, please try another",
-      "specialChars": "Special characters not allowed",
-      "failed": "Sign up failed, try again"
+      "params": "Invalid inputs",
+      "format": "6-20 chars, Alphanumeric",
+      "duplicate": "ID taken",
+      "specialChars": "Symbols not allowed",
+      "failed": "Signup failed"
     }
   },
   "member": {
@@ -164,16 +167,16 @@
     },
     "profile": {
       "title": "Profile",
-      "account": "Username",
+      "account": "Account",
       "nickname": "Nickname",
-      "saveBtn": "Save Changes",
+      "saveBtn": "Save",
       "updateSuccess": "Nickname updated!",
-      "changePassword": "Change Password",
+      "changePassword": "Edit Password",
       "newPassword": "New Password",
-      "confirmPassword": "Confirm Password",
-      "newPasswordPlaceholder": "Enter new password",
-      "confirmPasswordPlaceholder": "Confirm new password",
-      "updatePasswordBtn": "Update Password",
+      "confirmPassword": "Confirm",
+      "newPasswordPlaceholder": "New password",
+      "confirmPasswordPlaceholder": "Confirm password",
+      "updatePasswordBtn": "Update",
       "passwordSuccess": "Password updated!",
       "passwordMismatch": "Passwords do not match!"
     },
@@ -182,67 +185,67 @@
       "empty": "No favorites yet!"
     },
     "transactions": {
-      "title": "Transaction History",
+      "title": "History",
       "orderId": "Order ID",
       "date": "Date",
-      "amount": "Amount",
+      "amount": "Price",
       "gotCoins": "Coins",
-      "empty": "No transaction history"
+      "empty": "No records"
     },
     "errors": {
-      "loginExpired": "Session expired, please log in",
+      "loginExpired": "Session expired",
       "userNotFound": "User not found",
-      "passwordSame": "Cannot be the same as old password",
-      "passwordFormat": "Invalid format (6-20 chars, must include 1 letter and 1 number)",
-      "changeFailed": "Update failed, please try again"
+      "passwordSame": "Cannot use old password",
+      "passwordFormat": "6-20 chars, Alphanumeric",
+      "changeFailed": "Failed, try later"
     }
   },
   "playView": {
-    "exitGame": "Quit",
-    "loadingGame": "Loading game, please wait...",
+    "exitGame": "Exit",
+    "loadingGame": "Loading game...",
     "exitModal": {
-      "title": "Quit game?",
-      "desc": "Unsaved progress may be lost. Are you sure?",
-      "continue": "Keep Playing",
-      "confirm": "Quit"
+      "title": "Exit game?",
+      "desc": "Unsaved progress may be lost.",
+      "continue": "Play",
+      "confirm": "Exit"
     },
     "errors": {
-      "noFullscreen": "Fullscreen not supported on this browser",
-      "timeout": "Connection timeout, please check your network",
-      "guestNoPlay": "Guests cannot play, please log in",
-      "notUnlocked": "Game locked, please unlock to play",
-      "accountBlocked": "Account blocked",
-      "fetchUrlFailed": "Failed to load game URL",
-      "systemError": "System error, please try again"
+      "noFullscreen": "Fullscreen not supported",
+      "timeout": "Timeout, check network",
+      "guestNoPlay": "Please login to play",
+      "notUnlocked": "Game not unlocked",
+      "accountBlocked": "Blocked",
+      "fetchUrlFailed": "Load failed",
+      "systemError": "Connection error"
     }
   },
   "recharge": {
-    "title": "Top Up Center",
-    "step1": "Select Payment",
+    "title": "Store",
+    "step1": "Payment Method",
     "step2": "Select Amount",
     "points": "Pts",
-    "totalAmount": "Total Due: ",
-    "goToPay": "Checkout",
+    "totalAmount": "Total Price:",
+    "goToPay": "Pay Now",
     "currency": {
       "CNY": "CNY",
       "TWD": "TWD"
     },
     "errors": {
-      "fetchMethodsFailed": "Failed to load payment methods",
+      "fetchMethodsFailed": "Failed to load methods",
       "systemErrorTitle": "System Error",
-      "systemErrorDesc": "Please try again later",
-      "formInvalid": "Invalid form, contact support",
-      "createOrderFailed": "Failed to create order"
+      "systemErrorDesc": "Try again later",
+      "formInvalid": "Form error, contact support",
+      "createOrderFailed": "Order failed"
     }
   },
   "searchView": {
-    "title": "Search Results",
-    "searchingFor": "Searching for \"{query}\"",
-    "resultCount": "({count} results found)",
-    "enterKeyword": "Enter keywords to search",
-    "noResultTitle": "No games found",
-    "noResultDesc": "Try different keywords!",
-    "backToHome": "Back to Home"
+    "title": "Search",
+    "searchingFor": "Games for \"{query}\"",
+    "resultCount": "({count} results)",
+    "enterKeyword": "Enter keyword",
+    "noResultTitle": "No results",
+    "noResultDesc": "Try another keyword!",
+    "backToHome": "Go Home"
   },
   "support": {
     "tabs": {
@@ -250,97 +253,97 @@
       "history": "History"
     },
     "newIssue": {
-      "title": "Contact Support",
-      "subtitle": "Need help? Fill out the form below and we'll be in touch.",
-      "successTitle": "Ticket submitted!",
+      "title": "Support",
+      "subtitle": "Need help? Fill out the form below.",
+      "successTitle": "Sent!",
       "ticketId": "Ticket ID: {id}",
-      "successDesc": "Support will contact you via email in 1-2 business days.",
-      "backToNew": "Submit another"
+      "successDesc": "We'll reply via email in 1-2 days.",
+      "backToNew": "New Ticket"
     },
     "form": {
-      "issueType": "Issue Type",
-      "selectType": "Select type",
-      "description": "Description",
-      "descPlaceholder": "Please describe the issue, time, and steps taken...",
+      "issueType": "Type",
+      "selectType": "Select Type",
+      "description": "Details",
+      "descPlaceholder": "Describe your issue, time, and steps...",
       "uploadImage": "Screenshots",
-      "optional3": "(Optional, max 3)",
+      "optional3": "(Max 3, optional)",
       "dragHint": "Click or drag images here",
-      "supportFormat": "Supports JPG, PNG",
+      "supportFormat": "JPG, PNG only",
       "submit": "Submit"
     },
     "issueTypes": {
-      "account": "Account & Login",
-      "payment": "Payment & Billing",
-      "bug": "Bug Report",
-      "suggestion": "Suggestions",
+      "account": "Login/Account",
+      "payment": "Billing",
+      "bug": "Game Bug",
+      "suggestion": "Idea",
       "other": "Other"
     },
     "history": {
-      "title": "Support History",
+      "title": "History",
       "ticketNo": "Ticket #{id}",
-      "empty": "No support records found"
+      "empty": "No tickets"
     },
     "detail": {
-      "back": "Back to List",
+      "back": "Back",
       "attachments": "Attachments:",
-      "replyPlaceholder": "Enter your reply...",
-      "submitReply": "Send Reply"
+      "replyPlaceholder": "Type your reply...",
+      "submitReply": "Send"
     },
     "status": {
       "pending": "Pending",
-      "processing": "Processing",
-      "resolved": "Resolved",
+      "processing": "Ongoing",
+      "resolved": "Closed",
       "unknown": "Unknown"
     },
     "errors": {
-      "formatOnly": "Only JPG and PNG formats are supported",
-      "submitFailed": "Submission failed",
-      "replyFailed": "Reply failed"
+      "formatOnly": "JPG/PNG only",
+      "submitFailed": "Failed",
+      "replyFailed": "Failed"
     }
   },
   "task": {
-    "title": "Rewards Center",
-    "checkInSubtitle": "Weekly Check-in Progress",
-    "rewardSubtitle": "Claim Your Rewards",
+    "title": "Rewards",
+    "checkInSubtitle": "Check-in Progress",
+    "rewardSubtitle": "Exclusive Rewards",
     "dailyLogin": {
-      "name": "Daily Login Bonus",
-      "desc": "Log in daily to claim rewards"
+      "name": "Daily Login",
+      "desc": "Login daily to claim"
     },
     "accumulate3": {
       "name": "3-Day Streak",
-      "desc": "Check in for 3 days this week"
+      "desc": "Check-in for 3 days"
     },
     "accumulate5": {
       "name": "5-Day Streak",
-      "desc": "Check in for 5 days this week"
+      "desc": "Check-in for 5 days"
     },
     "status": {
       "canClaim": "Claim",
-      "claimed": "Claimed",
+      "claimed": "Done",
       "locked": "Locked"
     },
     "messages": {
-      "claimSuccess": "Reward claimed! 💎",
-      "claimFailed": "Claim failed",
-      "systemError": "Something went wrong"
+      "claimSuccess": "Claimed! 💎",
+      "claimFailed": "Failed",
+      "systemError": "Error"
     }
   },
   "terms": {
-    "copied": "Business email copied to clipboard",
-    "failed": "Please copy the email address manually:"
+    "copied": "Email copied",
+    "failed": "Please copy manually:"
   },
   "info": {
     "terms": {
       "title": "Terms of Service",
-      "content": "<h3>1. Acceptance of Terms</h3><p>Welcome to DDFun Planet (\"the Platform\"). By registering or using our services, you acknowledge that you have read, understood, and agreed to all terms outlined herein.</p><h3>2. Account & Security</h3><p>You are responsible for maintaining the confidentiality of your account credentials. All activities conducted under your account are your responsibility. If you suspect unauthorized access, please contact customer support immediately.</p><h3>3. Service Termination</h3><p>The Platform reserves the right to modify, suspend, or terminate services at any time. Accounts that violate these terms may be suspended or removed without prior notice.</p><h3>4. Disclaimer</h3><p>The Platform does not guarantee uninterrupted, secure, or error-free service. We are not liable for any data loss caused by system maintenance, upgrades, or force majeure events.</p>"
+      "content": "<h3>1. Acceptance</h3><p>Welcome to DDFun. By using our service, you agree to these terms.</p><h3>2. Account Security</h3><p>You are responsible for your password. Notify support if hacked.</p><h3>3. Termination</h3><p>We may suspend accounts that violate terms without notice.</p><h3>4. Disclaimer</h3><p>We are not liable for data loss due to maintenance or unforeseen events.</p>"
     },
     "privacy": {
       "title": "Privacy Policy",
-      "content": "<h3>1. Data Collection</h3><p>When you register, we may collect your account information, IP address, device data, and gameplay history to enhance your experience and ensure platform security.</p><h3>2. Use of Data</h3><p>Your personal data is used solely for internal purposes such as user behavior analysis, customer support, and reward distribution. We will not sell or share your data with third parties without your consent.</p><h3>3. Cookies</h3><p>We use cookies to provide a more personalized experience and track user activity. You may disable or restrict cookies through your browser settings.</p><h3>4. Data Security</h3><p>We implement industry-standard encryption and security measures to protect your personal data from unauthorized access or disclosure.</p>"
+      "content": "<h3>1. Data Collection</h3><p>We collect ID, IP, and game logs to improve security and experience.</p><h3>2. Data Use</h3><p>Data is used internally for support and rewards. No third-party sales.</p><h3>3. Cookies</h3><p>We use cookies for personalization. You can disable this in your browser.</p><h3>4. Protection</h3><p>We use standard encryption to protect your personal data.</p>"
     },
     "business": {
-      "title": "Business Cooperation",
-      "content": "<h3>Partnership Opportunities</h3><p>DDFun Planet is committed to building a high-quality gaming ecosystem. We welcome game developers, publishers, brands, and marketing partners to collaborate with us.</p><h3>Cooperation Scope</h3><ul><li>Game publishing and distribution</li><li>Cross-brand marketing campaigns</li><li>Platform advertising and resource exchange</li><li>API integration and technical collaboration</li></ul><br><p>If you are interested in partnering with us, please send your proposal or contact details to:<br><strong>Contact Email:</strong> <a href=\"mailto:hentai.bd2@gmail.com\" style=\"color: var(--color-primary);\">hentai.bd2@gmail.com</a></p><p>Our business team will get back to you within 3 business days.</p>"
+      "title": "Business",
+      "content": "<h3>Partnership</h3><p>DDFun welcomes developers, brands, and marketers to join our ecosystem.</p><h3>Projects</h3><ul><li>Game Publishing</li><li>Brand Marketing</li><li>Ads & Resources</li><li>API Integration</li></ul><br><p>Interested? Email us at:<br><strong>Email:</strong> <a href=\"mailto:hentai.bd2@gmail.com\" style=\"color: var(--color-primary);\">hentai.bd2@gmail.com</a></p><p>Our team will reply within 3 days!</p>"
     }
   }
 }

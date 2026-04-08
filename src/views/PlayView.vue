@@ -239,7 +239,7 @@ onUnmounted(() => {
   justify-content: space-between;
   align-items: center;
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
-  z-index: 10;
+  z-index: 999;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
@@ -247,6 +247,24 @@ onUnmounted(() => {
   opacity: 0;
   transform: translateY(-10px);
   pointer-events: none;
+}
+
+.play-view::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  z-index: 998;
+}
+
+.play-view:hover::before~.game-toolbar,
+.play-view::before:hover~.game-toolbar,
+.game-toolbar:hover {
+  opacity: 1 !important;
+  transform: translateY(0) !important;
+  pointer-events: auto !important;
 }
 
 .toolbar-btn {
