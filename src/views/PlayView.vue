@@ -43,10 +43,7 @@
     </transition>
 
     <div v-if="isLoading" class="loading-overlay">
-      <div class="loader-container">
-        <div class="spinner"></div>
-        <p>{{ $t('playView.loadingGame') }}</p>
-      </div>
+      <LoadingSpinner :size="64" color="#ffffff" :text="$t('playView.loadingGame')" />
     </div>
 
     <iframe ref="gameIframe" :src="gameUrl" class="game-iframe" allow="autoplay; fullscreen; microphone; camera"
@@ -62,6 +59,7 @@ import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { fetchGamePlayUrlApi } from '@/assets/utils/api'
 import { showToast } from '@/assets/utils/swal'
+import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -143,6 +141,21 @@ const handleMouseMove = () => {
 //   return gameMap[gameId] || 'http://60.250.78.9:8081/'
 // }
 
+const preventDefaultAction = (e) => {
+  e.preventDefault()
+}
+
+const handleKeyDown = (e) => {
+  // 擋下 F12
+  if (e.key === 'F12') {
+    e.preventDefault()
+  }
+  // 擋下 Ctrl+U, Ctrl+S, Ctrl+Shift+I (開發者工具) 等組合鍵
+  if (e.ctrlKey && ['u', 's', 'i', 'j', 'c'].includes(e.key.toLowerCase())) {
+    e.preventDefault()
+  }
+}
+
 onMounted(async () => {
   document.body.style.overflow = 'hidden'
   document.body.style.overscrollBehavior = 'none'
@@ -150,6 +163,9 @@ onMounted(async () => {
   document.addEventListener('fullscreenchange', handleFullscreenChange)
   window.addEventListener('mousemove', handleMouseMove)
   window.addEventListener('touchstart', handleMouseMove)
+
+  document.addEventListener('contextmenu', preventDefaultAction)
+  document.addEventListener('keydown', handleKeyDown)
 
   const gameId = route.params.id
 
@@ -194,6 +210,9 @@ onUnmounted(() => {
   window.removeEventListener('touchstart', handleMouseMove)
   clearTimeout(hideToolbarTimer)
   clearTimeout(loadingTimeout)
+
+  document.removeEventListener('contextmenu', preventDefaultAction)
+  document.removeEventListener('keydown', handleKeyDown)
 })
 </script>
 
@@ -280,28 +299,6 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   z-index: 5;
-}
-
-.loader-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
-.spinner {
-  width: 48px;
-  height: 48px;
-  border: 4px solid rgba(94, 96, 206, 0.3);
-  border-top-color: #5e60ce;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-.loader-container p {
-  color: #a8a8a8;
-  font-size: 1.1rem;
-  margin: 0;
 }
 
 /* --- Modal 樣式 --- */
