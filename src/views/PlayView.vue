@@ -46,7 +46,8 @@
       <LoadingSpinner :size="64" color="#ffffff" :text="$t('playView.loadingGame')" />
     </div>
 
-    <iframe ref="gameIframe" :src="gameUrl" class="game-iframe" allow="autoplay; fullscreen; microphone; camera"
+    <iframe ref="gameIframe" :src="gameUrl" class="game-iframe" :class="iframeOrientationClass"
+      allow="autoplay; fullscreen; microphone; camera"
       sandbox="allow-scripts allow-same-origin allow-popups allow-forms" @load="handleLoad"></iframe>
   </div>
 </template>
@@ -54,7 +55,7 @@
 <script setup>
 // src/views/PlayView.vue 的 script 區塊
 
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useUserStore } from '@/stores/user'
 import { fetchGamePlayUrlApi } from '@/assets/utils/api'
@@ -78,6 +79,11 @@ let hideToolbarTimer = null
 let loadingTimeout = null
 
 const gameUrl = ref('')
+const gameOrientation = ref('landscape')
+
+const iframeOrientationClass = computed(() => {
+  return gameOrientation.value === 'portrait' ? 'is-portrait' : 'is-landscape'
+})
 
 const handleLoad = () => {
   isLoading.value = false
@@ -175,6 +181,10 @@ onMounted(async () => {
     if (result.code === 0 && result.url) {
       gameUrl.value = result.url
 
+      if (result.orientation) {
+        gameOrientation.value = result.orientation.toLowerCase() // 'landscape' 或 'portrait'
+      }
+
       loadingTimeout = setTimeout(() => {
         if (isLoading.value) {
           showToast(t('playView.errors.timeout'), 'warning')
@@ -227,6 +237,8 @@ onUnmounted(() => {
   z-index: 9999;
   display: flex;
   flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 .game-toolbar {
@@ -241,6 +253,9 @@ onUnmounted(() => {
   background: linear-gradient(to bottom, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
   z-index: 999;
   transition: opacity 0.3s ease, transform 0.3s ease;
+
+  /* 穿透點擊 */
+  pointer-events: none;
 }
 
 .game-toolbar.is-hidden {
@@ -257,6 +272,9 @@ onUnmounted(() => {
   width: 100%;
   height: 80px;
   z-index: 998;
+
+  /* 穿透點擊 */
+  pointer-events: none;
 }
 
 .play-view:hover::before~.game-toolbar,
@@ -264,7 +282,7 @@ onUnmounted(() => {
 .game-toolbar:hover {
   opacity: 1 !important;
   transform: translateY(0) !important;
-  pointer-events: auto !important;
+  /* pointer-events: auto !important; */
 }
 
 .toolbar-btn {
@@ -281,6 +299,9 @@ onUnmounted(() => {
   cursor: pointer;
   backdrop-filter: blur(8px);
   transition: all 0.2s ease;
+
+  /* 按鈕可以點擊 */
+  pointer-events: auto;
 }
 
 .toolbar-btn:hover {
@@ -304,6 +325,22 @@ onUnmounted(() => {
   height: 100%;
   border: none;
   background-color: #000000;
+  transition: all 0.35s ease;
+}
+
+/* 橫式：滿版狀態 */
+.game-iframe.is-landscape {
+  width: 100%;
+  height: 100%;
+  flex: 1;
+}
+
+/* 直式：高度滿版，寬度限制在 440px 以內 */
+.game-iframe.is-portrait {
+  width: 100%;
+  max-width: 440px;
+  height: 100%;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
 }
 
 .loading-overlay {
