@@ -2,7 +2,8 @@
   <section class="game-section">
     <div class="section-header">
       <h3 class="section-title">
-        <span class="title-icon" v-if="icon" v-html="icon"></span>
+        <!-- <span class="title-icon" v-if="icon" v-html="icon"></span> -->
+        <img :src="icon" alt="">
         {{ title || $t('gameSection.featuredGames') }}
       </h3>
 
@@ -80,6 +81,11 @@ const goToCategory = () => {
   align-items: center;
   gap: 8px;
   margin: 0;
+}
+
+.section-title img {
+  width: 42px;
+  height: auto;
 }
 
 .title-icon {
