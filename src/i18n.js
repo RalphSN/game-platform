@@ -4,7 +4,7 @@ import zhCN from './locales/zh-CN.json'
 import enUS from './locales/en-US.json'
 
 // 取得使用者上次選擇的語系，預設繁體中文
-const savedLanguage = localStorage.getItem('user_language') || 'zh-TW'
+const savedLanguage = localStorage.getItem('user_language') || 'zh-CN'
 
 const i18n = createI18n({
   legacy: false,

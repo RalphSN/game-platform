@@ -40,8 +40,8 @@
           <AdBanner v-if="adRight" :ad="adRight" />
         </div>
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" :title="$t('homeView.sections.featured')"
-          :icon="svgIcons.action" categoryId="featured" :games="featuredGames.slice(0, 6)" />
+        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" :title="$t('homeView.sections.simulate')"
+          :icon="svgIcons.simulate" categoryId="simulate" :games="simulateGames.slice(0, 6)" />
 
         <GameSection class="fade-in-up" style="animation-delay: 0.6s;" :title="$t('homeView.sections.rpg')"
           :icon="svgIcons.rpg" categoryId="rpg" :games="rpgGames.slice(0, 6)" />
@@ -68,12 +68,13 @@ const userStore = useUserStore()
 const router = useRouter()
 
 // 儲存各分類遊戲
-const featuredGames = ref([])
-const hotGames = ref([])     // 對應分類 7 (精選合集/熱門)
+const simulateGames = ref([]) // 對應分類 4 (模擬經營)
+const hotGames = ref([])     // 對應分類 7 (熱門推薦)
 const bananaGames = ref([])  // 對應分類 0 (香蕉遊戲)
 const actionGames = ref([])  // 對應分類 2 (動作闖關)
 const puzzleGames = ref([])  // 對應分類 1 (休閒益智)
 const rpgGames = ref([])     // 對應分類 6 (角色冒險)
+
 
 // Banner與廣告
 const banners = ref([])    // 對應 BType: 1 (輪播大 BANNER)
@@ -94,8 +95,9 @@ const svgIcons = {
 
   rpg: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-users-icon lucide-users"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><path d="M16 3.128a4 4 0 0 1 0 7.744"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><circle cx="9" cy="7" r="4"/></svg>`,
 
-  banana: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chess-queen-icon lucide-chess-queen"><path d="M4 20a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="m12.474 5.943 1.567 5.34a1 1 0 0 0 1.75.328l2.616-3.402"/><path d="m20 9-3 9"/><path d="m5.594 8.209 2.615 3.403a1 1 0 0 0 1.75-.329l1.567-5.34"/><path d="M7 18 4 9"/><circle cx="12" cy="4" r="2"/><circle cx="20" cy="7" r="2"/><circle cx="4" cy="7" r="2"/></svg>`
+  banana: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-chess-queen-icon lucide-chess-queen"><path d="M4 20a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v1a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1z"/><path d="m12.474 5.943 1.567 5.34a1 1 0 0 0 1.75.328l2.616-3.402"/><path d="m20 9-3 9"/><path d="m5.594 8.209 2.615 3.403a1 1 0 0 0 1.75-.329l1.567-5.34"/><path d="M7 18 4 9"/><circle cx="12" cy="4" r="2"/><circle cx="20" cy="7" r="2"/><circle cx="4" cy="7" r="2"/></svg>`,
 
+  simulate: `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-layers-icon lucide-layers"><path d="M12.83 2.18a2 2 0 0 0-1.66 0L2.6 6.08a1 1 0 0 0 0 1.83l8.58 3.91a2 2 0 0 0 1.66 0l8.58-3.9a1 1 0 0 0 0-1.83z"/><path d="M2 12a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 12"/><path d="M2 17a1 1 0 0 0 .58.91l8.6 3.91a2 2 0 0 0 1.65 0l8.58-3.9A1 1 0 0 0 22 17"/></svg>`,
 }
 
 // 獲取資料
@@ -107,7 +109,7 @@ const loadGames = async () => {
 
     if (result.code === 0 || result.code === 888) {
       hotGames.value = result['999'] || []
-      featuredGames.value = result['7'] || []
+      simulateGames.value = result['4'] || []
       bananaGames.value = result['0'] || []
       actionGames.value = result['2'] || []
       puzzleGames.value = result['1'] || []

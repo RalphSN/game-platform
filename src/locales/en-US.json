@@ -31,7 +31,8 @@
       "action": "Action",
       "puzzle": "Puzzle",
       "rpg": "RPG",
-      "banana": "Mobile"
+      "banana": "Mobile",
+      "simulate": "Simulation"
     }
   },
   "gameCard": {
@@ -79,7 +80,8 @@
       "featured": "Featured",
       "action": "Action",
       "puzzle": "Puzzle",
-      "rpg": "RPG"
+      "rpg": "RPG",
+      "simulate": "Simulation"
     }
   },
   "gameDetail": {

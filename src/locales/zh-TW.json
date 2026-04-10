@@ -28,10 +28,11 @@
     "sections": {
       "hot": "熱門推薦",
       "featured": "精選合集",
-      "action": "動作冒險",
+      "action": "動作闖關",
       "puzzle": "休閒益智",
-      "rpg": "角色扮演",
-      "banana": "手機遊戲"
+      "rpg": "角色冒險",
+      "banana": "手機遊戲",
+      "simulate": "模擬經營"
     }
   },
   "gameCard": {
@@ -77,9 +78,10 @@
       "hot": "熱門推薦",
       "banana": "手機遊戲",
       "featured": "精選合集",
-      "action": "動作冒險",
+      "action": "動作闖關",
       "puzzle": "休閒益智",
-      "rpg": "角色扮演"
+      "rpg": "角色冒險",
+      "simulate": "模擬經營"
     }
   },
   "gameDetail": {

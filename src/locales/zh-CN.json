@@ -28,10 +28,11 @@
     "sections": {
       "hot": "热门推荐",
       "featured": "精选合集",
-      "action": "动作冒险",
+      "action": "动作闯关",
       "puzzle": "休闲益智",
-      "rpg": "角色扮演",
-      "banana": "手机游戏"
+      "rpg": "角色冒险",
+      "banana": "手机游戏",
+      "simulate": "模拟经营"
     }
   },
   "gameCard": {
@@ -77,9 +78,10 @@
       "hot": "热门推荐",
       "banana": "手机游戏",
       "featured": "精选合集",
-      "action": "动作冒险",
+      "action": "动作闯关",
       "puzzle": "休闲益智",
-      "rpg": "角色扮演"
+      "rpg": "角色冒险",
+      "simulate": "模拟经营"
     }
   },
   "gameDetail": {
