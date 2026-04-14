@@ -188,7 +188,7 @@ import { useUserStore } from '@/stores/user'
 import { updatePasswordApi, updatePlayerInfoApi, fetchFavoriteListApi, fetchChargeListApi } from '@/assets/utils/api'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import { showToast } from '@/assets/utils/swal'
-import GameCard from '@/components/GameCard.vue'
+import GameCard from '@/components/GameCard-o.vue'
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()

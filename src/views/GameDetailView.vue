@@ -141,7 +141,7 @@
     </div>
 
     <div v-if="relatedGames.length > 0" class="related-section fade-in-up" style="animation-delay: 0.3s;">
-      <GameSection :title="$t('gameDetail.othersAlsoPlay')" :icon="svgIcons.related" categoryId="related"
+      <GameSection :title="$t('gameDetail.othersAlsoPlay')" :icon="svgIcons.related" categoryId="hot"
         :games="relatedGames.slice(0, 6)" />
     </div>
   </div>

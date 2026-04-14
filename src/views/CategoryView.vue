@@ -32,7 +32,7 @@ import { ref, onMounted, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchGameListAllApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
-import GameCard from '@/components/GameCard.vue'
+import GameCard from '@/components/GameCard-o.vue'
 
 const route = useRoute()
 const router = useRouter()
