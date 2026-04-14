@@ -183,24 +183,24 @@
           <template v-if="userStore.token">
             <div class="sidebar-divider"></div>
             <router-link to="/member" active-class="active" @click="toggleMenu">{{ $t('header.memberCenter')
-              }}</router-link>
+            }}</router-link>
             <router-link to="/recharge" active-class="active" @click="toggleMenu">{{ $t('header.recharge')
-              }}</router-link>
+            }}</router-link>
             <router-link to="/support" active-class="active" @click="toggleMenu">{{ $t('header.support')
-              }}</router-link>
+            }}</router-link>
           </template>
 
           <div class="sidebar-divider"></div>
 
           <template v-if="!userStore.token">
             <router-link to="/login" class="sidebar-btn text-btn" @click="toggleMenu">{{ $t('header.login')
-              }}</router-link>
+            }}</router-link>
             <router-link to="/register" class="sidebar-btn primary-btn sidebar-register" @click="toggleMenu">{{
               $t('header.register') }}</router-link>
           </template>
           <template v-else>
             <button class="sidebar-btn text-btn logout-text" @click="handleLogoutAndCloseMenu">{{ $t('header.logout')
-              }}</button>
+            }}</button>
           </template>
         </div>
       </nav>
@@ -249,7 +249,10 @@ const handleLogout = () => {
   userStore.logout()
   isProfileMenuOpen.value = false
   showToast(t('header.logoutSuccess'), 'success')
-  router.push('/')
+
+  setTimeout(() => {
+    window.location.href = '/'
+  }, 500)
 }
 
 const handleLogoutAndCloseMenu = () => {

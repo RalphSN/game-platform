@@ -140,9 +140,9 @@
       </main>
     </div>
 
-    <div class="related-section fade-in-up" style="animation-delay: 0.3s;">
+    <div v-if="relatedGames.length > 0" class="related-section fade-in-up" style="animation-delay: 0.3s;">
       <GameSection :title="$t('gameDetail.othersAlsoPlay')" :icon="svgIcons.related" categoryId="related"
-        :games="relatedGames" />
+        :games="relatedGames.slice(0, 6)" />
     </div>
   </div>
 </template>
@@ -150,7 +150,7 @@
 <script setup>
 import { ref, onMounted, onUnmounted, watch, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { fetchGameInfoApi, buyGameApi } from '@/assets/utils/api'
+import { fetchGameInfoApi, buyGameApi, fetchGameListAllApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 import { getImageUrlWithCacheBuster } from '@/assets/utils/helpers'
 import { showToast } from '@/assets/utils/swal'
@@ -248,8 +248,6 @@ const fetchGameData = async (gameId) => {
         gamePay: data.GamePay || 0,
       }
       localFavorite.value = data.Favorite
-
-      relatedGames.value = []
     } else {
       console.error('獲取遊戲詳情失敗:', result.msg)
       router.push('/')
@@ -258,6 +256,21 @@ const fetchGameData = async (gameId) => {
     console.error('API 錯誤:', error)
   } finally {
     isLoadingData.value = false
+  }
+}
+
+const loadGames = async () => {
+  try {
+    // 如果是訪客模式 userStore.account 會是空的
+    const result = await fetchGameListAllApi(userStore.account, userStore.token)
+
+    if (result.code === 0 || result.code === 888) {
+      relatedGames.value = result['999'] || []
+    } else {
+      console.error('獲取遊戲列表失敗:', result.msg)
+    }
+  } catch (error) {
+    console.error('API 錯誤:', error)
   }
 }
 
@@ -361,6 +374,7 @@ const currentBanner = computed(() => {
 })
 
 onMounted(() => {
+  loadGames()
   window.scrollTo(0, 0)
   window.addEventListener('resize', handleResize)
   const id = route.params.id

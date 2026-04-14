@@ -33,13 +33,7 @@
       <h4 class="game-title">{{ game.GameName || $t('gameCard.loading') }}</h4>
       <div class="game-meta">
         <span class="game-tag">{{ finalCategory }}</span>
-        <span class="game-players" v-if="!isBanana">
-          <svg class="flame-svg" viewBox="0 0 24 24">
-            <path
-              d="M12 2C8.5 6 6 9 8 13c-2-1-3-3-2.5-5C3 10 2 14 4 17c1.5 2.5 4 4 8 4s8-3 8-7c0-4-3-7-3-7s.5 3-2 4c1-3-1-7-3-9z" />
-          </svg>
-          {{ game.PlayerNum }}
-        </span>
+        <span class="game-players" v-if="!isBanana">🔥 {{ game.PlayerNum }}</span>
       </div>
     </div>
   </div>
@@ -154,18 +148,17 @@ watch(
 <style scoped>
 .game-card {
   background-color: var(--color-bg-content);
-  border-radius: 14px;
+  border-radius: 12px;
   overflow: hidden;
   cursor: pointer;
-  border: 1.5px solid var(--color-border-light);
-  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.28s ease, border-color 0.2s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   width: 100%;
 }
 
 .game-card:hover {
-  transform: translateY(-5px);
-  box-shadow: 0 12px 28px rgba(94, 96, 206, 0.15), 0 2px 8px rgba(0, 0, 0, 0.06);
-  border-color: #c5c7f5;
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px var(--color-shadow-main);
 }
 
 .thumb-wrapper {
@@ -175,9 +168,8 @@ watch(
   overflow: hidden;
 }
 
-/* 載入中骨架屏 */
 .game-card.is-loading .thumb-wrapper {
-  background-color: #eef0ff;
+  background-color: var(--color-border-light, #cbd5e1);
 }
 
 .game-card.is-loading .thumb-wrapper::after {
@@ -187,7 +179,7 @@ watch(
   left: -100%;
   width: 100%;
   height: 100%;
-  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.8) 50%, transparent 100%);
+  background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.7) 50%, transparent 100%);
   animation: shimmer 1.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
   z-index: 1;
 }
@@ -218,7 +210,6 @@ watch(
   transform: scale(1.08);
 }
 
-/* 上鎖狀態 */
 .is-locked .game-thumb {
   filter: grayscale(85%) brightness(60%);
 }
@@ -232,21 +223,23 @@ watch(
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: rgba(255, 255, 255, 0.12);
-  width: 46px;
-  height: 46px;
+  background-color: rgba(0, 0, 0, 0.6);
+  width: 48px;
+  height: 48px;
   border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 2;
-  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(4px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .lock-icon {
-  width: 20px;
-  height: 20px;
-  stroke: rgba(255, 255, 255, 0.85);
+  width: 24px;
+  height: 24px;
+  stroke: #ffffff;
+  opacity: 0.9;
 }
 
 .game-card.is-loading .lock-indicator {
@@ -258,19 +251,18 @@ watch(
   transition: opacity 0.3s ease;
 }
 
-/* Hover overlay */
 .hover-overlay {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(30, 34, 53, 0.55);
+  background-color: rgba(31, 41, 55, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   opacity: 0;
-  transition: opacity 0.25s ease;
+  transition: opacity 0.3s ease;
   z-index: 3;
   pointer-events: none;
 }
@@ -284,13 +276,12 @@ watch(
 .play-btn {
   background-color: var(--color-primary);
   color: var(--color-text-white);
-  padding: 7px 20px;
+  padding: 8px 16px;
   border-radius: 20px;
-  font-weight: 600;
-  font-size: 0.85rem;
-  letter-spacing: 0.3px;
-  transform: translateY(10px);
-  transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1);
+  font-weight: bold;
+  font-size: 0.9rem;
+  transform: translateY(20px);
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 @media (hover: hover) {
@@ -302,42 +293,44 @@ watch(
 .unlock-btn {
   background-color: #f59e0b;
   color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
-/* 收藏按鈕 */
 .favorite-btn {
   position: absolute;
   top: 8px;
   right: 8px;
-  width: 30px;
-  height: 30px;
-  background-color: rgba(255, 255, 255, 0.88);
+  width: 32px;
+  height: 32px;
+  background-color: rgba(0, 0, 0, 0.5);
   border: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: transform 0.18s ease, background-color 0.18s ease;
+  transition: all 0.2s ease;
   z-index: 10;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(4px);
 }
 
 .favorite-btn svg {
-  width: 15px;
-  height: 15px;
+  width: 18px;
+  height: 18px;
   fill: none;
-  stroke: #9ca3af;
+  stroke: #ffffff;
   transition: all 0.2s ease;
 }
 
 .favorite-btn:hover {
-  background-color: #ffffff;
-  transform: scale(1.15);
+  background-color: rgba(0, 0, 0, 0.7);
+  transform: scale(1.1);
 }
 
 .favorite-btn.active {
-  background-color: #fff0f1;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .favorite-btn.active svg {
@@ -360,34 +353,27 @@ watch(
   }
 }
 
-/* 卡片底部資訊 */
 .game-info {
-  padding: 10px 12px 12px;
-  border-top: 1.5px solid var(--color-primary-light);
+  padding: 14px 12px;
 }
 
 .game-title {
   color: var(--color-text-main);
-  font-size: 0.9rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  margin-bottom: 8px;
+  margin-bottom: 10px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.1px;
-}
-
-/* 上鎖時標題降灰 */
-.is-locked .game-title {
-  color: var(--color-text-muted);
+  letter-spacing: 0.3px;
 }
 
 .game-card.is-loading .game-title {
   color: transparent;
-  background-color: var(--color-primary-light);
+  background-color: var(--color-border-light, #cbd5e1);
   border-radius: 4px;
-  width: 75%;
-  height: 1rem;
+  width: 80%;
+  height: 1.2rem;
   animation: pulse 1.5s infinite;
 }
 
@@ -399,50 +385,19 @@ watch(
 
 .game-tag {
   background-color: var(--color-primary-light);
-  color: var(--color-primary-active);
-  font-size: 0.72rem;
-  padding: 3px 9px;
-  border-radius: 5px;
+  color: var(--color-primary);
+  font-size: 0.75rem;
+  padding: 4px 10px;
+  border-radius: 6px;
   font-weight: 600;
-  letter-spacing: 0.2px;
-}
-
-/* 上鎖時 tag 降灰 */
-.is-locked .game-tag {
-  background-color: #f3f4f6;
-  color: var(--color-text-muted);
 }
 
 .game-players {
-  display: flex;
-  align-items: center;
-  gap: 3px;
   color: var(--color-text-sub);
-  font-size: 0.78rem;
+  font-size: 0.8rem;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
   font-variant-numeric: tabular-nums;
   -webkit-font-smoothing: antialiased;
-  font-weight: 500;
-}
-
-/* 上鎖時人氣降灰 */
-.is-locked .game-players {
-  color: #d1d5db;
-}
-
-.flame-svg {
-  width: 13px;
-  height: 13px;
-  fill: #ff4757;
-  flex-shrink: 0;
-}
-
-.is-locked .flame-svg {
-  fill: #d1d5db;
-}
-
-.game-card.is-loading .game-meta {
-  display: none;
 }
 
 @keyframes pulse {

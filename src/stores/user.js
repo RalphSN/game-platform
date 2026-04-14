@@ -41,7 +41,7 @@ export const useUserStore = defineStore('user', {
     // 切換收藏狀態 (加入或取消)
     async toggleFavorite(gameId, ip = '127.0.0.1') {
       if (!this.account || !this.token) {
-        showToast('請先登入才能收藏遊戲','warning')
+        showToast('請先登入才能收藏遊戲', 'warning')
         throw new Error('未登入')
       }
 
@@ -76,15 +76,32 @@ export const useUserStore = defineStore('user', {
       localStorage.setItem('user_token', token)
     },
 
+    // logout() {
+    //   this.account = ''
+    //   this.token = ''
+    //   this.nickname = ''
+    //   this.points = 0
+    //   this.freePoints = 0
+    //   this.favoriteGames = []
+    //   localStorage.removeItem('user_account')
+    //   localStorage.removeItem('user_token')
+    // },
+
     logout() {
+      const savedLang = localStorage.getItem('user_language')
+      localStorage.clear()
+
+      if (savedLang) {
+        localStorage.setItem('user_language', savedLang)
+      }
+
       this.account = ''
       this.token = ''
       this.nickname = ''
       this.points = 0
       this.freePoints = 0
       this.favoriteGames = []
-      localStorage.removeItem('user_account')
-      localStorage.removeItem('user_token')
+
     },
   },
 })

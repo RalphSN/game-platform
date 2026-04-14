@@ -24,7 +24,7 @@
 
 <script setup>
 import { useRouter } from 'vue-router'
-import GameCard from './GameCard.vue'
+import GameCard from './GameCard-o.vue'
 
 const props = defineProps({
   title: {
