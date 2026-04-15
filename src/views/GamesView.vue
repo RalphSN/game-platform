@@ -53,7 +53,7 @@
         <h3>{{ $t('gamesView.filterResult') }} <span class="result-count">({{ filteredGames.length }})</span></h3>
       </div>
 
-      <div class="game-grid" :key="refreshKey">
+      <div class="game-grid">
         <template v-if="!isLoading">
           <div v-for="(game, index) in filteredGames" :key="game.GameAutoNo || index" class="animated-card"
             :style="{ animationDelay: `${index * 0.04}s` }">
@@ -65,19 +65,27 @@
         </div>
       </div>
 
-      <div v-if="filteredGames.length === 0" class="empty-state">
+      <div v-if="!isLoading && filteredGames.length === 0" class="empty-state">
         <div class="empty-icon">📂</div>
         <p>{{ $t('gamesView.noResult') }}</p>
+      </div>
+
+      <!-- 觸底偵測錨點 -->
+      <div ref="loadMoreTrigger" class="load-more-trigger"></div>
+
+      <!-- 底部加載中提示 -->
+      <div v-if="isLoadingMore" class="load-more-spinner">
+        <LoadingSpinner text="loading..." />
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted, onUnmounted } from 'vue'
 import { fetchFilteredGamesApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
-import GameCard from '@/components/GameCard.vue'
+import GameCard from '@/components/GameCard-o.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const userStore = useUserStore()
@@ -144,20 +152,36 @@ const isFullyMatch = ref(false)
 const filteredGames = ref([])
 const isLoading = ref(true)
 
-const fetchGames = async () => {
-  isLoading.value = true
+const isLoadingMore = ref(false)  // 底部加載中
+const hasMore = ref(true)          // 是否還有更多資料
+const currentStart = ref(0)        // 目前抓到第幾筆
+const PAGE_SIZE = 20
+
+const loadMoreTrigger = ref(null)
+let observer = null
+
+const fetchGames = async (isLoadMore = false) => {
+  if (!isLoadMore) {
+    currentStart.value = 0
+    filteredGames.value = []
+    hasMore.value = true
+  }
+
+  if (isLoadMore && (isLoadingMore.value || !hasMore.value)) return
+
+  if (isLoadMore) {
+    isLoadingMore.value = true
+  } else {
+    isLoading.value = true
+  }
+
   try {
-
-    // 測試用延遲
-    // await new Promise(resolve => setTimeout(resolve, 2000))
-
     let labelTypeStr = ''
     if (!selectedIds.value.genre.includes(0)) {
       labelTypeStr = selectedIds.value.genre.join(',')
     }
 
     const conformAnyStr = isFullyMatch.value ? 'N' : 'Y'
-
     const gameStatusNum = selectedIds.value.mode
 
     const result = await fetchFilteredGamesApi(
@@ -165,26 +189,33 @@ const fetchGames = async () => {
       userStore.token,
       labelTypeStr,
       conformAnyStr,
-      gameStatusNum
+      gameStatusNum,
+      '',                      // keyword
+      currentStart.value,      // start
+      PAGE_SIZE                // length
     )
 
     if (result.code === 0 || result.code === 888) {
-      filteredGames.value = result.da || []
+      const newData = result.da || []
+      filteredGames.value = [...filteredGames.value, ...newData]  // 累加，不覆蓋
+      currentStart.value += 1
+      hasMore.value = newData.length === PAGE_SIZE  // 不足 20 筆代表沒有更多了
     } else {
       console.error('獲取篩選結果失敗:', result.msg)
-      filteredGames.value = []
+      if (!isLoadMore) filteredGames.value = []
     }
   } catch (error) {
     console.error('API 錯誤:', error)
-    filteredGames.value = []
+    if (!isLoadMore) filteredGames.value = []
   } finally {
     isLoading.value = false
+    isLoadingMore.value = false
   }
 }
 
-const refreshKey = computed(() => {
-  return JSON.stringify(selectedIds.value) + isFullyMatch.value
-})
+// const refreshKey = computed(() => {
+//   return JSON.stringify(selectedIds.value) + isFullyMatch.value
+// })
 
 const toggleMatchMode = () => {
   isFullyMatch.value = !isFullyMatch.value
@@ -220,8 +251,30 @@ const updateSelection = (type, tagId) => {
   fetchGames()
 }
 
-onMounted(() => {
-  fetchGames()
+onMounted(async () => {
+  await fetchGames()
+
+  observer = new IntersectionObserver(
+    (entries) => {
+      const entry = entries[0]
+      if (entry.isIntersecting) {
+        fetchGames(true)
+      }
+    },
+    {
+      threshold: 0.1
+    }
+  )
+
+  if (loadMoreTrigger.value) {
+    observer.observe(loadMoreTrigger.value)
+  }
+})
+
+onUnmounted(() => {
+  if (observer) {
+    observer.disconnect()
+  }
 })
 
 // const allGames = ref(mockDatabase)
@@ -462,6 +515,18 @@ onMounted(() => {
   align-items: center;
   min-height: 200px;
   /* 給予最小高度避免畫面跳動過大 */
+}
+
+.load-more-trigger {
+  width: 100%;
+  height: 40px;
+}
+
+.load-more-spinner {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px 0;
 }
 
 @media (max-width: 1024px) {

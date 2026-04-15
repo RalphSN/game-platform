@@ -50,7 +50,7 @@ const categoryMapping = {
   'action': { id: '2', titleKey: 'categoryView.categories.action' },
   'puzzle': { id: '1', titleKey: 'categoryView.categories.puzzle' },
   'rpg': { id: '6', titleKey: 'categoryView.categories.rpg' },
-  'simulate': { id:4, titleKey: 'categoryView.categories.simulate' },
+  'simulate': { id: '4', titleKey: 'categoryView.categories.simulate' },
 }
 
 const loadCategoryData = async (categoryId) => {
