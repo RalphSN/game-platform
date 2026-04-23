@@ -27,7 +27,7 @@
     "eventBanner": "Events",
     "sections": {
       "hot": "Hot",
-      "featured": "Featured",
+      "featured": "Texting",
       "action": "Action",
       "puzzle": "Puzzle",
       "rpg": "RPG",
@@ -50,12 +50,12 @@
     "4": "Sim",
     "5": "PvP",
     "6": "Adventure",
-    "7": "Featured",
+    "7": "Texting",
     "hot": "Hot"
   },
   "gameSection": {
     "viewMore": "More",
-    "featuredGames": "Featured"
+    "featuredGames": "Texting"
   },
   "tabBar": {
     "games": "Games",
@@ -77,7 +77,7 @@
     "categories": {
       "hot": "Hot",
       "banana": "Mobile",
-      "featured": "Featured",
+      "featured": "Texting",
       "action": "Action",
       "puzzle": "Puzzle",
       "rpg": "RPG",

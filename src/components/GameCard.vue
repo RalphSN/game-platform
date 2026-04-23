@@ -160,6 +160,10 @@ watch(
   border: 1.5px solid var(--color-border-light);
   transition: transform 0.28s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.28s ease, border-color 0.2s ease;
   width: 100%;
+
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .game-card:hover {
@@ -374,7 +378,8 @@ watch(
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  letter-spacing: 0.1px;
+  display: block;
+  width: 100%;
 }
 
 /* 上鎖時標題降灰 */

@@ -1,5 +1,6 @@
 <template>
-  <div class="ad-banner" :class="{ 'is-loading': !isImageLoaded }" @click="handleAdClick" style="cursor: pointer;">
+  <div class="ad-banner" :class="{ 'is-loading': !isImageLoaded, 'is-half': isHalf }" @click="handleAdClick"
+    style="cursor: pointer;">
     <picture>
       <source v-if="ad.PicURL2" media="(max-width: 768px)" :srcset="getImageUrlWithCacheBuster(ad.PicURL2)"
         referrerpolicy="no-referrer" />
@@ -41,6 +42,10 @@ const props = defineProps({
       PicURL: 'https://via.placeholder.com/1200x200?text=AD',
       PicURL2: ''
     })
+  },
+  isHalf: {
+    type: Boolean,
+    default: false
   }
 })
 
@@ -69,8 +74,14 @@ const handleAdClick = () => {
   box-shadow: 0 4px 12px var(--color-shadow-main);
   transition: transform 0.2s ease;
   aspect-ratio: 1440 / 300;
+  /* aspect-ratio: 708 / 300; */
   background-color: var(--color-border-light);
   cursor: pointer;
+}
+
+.ad-banner.is-half {
+  aspect-ratio: 708 / 300;
+  /* 並排 PC */
 }
 
 .ad-banner:hover {
@@ -158,6 +169,12 @@ const handleAdClick = () => {
 @media (max-width: 768px) {
   .ad-banner {
     aspect-ratio: 1080 / 280;
+    /* aspect-ratio: 534 / 280; */
+  }
+
+  .ad-banner.is-half {
+    aspect-ratio: 534 / 280;
+    /* 並排 Mobile */
   }
 }
 </style>

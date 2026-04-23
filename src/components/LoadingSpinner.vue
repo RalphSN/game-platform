@@ -1,7 +1,13 @@
 <template>
   <div class="spinner-container">
-    <svg class="spinner" :width="size" :height="size" viewBox="0 0 50 50">
-      <circle class="path" cx="25" cy="25" r="20" fill="none" :stroke="color" stroke-width="5"></circle>
+    <svg class="spinner" :width="size" :height="size" viewBox="0 0 24 24" fill="none" :stroke="color" stroke-width="2"
+      stroke-linecap="round" stroke-linejoin="round">
+      <!-- 縮小右上角的箭頭頭部 -->
+      <path d="M21 4.5v3.5h-3.5"></path>
+      <path d="M3 12a9 9 0 0 1 15-6.7L21 8"></path>
+      <!-- 縮小左下角的箭頭頭部 -->
+      <path d="M3 19.5v-3.5h3.5"></path>
+      <path d="M21 12a9 9 0 0 1-15 6.7L3 16"></path>
     </svg>
     <p v-if="text" class="loading-text" :style="{ color: color }">{{ text ?? $t('common.loading') }}</p>
   </div>
@@ -35,12 +41,8 @@ defineProps({
 }
 
 .spinner {
-  animation: rotate 2s linear infinite;
-}
-
-.spinner .path {
-  stroke-linecap: round;
-  animation: dash 1.5s ease-in-out infinite;
+  /* 稍微加快轉速，讓現代感與俐落感提升 */
+  animation: rotate 0.75s linear infinite;
 }
 
 .loading-text {
@@ -53,23 +55,6 @@ defineProps({
 @keyframes rotate {
   100% {
     transform: rotate(360deg);
-  }
-}
-
-@keyframes dash {
-  0% {
-    stroke-dasharray: 1, 150;
-    stroke-dashoffset: 0;
-  }
-
-  50% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -35;
-  }
-
-  100% {
-    stroke-dasharray: 90, 150;
-    stroke-dashoffset: -124;
   }
 }
 </style>

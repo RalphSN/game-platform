@@ -41,15 +41,17 @@
 </template>
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
 import { showToast } from '@/assets/utils/swal'
+import { useUserStore } from '@/stores/user'
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
 
 const router = useRouter()
+const userStore = useUserStore()
 
 const form = reactive({
   account: '',
@@ -120,6 +122,15 @@ const handleRegister = async () => {
     isLoading.value = false
   }
 }
+
+onMounted(() => {
+  if (userStore.token) {
+    // showToast('您已在登入狀態，為您導回首頁', 'info')
+    router.replace('/')
+  }
+})
+
+
 </script>
 
 <style scoped>

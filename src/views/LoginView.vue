@@ -42,11 +42,12 @@
 
 
 <script setup>
-import { reactive, ref } from 'vue'
+import { reactive, ref, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { sendRequest } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
 import { showToast } from '@/assets/utils/swal'
+
 
 import { useI18n } from 'vue-i18n'
 const { t } = useI18n()
@@ -111,6 +112,15 @@ const handleLogin = async () => {
     isLoading.value = false
   }
 }
+
+onMounted(() => {
+  if (userStore.token) {
+    // showToast('您已在登入狀態，為您導回首頁', 'info')
+    router.replace('/')
+  }
+})
+
+
 </script>
 
 <style scoped>

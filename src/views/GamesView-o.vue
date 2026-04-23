@@ -7,6 +7,7 @@
         <div class="mode-switch-container" @click="toggleMatchMode">
           <div class="mode-track">
             <div class="mode-thumb" :class="{ 'move-right': isFullyMatch }"></div>
+
             <div class="mode-item" :class="{ active: !isFullyMatch }" :title="$t('gamesView.looseMatch')">
               <svg xmlns="http://www.w3.org/2000/svg" class="mode-icon" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -21,6 +22,7 @@
                 <line x1="17" y1="16" x2="23" y2="16"></line>
               </svg>
             </div>
+
             <div class="mode-item" :class="{ active: isFullyMatch }" :title="$t('gamesView.exactMatch')">
               <svg xmlns="http://www.w3.org/2000/svg" class="mode-icon" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -34,6 +36,7 @@
 
       <div v-for="(category, cIndex) in categoryList" :key="cIndex" class="category-row">
         <h3 class="category-title">{{ $t(category.titleKey) }}</h3>
+
         <div class="options-container">
           <button v-for="(opt, oIndex) in category.list" :key="opt.id" class="option-btn"
             :class="{ 'active': Array.isArray(selectedIds[category.key]) ? selectedIds[category.key].includes(opt.id) : selectedIds[category.key] === opt.id }"
@@ -50,42 +53,60 @@
         <h3>{{ $t('gamesView.filterResult') }} <span class="result-count">({{ filteredGames.length }})</span></h3>
       </div>
 
-      <div class="game-grid">
-        <template v-if="!isInitialLoading">
-          <div v-for="(game, index) in filteredGames" :key="game.GameAutoNo" class="animated-card"
-            :style="{ animationDelay: `${(index % 20) * 0.04}s` }">
+      <div class="game-grid" :key="refreshKey">
+        <template v-if="!isLoading">
+          <div v-for="(game, index) in filteredGames" :key="game.GameAutoNo || index" class="animated-card"
+            :style="{ animationDelay: `${index * 0.04}s` }">
             <GameCard :game="game" />
           </div>
         </template>
-
-        <div v-if="isInitialLoading" class="loading-wrapper">
+        <div v-else class="loading-wrapper">
           <LoadingSpinner text="loading..." />
         </div>
       </div>
 
-      <div v-if="!isInitialLoading && filteredGames.length === 0" class="empty-state">
+      <div v-if="filteredGames.length === 0" class="empty-state">
         <div class="empty-icon">📂</div>
         <p>{{ $t('gamesView.noResult') }}</p>
-      </div>
-
-      <div ref="loadMoreTrigger" class="load-more-trigger">
-        <div v-if="isLoadingMore" class="load-more-spinner">
-          <LoadingSpinner text="loading..." />
-        </div>
       </div>
     </section>
   </div>
 </template>
 
 <script setup>
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { fetchFilteredGamesApi } from '@/assets/utils/api'
 import { useUserStore } from '@/stores/user'
-// 請確認你的元件名稱是 GameCard.vue 還是 GameCard-o.vue
 import GameCard from '@/components/GameCard-o.vue'
 import LoadingSpinner from '@/components/LoadingSpinner.vue'
 
 const userStore = useUserStore()
+
+// const categoryList = ref([
+//   {
+//     title: '遊戲類別',
+//     key: 'genre',
+//     list: [
+//       { id: 0, name: '全部' },
+//       { id: 1, name: '休閒益智' },
+//       { id: 2, name: '動作闖關' },
+//       { id: 3, name: '策略塔防' },
+//       { id: 4, name: '模擬經營' },
+//       { id: 5, name: '競技對戰' },
+//       { id: 6, name: '角色冒險' },
+//       { id: 7, name: '精選合集' }
+//     ]
+//   },
+//   {
+//     title: '遊戲狀態',
+//     key: 'mode',
+//     list: [
+//       { id: 0, name: '全部' },
+//       { id: 1, name: '已解鎖' },
+//       { id: 2, name: '未解鎖' }
+//     ]
+//   }
+// ])
 
 const categoryList = ref([
   {
@@ -114,40 +135,29 @@ const categoryList = ref([
 ])
 
 const selectedIds = ref({
-  genre: [0],
-  mode: 0
+  genre: [0], // 陣列多選
+  mode: 0 // 純數字單選
 })
 
 const isFullyMatch = ref(false)
 
 const filteredGames = ref([])
-const isInitialLoading = ref(true)
-const isLoadingMore = ref(false)
-const hasMore = ref(true)
-const currentPage = ref(0)
-const PAGE_SIZE = 20
+const isLoading = ref(true)
 
-const loadMoreTrigger = ref(null)
-let observer = null
-
-const fetchGames = async (isLoadMore = false) => {
-  if (!isLoadMore) {
-    currentPage.value = 0
-    hasMore.value = true
-    filteredGames.value = []
-    isInitialLoading.value = true
-  } else {
-    if (isLoadingMore.value || !hasMore.value) return
-    isLoadingMore.value = true
-  }
-
+const fetchGames = async () => {
+  isLoading.value = true
   try {
+
+    // 測試用延遲
+    // await new Promise(resolve => setTimeout(resolve, 2000))
+
     let labelTypeStr = ''
     if (!selectedIds.value.genre.includes(0)) {
       labelTypeStr = selectedIds.value.genre.join(',')
     }
 
     const conformAnyStr = isFullyMatch.value ? 'N' : 'Y'
+
     const gameStatusNum = selectedIds.value.mode
 
     const result = await fetchFilteredGamesApi(
@@ -155,58 +165,26 @@ const fetchGames = async (isLoadMore = false) => {
       userStore.token,
       labelTypeStr,
       conformAnyStr,
-      gameStatusNum,
-      '',
-      currentPage.value,
-      PAGE_SIZE
+      gameStatusNum
     )
 
     if (result.code === 0 || result.code === 888) {
-      const newData = result.da || []
-
-      if (!isLoadMore) {
-        filteredGames.value = newData
-      } else {
-        // 使用展開運算符追加，不破壞舊 DOM
-        filteredGames.value.push(...newData)
-      }
-
-      if (newData.length < PAGE_SIZE) {
-        hasMore.value = false
-      } else {
-        currentPage.value += 1
-      }
+      filteredGames.value = result.da || []
     } else {
       console.error('獲取篩選結果失敗:', result.msg)
-      if (!isLoadMore) filteredGames.value = []
+      filteredGames.value = []
     }
   } catch (error) {
     console.error('API 錯誤:', error)
-    if (!isLoadMore) filteredGames.value = []
+    filteredGames.value = []
   } finally {
-    isInitialLoading.value = false
-    isLoadingMore.value = false
+    isLoading.value = false
   }
 }
 
-const setupObserver = () => {
-  const options = {
-    root: null,
-    rootMargin: '100px',
-    threshold: 0
-  }
-
-  observer = new IntersectionObserver((entries) => {
-    const target = entries[0]
-    if (target.isIntersecting && !isInitialLoading.value && !isLoadingMore.value && hasMore.value) {
-      fetchGames(true)
-    }
-  }, options)
-
-  if (loadMoreTrigger.value) {
-    observer.observe(loadMoreTrigger.value)
-  }
-}
+const refreshKey = computed(() => {
+  return JSON.stringify(selectedIds.value) + isFullyMatch.value
+})
 
 const toggleMatchMode = () => {
   isFullyMatch.value = !isFullyMatch.value
@@ -215,23 +193,26 @@ const toggleMatchMode = () => {
 
 const updateSelection = (type, tagId) => {
   if (type === 'mode') {
+    // 單選邏輯 (解鎖狀態)
     selectedIds.value[type] = tagId
   } else {
+    // 多選邏輯 (遊戲類別)
     let ids = [...selectedIds.value[type]]
+
     if (tagId === 0) {
-      ids = [0]
+      ids = [0] // 如果點了全部，清空其他選項
     } else {
       if (ids.includes(0)) {
-        ids = []
+        ids = [] // 如果原本有全部，把它移除
       }
       const index = ids.indexOf(tagId)
       if (index > -1) {
-        ids.splice(index, 1)
+        ids.splice(index, 1) // 取消選取
       } else {
-        ids.push(tagId)
+        ids.push(tagId) // 加入選取
       }
       if (ids.length === 0) {
-        ids = [0]
+        ids = [0] // 預設回到選全部
       }
     }
     selectedIds.value[type] = ids
@@ -240,16 +221,32 @@ const updateSelection = (type, tagId) => {
 }
 
 onMounted(() => {
-  fetchGames().then(() => {
-    setupObserver()
-  })
+  fetchGames()
 })
 
-onUnmounted(() => {
-  if (observer) {
-    observer.disconnect()
-  }
-})
+// const allGames = ref(mockDatabase)
+
+// const filteredGames = computed(() => {
+//   return allGames.value.filter(game => {
+//     const genreFilter = selectedIds.value.genre
+//     const isGenreMatch = genreFilter.includes(0) || genreFilter.some(id => game.tags.genre.includes(id))
+
+//     const modeFilter = selectedIds.value.mode
+//     const isModeMatch = modeFilter === 0 || game.tags.mode === modeFilter
+
+//     // 匹配模式
+//     if (!isFullyMatch.value) {
+//       // 寬鬆匹配 (符合任一條件)
+//       if (genreFilter.includes(0) && modeFilter === 0) return true;
+//       if (genreFilter.includes(0)) return isModeMatch;
+//       if (modeFilter === 0) return isGenreMatch;
+//       return isGenreMatch || isModeMatch;
+//     } else {
+//       // 精準匹配 (符合所有條件)
+//       return isGenreMatch && isModeMatch;
+//     }
+//   })
+// })
 </script>
 
 <style scoped>
@@ -431,13 +428,9 @@ onUnmounted(() => {
   gap: 20px;
 }
 
-/* ！！！重點修正區域！！！ */
 .animated-card {
   opacity: 0;
   animation: fadeSlideUp 0.5s ease-out forwards;
-  /* 以下兩行是防止 Grid 不平均擠壓的絕對核心 */
-  min-width: 0;
-  overflow: hidden;
 }
 
 .empty-state {
@@ -463,25 +456,12 @@ onUnmounted(() => {
 
 .loading-wrapper {
   grid-column: 1 / -1;
+  /* 讓載入動畫橫跨所有的 grid 欄位 */
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 200px;
-}
-
-.load-more-trigger {
-  width: 100%;
-  height: 60px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-top: 20px;
-}
-
-.load-more-spinner {
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  /* 給予最小高度避免畫面跳動過大 */
 }
 
 @media (max-width: 1024px) {

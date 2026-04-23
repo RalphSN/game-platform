@@ -27,7 +27,7 @@
     "eventBanner": "活动横幅",
     "sections": {
       "hot": "热门推荐",
-      "featured": "精选合集",
+      "featured": "文字互动",
       "action": "动作闯关",
       "puzzle": "休闲益智",
       "rpg": "角色冒险",
@@ -50,7 +50,7 @@
     "4": "模拟经营",
     "5": "竞技对抗",
     "6": "角色冒险",
-    "7": "精选合集",
+    "7": "文字互动",
     "hot": "热门推荐"
   },
   "gameSection": {
@@ -77,7 +77,7 @@
     "categories": {
       "hot": "热门推荐",
       "banana": "手机游戏",
-      "featured": "精选合集",
+      "featured": "文字互动",
       "action": "动作闯关",
       "puzzle": "休闲益智",
       "rpg": "角色冒险",

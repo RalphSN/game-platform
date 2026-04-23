@@ -35,11 +35,6 @@
         <GameSection class="fade-in-up" style="animation-delay: 0.4s;" :title="$t('homeView.sections.puzzle')"
           :icon="svgIcons.puzzle" categoryId="puzzle" :games="puzzleGames.slice(0, 6)" />
 
-        <div v-if="adLeft || adRight" class="ad-wrapper half-ad fade-in-up" style="animation-delay: 0.5s;">
-          <AdBanner v-if="adLeft" :ad="adLeft" />
-          <AdBanner v-if="adRight" :ad="adRight" />
-        </div>
-
         <GameSection class="fade-in-up" style="animation-delay: 0.3s;" :title="$t('homeView.sections.simulate')"
           :icon="svgIcons.simulate" categoryId="simulate" :games="simulateGames.slice(0, 6)" />
 
@@ -48,6 +43,12 @@
 
         <GameSection class="fade-in-up" style="animation-delay: 0.7s;" :title="$t('homeView.sections.banana')"
           :icon="svgIcons.banana" categoryId="banana" :games="bananaGames.slice(0, 6)" />
+
+        <div v-if="adLeft || adRight" class="ad-wrapper half-ad">
+          <AdBanner v-if="adLeft" :ad="adLeft" is-half />
+          <AdBanner v-if="adRight" :ad="adRight" is-half />
+        </div>
+
       </template>
     </div>
   </div>
