@@ -35,11 +35,11 @@
         <GameSection class="fade-in-up" style="animation-delay: 0.4s;" :title="$t('homeView.sections.puzzle')"
           :icon="svgIcons.puzzle" categoryId="puzzle" :games="puzzleGames.slice(0, 6)" />
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.3s;" :title="$t('homeView.sections.simulate')"
-          :icon="svgIcons.simulate" categoryId="simulate" :games="simulateGames.slice(0, 6)" />
+        <!-- <GameSection class="fade-in-up" style="animation-delay: 0.3s;" :title="$t('homeView.sections.simulate')"
+          :icon="svgIcons.simulate" categoryId="simulate" :games="simulateGames.slice(0, 6)" /> -->
 
-        <GameSection class="fade-in-up" style="animation-delay: 0.6s;" :title="$t('homeView.sections.rpg')"
-          :icon="svgIcons.rpg" categoryId="rpg" :games="rpgGames.slice(0, 6)" />
+        <!-- <GameSection class="fade-in-up" style="animation-delay: 0.6s;" :title="$t('homeView.sections.rpg')"
+          :icon="svgIcons.rpg" categoryId="rpg" :games="rpgGames.slice(0, 6)" /> -->
 
         <GameSection class="fade-in-up" style="animation-delay: 0.7s;" :title="$t('homeView.sections.banana')"
           :icon="svgIcons.banana" categoryId="banana" :games="bananaGames.slice(0, 6)" />
